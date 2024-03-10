@@ -1,6 +1,6 @@
 # 2. projekt IVS - Týmový projekt: Kalkulačka: PLÁN PROJEKTU
 
-# Členové týmu
+## Členové týmu
 
 | **Jméno** | **xlogin** | **Přezdívka** | **Speciální role** |
 | --- | --- | --- | --- |
@@ -9,9 +9,9 @@
 | **Kalina Jan** | xkalinj00 | Honziksick | Vedoucí |
 | **Krejčí David** | xkrejcd00 | DJmDavidus | \----- |
 
-# Smluvené prostředky
+## Smluvené prostředky
 
-## Vývoj (obecně)
+### Vývoj (obecně)
 
 | **Prostředek** | **Domluveno v týmu** |
 | --- | --- |
@@ -23,7 +23,7 @@
 | **Nástroj pro dokumentaci** | Doxygen |
 | **Formát a jazyk README** | README.md v jazyce Markdown |
 
-## Týmový jazykový pakt
+### Týmový jazykový pakt
 
 | **Prostředek** | **Jazyk** | **Detaily** |
 | --- | --- | --- |
@@ -33,7 +33,7 @@
 | **Dokumentace _(veškerá)_** | čeština s diakritikou | nástroj Doxygen |
 | **README.md** | čeština s diakritikou | jazyk Markdown |
 
-# Další týmové domluvy
+## Další týmové domluvy
 
 - V našem repozitáři budeme používat **.gitignore**, abychom předešli zanášení repozitářem nepotřebným a objemným smetím _(k nahlédnutí ve vzdáleném repozitáři)_
 - Domluvili jsme se na využívání **.editorconfig**, abychom předešli případným problémům při tvorbě kódu _(k nahlédnutí ve vzdáleném repozitáři)_
@@ -43,7 +43,7 @@
 - Pro potřeby domlouvání termínů _(v případě shledání Discordu nepraktickým)_ byly **zřízeny Outlook kalendáře** – **osobní** a **souhrnný týmový** –, které lze jednoduše **propojit s Doodlem**
 - Pokud nám to čas dovolí, rádi bychom se **seznámili s možností CI GitHubu** a automatizovaného testování a sestavování při provedení změn
 
-# Rozdělení úkolů
+## Rozdělení úkolů
 
 | **Úkol** | **Vykonavatel** | **Termín** |
 | --- | --- | --- |
@@ -64,9 +64,9 @@
 | **Prezentace k obhajobám** | TBD | nejpozději  <br>1 den před obhajobou |
 | **Obhajoby** | všichni | 6\. – 10. května |
 
-# Komunikace – Discord
+## Komunikace – Discord
 
-## Kanály
+### Kanály
 
 - team-rules
 - general
@@ -75,9 +75,9 @@
 - forum
 - voting
 
-## Pravidla komunikace
+### Pravidla komunikace
 
-### Pravidla pro jednotlivé kanály
+#### Pravidla pro jednotlivé kanály
 
 - **Team Rules**
   - V tomto kanálu jsou základní pravidla a očekávání týmu. Zahrnují například dodržování termínů, podílení se na projektu a pravidla komunikace.
@@ -92,7 +92,7 @@
 - **Voting**
   - Tento kanál slouží k pořádání veřejných hlasování. Jelikož jsme 4členný tým, tak může jednoduše dojít ke konfliktu. V případě nerozhodného hlasování vyhrává varianta, pro kterou hlasoval člověk, jehož úkolu se hlasovaný problém bezprostředně týká. V případě, že ani toto by konflikt v hlasování nevyřešilo, vyhrává varianta, pro kterou hlasoval vůdce týmu.
 
-### Obecná pravidla komunikace
+#### Obecná pravidla komunikace
 
 - **Kontrolujeme Discord pravidelně**
   - Každý člen týmu by měl pravidelně (alespoň dvakrát denně) kontrolovat Discord. Každý z nás máme jiný denní režim, proto je v případě problému či dotazu reagovat, co nejdřív, ideálně ještě v daný den, aby vývoj nestagnoval a mohli jsme všichni pokračovat v přidělených úkolech v době, kdy se nám to hodí a pasuje do denního režimu.
