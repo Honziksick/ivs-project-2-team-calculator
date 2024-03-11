@@ -356,3 +356,10 @@ README.md|txt
     - **maximum bodů** je **omezeno součtem maxim jednotlivých částí produktu**, jenž nebyly hodnoceny 0 body _(tedy pokud z týmu vypadl člen, nelze přerozdělením bodů za neúplný produkt získat plný počet bodů)_
   - **2 body** za **zhodnocení práce v týmu** _(za zamyšlení nad tím, co jste dělali špatně a jak to řešit lépe)_
   - **5 bodů** za **obhajobu**
+
+<br>
+
+---
+---
+
+*Datum poslední úpravy: 10. 3. 2024, 23:48*

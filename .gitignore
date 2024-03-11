@@ -93,6 +93,8 @@ _deps
 .history/
 *.vsix
 
-# Leader's info in MS Word
+# Leader's data
+/kostra_repozitare
+/info/raw/*
 *.doc
 *.docx

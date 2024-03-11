@@ -1,0 +1,55 @@
+#  ~~~~~  .GITCONFIG by Honziksick  ~~~~~
+
+# 1) Přejděte do svého domovského adresáře v Ubuntu WSL či Linux
+# 2) Otevřete stávající soubor '.gitconfig' v textovém editoru (např. VS Code)
+# 3) Volitelně si doplňte své stávající definice o obsah tohoto souboru.
+
+[user]
+    # E-mail pro commity
+	email = xlogin00@stud.fit.vutbr.cz
+
+    # Uživatelské jméno pro commity
+	name = JMÉNO PŘÍJMENÍ
+
+[color]
+    # Nastavení barev Gitu
+	ui = auto
+
+[init]
+    # Název výchozí větve nově inicializovaného repozitáře
+    defaultBranch = main
+
+[core]
+    # Nastavení výchozího editoru pro Git
+    editor = code
+
+    # Nebere se v úvahu změna práv k souboru
+    filemode = false
+
+    # Vychozí konec řádku
+	eol = lf
+
+    # Vhodné pokud většina týmu pracuje v Unixu - 
+    # zachovává konce řádků a případně je konvertuje lokálně
+    autocrlf = input
+
+[alias]
+    # Zobraz všechny branch
+    allbr = branch -av 
+
+    # Ukaž název současné branch
+    currbr = !git branch | grep "^*" | awk '{ print $2 }' 
+
+    # Zobrazení historie commmitů v repozitáři
+    logh = log --decorate --source --graph --all
+
+    # Smaž branch
+    brdel = branch -D
+
+[push]
+    # Push do branch ve vzdáleném repozitáři odpovídající aktuální branch
+	default = simple
+
+[pull]
+    # Zaručení lineárnější historie pomocí rebase namísto merge
+    rebase = true
