@@ -4,7 +4,7 @@
 
 | **Jméno** | **xlogin** | **Přezdívka** | **Speciální role** |
 | --- | --- | --- | --- |
-| **Farkašovský Lukáš** | xfarkal00 | norm | \----- |
+| **Farkašovský Lukáš** | xfarkal00 | NormREE | \----- |
 | **Hýža Pavel** | xhyzapa00 |     | Zapisovatel |
 | **Kalina Jan** | xkalinj00 | Honziksick | Vedoucí |
 | **Krejčí David** | xkrejcd00 | DJmDavidus | \----- |
