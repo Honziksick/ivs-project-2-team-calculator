@@ -64,11 +64,11 @@
 | **Implementace<br> směrodatné odchylky**             | **Jan Kalina**        | nejpozději  <br>Ne **7. dubna** 2024              |
 | **Protokol z profileru**                             | **Jan Kalina**        | nejpozději  <br>Ne **14. dubna** 2024             |
 | **Od/Instalátor**                                    | **Pavel Hýža**        | nejpozději  <br>Ne **14. dubna** 2024             |
-| **Mockup**                                           | **Lukáš Farkašovský** | nejpozději  <br>Pá **14. dubna** 2024             |
+| **Mockup**                                           | **Lukáš Farkašovský** | nejpozději  <br>Ne **14. dubna** 2024             |
 | **Debugging _(povinný)_**                            | **David Krejčí**      | nejpozději  <br>Pá **19. dubna** 2024             |
 | **Návod pro manuální<br> od/instalaci**              | **Pavel Hýža**        | nejpozději  <br>Pá **19. dubna** 2024             |
 | **Programová<br> dokumentace**                       | **Každý** dokumentuje svoji<br> práci + následná tvorba<br> výsledné dokumentace<br> **Jan Kalina** | nejpozději  <br>Pá **19\. dubna** 2024 |
-| **Uživatelská<br> dokumentace**                      | **Pavel Hýža**        | nejpozději  <br>Pá **19\. dubna** 2024            |
+| **Uživatelská<br> dokumentace**                      | **David Krejčí**      | nejpozději  <br>Pá **19\. dubna** 2024            |
 | **Soubory _odevzdani.txt_<br> & odevzdání projektu** | **Jan Kalina**        | Nejpozději  <br>St **24\. dubna**, **7:00 ráno**  |
 | **Nasazení u zákazníka**                             | **všichni**           | **29\. dubna – 3. května**                        |
 | **Soubor _hodnoceni.txt_<br> a _skutecnost.txt_**    | **všichni**           | nejpozději  <br>Čt **9\. května**, **7:00 ráno**  |
@@ -102,7 +102,6 @@
 | --------------------------------------- | --------------- | -------------------------------------- |
 | **Od/Instalátor**                       | **Pavel Hýža**  | nejpozději  <br>Ne **14. dubna** 2024  |
 | **Návod pro manuální<br> od/instalaci** | **Pavel Hýža**  | nejpozději  <br>Pá **19. dubna** 2024  |
-| **Uživatelská<br> dokumentace**         | **Pavel Hýža**  | nejpozději  <br>Pá **19\. dubna** 2024 |
 
 #### David Krejčí *(xkrejcd00)*
 
@@ -111,6 +110,7 @@
 | **Testy pro matematickou<br> knihovnu formou TDD** | **David Krejčí** | nejpozději  <br>Ne **17. března** 2024 |
 | **Matematická knihovna**                           | **David Krejčí** | nejpozději  <br>Ne **24. března** 2024 |
 | **Debugging _(povinný)_**                          | **David Krejčí** | nejpozději  <br>Pá **19. dubna** 2024  |
+| **Uživatelská<br> dokumentace**                    | **David Krejčí** | nejpozději  <br>Pá **19\. dubna** 2024 |
 
 #### Společné úkoly
 
@@ -186,4 +186,4 @@
 
 ---
 
-*Datum poslední úpravy: 11. 3. 2024, 23:42*
+*Datum poslední úpravy: 12. 3. 2024, 02:05*
