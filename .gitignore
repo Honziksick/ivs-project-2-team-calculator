@@ -68,33 +68,39 @@ CTestTestfile.cmake
 _deps
 
 # Doxygen
-/doxygen/html
-/doxygen/latex
-/doxygen/*.log
-/doxygen/*.log.*
-/doxygen/*.bak
-/doxygen/*.bak.*
-/examples/*/html
-/html
-/latex
-/rtf
-/xml
-/man
-/docbook
-/perlmod
+**/doxygen/html
+**/doxygen/latex
+**/doxygen/*.log
+**/doxygen/*.log.*
+**/doxygen/*.bak
+**/doxygen/*.bak.*
+**/examples/*/html
+**/html
+**/latex
+**/rtf
+**/xml
+**/man
+**/docbook
+**/perlmod
 
 # VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-.history/
-*.vsix
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+!**/.vscode/*.code-snippets
+**/.history/
+**/*.vsix
 
-# Leader's data
-/kostra_repozitare
+# Build
+**/build/*
+!**/build/.placeholder
+
+# General folders and files
+**/kostra_repozitare
+**/sandbox
+**/backup
 /info/raw/*
 *.doc
 *.docx
