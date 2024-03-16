@@ -6,4 +6,4 @@ using namespace ::testing;
 
 // TO-DO
 
-/*** Konec souboru cat_calc_core.cpp ***/
+/*** Konec souboru cat_calc_core_tests.cpp ***/
