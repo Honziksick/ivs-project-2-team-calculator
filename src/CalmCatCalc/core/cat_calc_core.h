@@ -12,7 +12,7 @@
 #include <algorithm>
 
 
-// TO_DO
+const char* calculate(const char* expression);
 
 
 #endif // CAT_CALC_CORE_H_
