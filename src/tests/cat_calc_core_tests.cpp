@@ -2,8 +2,8 @@
 #include <gmock/gmock.h>
 #include "cat_calc_core.h"
 
-/** Testovaná přesnost kalkulačky */
-#define PRECISION 0.00000000000001
+/** Testovaná přesnost kalkulačky na 14 desetinných míst */
+#define TESTED_PRECISION 0.00000000000001
 
 using namespace ::testing;
 using namespace std;
@@ -176,10 +176,12 @@ TEST(Operations, Root){
     EXPECT_EQ(5, root(2,25));
     EXPECT_EQ(2, root(12,4096));
     EXPECT_EQ(-3, root(3,-27));
-    EXPECT_NEAR(1.286648351223739, root(3, 2.13), PRECISION);
-    EXPECT_NEAR(1.732050807568877, root(2,3), PRECISION);
-    EXPECT_NEAR(0.3894322904960899, root(4,0.023), PRECISION);
-    EXPECT_NEAR(-0.284386697985156, root(3,-0.023), PRECISION);
+    EXPECT_NEAR(1.286648351223739, root(3, 2.13), TESTED_PRECISION);
+    EXPECT_NEAR(1.732050807568877, root(2,3), TESTED_PRECISION);
+    EXPECT_NEAR(0.3894322904960899, root(4,0.023), TESTED_PRECISION);
+    EXPECT_NEAR(-0.284386697985156, root(3,-0.023), TESTED_PRECISION);
+    double expectedResult = 11111.111060555555441;
+    EXPECT_NEAR(expectedResult, root(2,123456789), expectedResult*TESTED_PRECISION);
     EXPECT_ANY_THROW(root(2,-16));
 }
 
@@ -192,23 +194,23 @@ TEST(Operations, Power){
 }
 
 TEST(Operations, Sine){
-    EXPECT_EQ(0.5, csin(30));
-    EXPECT_EQ(-0.5, csin(-30));
-    EXPECT_EQ(csin(5),csin(365));
-    EXPECT_NEAR(0.939692620785908, csin(70), PRECISION);
+    EXPECT_NEAR(0.5, csin(30), TESTED_PRECISION);
+    EXPECT_NEAR(-0.5, csin(-30), TESTED_PRECISION);
+    EXPECT_NEAR(csin(5),csin(365), TESTED_PRECISION);
+    EXPECT_NEAR(0.939692620785908, csin(70), TESTED_PRECISION);
 }
 
 TEST(Operations, Cosine){
-    EXPECT_EQ(0.5,ccos(60));
-    EXPECT_EQ(0.5,ccos(-60));
-    EXPECT_EQ(ccos(6),ccos(366));
-    EXPECT_NEAR(0.342020143325668, ccos(70), PRECISION);
+    EXPECT_NEAR(0.5,ccos(60), TESTED_PRECISION);
+    EXPECT_NEAR(0.5,ccos(-60), TESTED_PRECISION);
+    EXPECT_NEAR(ccos(6),ccos(366), TESTED_PRECISION);
+    EXPECT_NEAR(0.342020143325668, ccos(70), TESTED_PRECISION);
 }
 
 TEST(Operations, Tan){
-    EXPECT_EQ(1,ctan(45));
-    EXPECT_EQ(ctan(24),ctan(204));
-    EXPECT_NEAR(2.747477419454622, ctan(70), PRECISION);
+    EXPECT_NEAR(1,ctan(45), TESTED_PRECISION);
+    EXPECT_NEAR(ctan(24),ctan(204), TESTED_PRECISION);
+    EXPECT_NEAR(2.747477419454622, ctan(70), TESTED_PRECISION);
     EXPECT_ANY_THROW(ctan(270));
 }
 

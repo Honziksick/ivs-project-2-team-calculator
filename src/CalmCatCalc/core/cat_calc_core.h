@@ -12,6 +12,13 @@
 #include <algorithm>
 #include <string>
 
+/** Přesnost kalkulačky pro */
+#define CALC_PRECISION 0.000000000000001
+/** Maximální počet aproximací funkcí*/
+#define MAX_CYCLES 200
+
+#define PI 3.14159265358979323846
+
 using namespace std;
 
 /**
@@ -116,6 +123,14 @@ string evaluate(vector<string> postfixExpression);
  * @return Absolutní hodnota zadaného čísla.
 */
 double absVal(double num);
+
+/**
+ * @brief Normalizace úhlu
+ * 
+ * @param[in] ang Úhel, který se má normalizovat
+ * @return Normalizovaný úhel
+*/
+double normalizeAngle(double ang);
 
 /**
  * @brief Výpočet odmocniny zadaného čísla na zadaný základ.
