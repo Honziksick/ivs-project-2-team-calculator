@@ -55,20 +55,8 @@ Mkfile.old
 dkms.conf
 
 # Doxygen
-**/doxygen/html
-**/doxygen/latex
-**/doxygen/*.log
-**/doxygen/*.log.*
-**/doxygen/*.bak
-**/doxygen/*.bak.*
-**/examples/*/html
-**/html
-**/latex
-**/rtf
-**/xml
-**/man
-**/docbook
-**/perlmod
+/doc/*
+!/doc/images/
 
 # VS Code
 **/.vscode/*
