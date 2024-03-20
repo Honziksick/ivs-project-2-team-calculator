@@ -82,7 +82,6 @@ dkms.conf
 
 # Build
 **/build/*
-!**/build/.placeholder
 
 # General folders and files
 **/kostra_repozitare
