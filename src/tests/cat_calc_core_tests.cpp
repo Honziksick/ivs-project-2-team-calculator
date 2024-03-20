@@ -138,7 +138,7 @@ TEST(Postfix, BasicExpressions){
 
     expected = {"5.4", "4", "!", "+"};
     result = postfix({"5.4", "+", "4", "!"});
-    EXPECT_PRED2(compareVectors, expected, result); //This is the line that doesn't work
+    EXPECT_PRED2(compareVectors, expected, result);
 }
 
 TEST(Postfix, ComplexExpressions){
