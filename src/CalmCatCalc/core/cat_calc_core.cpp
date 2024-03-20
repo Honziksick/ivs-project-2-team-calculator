@@ -8,7 +8,10 @@ string calculate(string expression){
 }
 
 double absVal(double num){
-    return num;
+    if(num >= 0){
+        return num;
+    }
+    return -num;
 }
 
 double root(int root, double num){
