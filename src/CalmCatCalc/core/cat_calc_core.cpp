@@ -20,6 +20,18 @@ double absVal(double num){
     return -num;
 }
 
+size_t factorial(size_t num){
+    size_t result = 1;
+    while(num > 1){
+        if(__SIZE_MAX__ / result < num){
+            throw overflow_error("Overflow");
+        }
+        result = result * num;
+        num--;
+    }
+    return result;
+}
+
 double root(int root, double num){
 
     if(num < 0 && root%2 == 0){
@@ -96,7 +108,7 @@ double csin(double ang){
     ang = normalizeAngle(ang);
     
     double result = 0;
-    double term = ang; // first term
+    double term = ang;
     int i = 1;
     while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
         result += term;
@@ -110,7 +122,7 @@ double ccos(double ang){
     ang = normalizeAngle(ang);
 
     double result = 0;
-    double term = 1; // first term
+    double term = 1;
     int i = 1;
     while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
         result += term;

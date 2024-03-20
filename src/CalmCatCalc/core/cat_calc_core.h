@@ -125,6 +125,15 @@ string evaluate(vector<string> postfixExpression);
 double absVal(double num);
 
 /**
+ * @brief Výpočet faktoriálu.
+ * 
+ * @param[in] num Číslo, ze kterého se má získat faktoriál.
+ * @return Faktoriál zadaného čísla.
+ * @exception Overlow, pokud se výsledek nevejde do 8 bytů
+*/
+size_t factorial(size_t num);
+
+/**
  * @brief Normalizace úhlu
  * 
  * @param[in] ang Úhel, který se má normalizovat
@@ -154,26 +163,30 @@ double root(int root, double num);
 double power(int exp, double num);
 
 /**
- * @brief Výpočet sinu zadaného čísla.
+ * @brief Výpočet sinu zadaného úhlu.
  * 
- * @param[in] ang Úhel ve stupních.
+ * @param[in] ang Zadaný úhel.
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
  * @return Sinus zadaného úhlu.
 */
 double csin(double ang);
 
 /**
- * @brief Výpočet cosinu zadaného čísla.
+ * @brief Výpočet cosinu zadaného úhlu.
  * 
- * @param[in] ang Úhel ve stupních.
+ * @param[in] ang Zadaný úhel.
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
  * @return Cosinus zadaného úhlu.
 */
 double ccos(double ang);
 
 /**
- * @brief Výpočet tangens zadaného čísla.
+ * @brief Výpočet tangens zadaného úhlu.
  * 
- * @param[in] ang Úhel ve stupních.
+ * @param[in] ang Zadaný úhel.
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
  * @return Tangens zadaného úhlu.
+ * @exception MathError, pokud v zadaném úhlu není funkce definovaná.
 */
 double ctan(double ang);
 
