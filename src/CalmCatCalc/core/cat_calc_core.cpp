@@ -144,7 +144,10 @@ double ctan(double ang){
 }
 
 void formatCheck(string expression){
-    
+    // Jen blbost, aby šlo přeložit
+    if(!expression.empty()){
+       throw overflow_error("");
+    }
 }
 
 vector<string> parse(string expression){
