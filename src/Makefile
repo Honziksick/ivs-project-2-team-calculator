@@ -191,7 +191,7 @@ build_coverage: CXXFLAGS_CORE += $(COVERAGE)
 
 # Nejprve vyčistíme předchozí "build" a opětovně sestavíme a spustíme testy
 # s informacemi pro generování pokrytí kódu
-build_coverage: clean test
+build_coverage: clean-build test
 
 
 # Cíl 'process_coverage' zpracuje data/výstup o pokrytí kódu
