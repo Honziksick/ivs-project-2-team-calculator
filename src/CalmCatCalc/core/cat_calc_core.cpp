@@ -2,6 +2,12 @@
 
 using namespace std;
 
+/**
+ *  Globání proměnná určující, jestli jsou hodnoty zadány ve stupních nebo radiánech
+ *  false = stupně
+ *  true = radiány
+ */
+bool degRad = false;
 
 string calculate(string expression){
     return expression;
@@ -38,15 +44,16 @@ double root(int root, double num){
         maxVal = -1;
     }
 
-    double eps = 0.000000000000001;
+    int numOfCycles = 0;
     double estimate = (minVal + maxVal)/2;
-    while((absVal(absVal(power(root,estimate)) - absVal(num)) > eps)){
+    while((absVal(absVal(power(root,estimate)) - absVal(num)) > CALC_PRECISION) && (numOfCycles < MAX_CYCLES)){
         if(power(root,estimate) > num){
             maxVal = estimate;
         }else{
             minVal = estimate;
         }
         estimate = (minVal + maxVal)/2;
+        numOfCycles++;
     }
     return estimate;
 }
@@ -68,16 +75,60 @@ double power(int exp, double num){
     }
 }
 
-double csin(double ang){
+/**
+ * @details Převede úhel do radiánů, pokud potřeba a upraví jej na rozmezí 0 - 2PI
+*/
+double normalizeAngle(double ang){
+    if(degRad == false){
+        ang = ang *(PI/180);
+    }
+
+    while(ang < 0){
+        ang = ang + 2*PI;
+    }
+    while(ang > 2*PI){
+        ang = ang - 2*PI;
+    }
     return ang;
+}
+
+double csin(double ang){
+    ang = normalizeAngle(ang);
+    
+    double result = 0;
+    double term = ang; // first term
+    int i = 1;
+    while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
+        result += term;
+        term = -term * ang * ang / ((2 * i) * (2 * i + 1));
+        i++;
+    }
+    return result;
 }
 
 double ccos(double ang){
-    return ang;
+    ang = normalizeAngle(ang);
+
+    double result = 0;
+    double term = 1; // first term
+    int i = 1;
+    while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
+        result += term;
+        term = -term * ang * ang / ((2 * i - 1) * (2 * i));
+        i++;
+    }
+    return result;
 }
 
 double ctan(double ang){
-    return ang;
+    // Pokud je zadaný úhel nedefinovaný pro tangens
+    if(absVal(normalizeAngle(ang) - PI/2) < CALC_PRECISION ||
+     absVal(normalizeAngle(ang) - 3*PI/2) < CALC_PRECISION)
+    {
+        throw invalid_argument("MathError");
+    }
+    double result = csin(ang)/ccos(ang);
+    return result;
 }
 
 void formatCheck(string expression){
