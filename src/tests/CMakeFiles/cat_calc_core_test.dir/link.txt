@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -O0 -fprofile-arcs -ftest-coverage CMakeFiles/cat_calc_core_test.dir/cat_calc_core_tests.cpp.o "CMakeFiles/cat_calc_core_test.dir/home/djmdavidus/Desktop/IVS/Proj2/ivs-project-2-team-calculator/src/CalmCatCalc/core/cat_calc_core.cpp.o" -o cat_calc_core_test  lib/libgtest_main.a lib/libgmock_main.a lib/libgmock.a lib/libgtest.a
