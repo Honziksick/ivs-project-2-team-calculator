@@ -3,7 +3,7 @@
 #include "cat_calc_core.h"
 
 /** Testovaná přesnost kalkulačky */
-#define PRECISION 0.000000000000001
+#define PRECISION 0.00000000000001
 
 using namespace ::testing;
 using namespace std;
@@ -178,6 +178,8 @@ TEST(Operations, Root){
     EXPECT_EQ(-3, root(3,-27));
     EXPECT_NEAR(1.286648351223739, root(3, 2.13), PRECISION);
     EXPECT_NEAR(1.732050807568877, root(2,3), PRECISION);
+    EXPECT_NEAR(0.3894322904960899, root(4,0.023), PRECISION);
+    EXPECT_NEAR(-0.284386697985156, root(3,-0.023), PRECISION);
     EXPECT_ANY_THROW(root(2,-16));
 }
 

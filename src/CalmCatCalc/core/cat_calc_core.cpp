@@ -15,7 +15,40 @@ double absVal(double num){
 }
 
 double root(int root, double num){
-    return num;
+
+    if(num < 0 && root%2 == 0){
+        throw invalid_argument("MathError");
+    }
+    if(num == 0 || num == 1 || num == -1){
+        return num;
+    }
+
+    double minVal, maxVal;
+    if(num > 0 && num < 1){
+        minVal = num;
+        maxVal = 1;
+    }else if(num > -1 && num < 0){
+        minVal = -1;
+        maxVal = num;
+    }else if(num > 1){
+        minVal = 1;
+        maxVal = num;
+    }else{
+        minVal = num;
+        maxVal = -1;
+    }
+
+    double eps = 0.000000000000001;
+    double estimate = (minVal + maxVal)/2;
+    while((absVal(absVal(power(root,estimate)) - absVal(num)) > eps)){
+        if(power(root,estimate) > num){
+            maxVal = estimate;
+        }else{
+            minVal = estimate;
+        }
+        estimate = (minVal + maxVal)/2;
+    }
+    return estimate;
 }
 
 double power(int exp, double num){
@@ -24,6 +57,7 @@ double power(int exp, double num){
             throw invalid_argument("MathError");
         }else{
             double result = 1/power(-exp, num);
+            return result;
         }
     }else{
         double result = 1;
