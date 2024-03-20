@@ -19,7 +19,19 @@ double root(int root, double num){
 }
 
 double power(int exp, double num){
-    return num;
+    if(exp < 0){
+        if(num == 0){
+            throw invalid_argument("MathError");
+        }else{
+            double result = 1/power(-exp, num);
+        }
+    }else{
+        double result = 1;
+        for(int i = 0; i < exp; i++){
+            result = result * num;
+        }
+        return result;
+    }
 }
 
 double csin(double ang){

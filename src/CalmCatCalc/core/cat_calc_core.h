@@ -24,25 +24,25 @@ enum exceptionCodes{
      * 
      * @example 64/*8
     */
-    SyntaxError = 1,
+    SyntaxError,
     /**
      * @brief Pro nesedící páry závorek.
      * 
      * @example 6+8)*2
     */
-    ParenthesisMismatch = 2,
+    ParenthesisMismatch,
     /**
      * @brief Pro neplatné matematické operace.
      * 
      * @example 5/0
      * @example 4.2!
-     * @example 10^-2
+     * @example 0^-2
     */
-    MathError = 3,
+    MathError,
     /**
      * @brief Pro přetečení maximální hodnoty double.
     */
-    Overflow = 4
+    Overflow
 };
 
 
