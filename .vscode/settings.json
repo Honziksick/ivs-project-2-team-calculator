@@ -1,0 +1,8 @@
+{
+    "testMate.cpp.test.advancedExecutables": [
+        {
+            "name": "Calm CatCalc Core",
+            "pattern": "**/build/**/*core*"
+        },
+    ]
+}
