@@ -190,6 +190,15 @@ double ccos(double ang);
 */
 double ctan(double ang);
 
+/******************************************************************************
+ * Ostatní funkce
+ * 
+******************************************************************************/
+/**
+ * @brief Je zadaný znak operátor
+ * @return True, pokud je znak operátor, jinak false
+*/
+bool isOperator(char c);
 
 #endif // CAT_CALC_CORE_H_
 

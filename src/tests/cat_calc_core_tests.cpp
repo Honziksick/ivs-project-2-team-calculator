@@ -222,5 +222,12 @@ TEST(Operations, Factorial){
     EXPECT_ANY_THROW(factorial(-5));
 }
 
+TEST(Other, IsOperator){
+    string testExpression = "4 /(7+1.2)";
+    bool expectedResult[] = {false,false,true,false,false,true,false,false,false,false};
+    for(int i = 0; i < 10; i++){
+        EXPECT_EQ(expectedResult[i], isOperator(testExpression[i]));
+    }
+}
 
 /*** Konec souboru cat_calc_core_tests.cpp ***/
