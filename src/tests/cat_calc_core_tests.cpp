@@ -214,5 +214,13 @@ TEST(Operations, Tan){
     EXPECT_ANY_THROW(ctan(270));
 }
 
+TEST(Operations, Factorial){
+    size_t expectedResult = 24;
+    EXPECT_EQ(expectedResult,factorial(4));
+    expectedResult = 2432902008176640000;
+    EXPECT_EQ(expectedResult,factorial(20));
+    EXPECT_ANY_THROW(factorial(-5));
+}
+
 
 /*** Konec souboru cat_calc_core_tests.cpp ***/
