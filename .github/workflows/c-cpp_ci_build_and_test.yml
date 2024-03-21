@@ -123,10 +123,11 @@ jobs:
     - name: Handle failure
       if: failure()
       run: |
-        echo "::error::Failed to build Google Tests or unit tests via 'make test'."
+        echo "::error::Some tests ended with status 'FAILED'."
         false
 
     - name: Clean build
+      if: always()
       run: make -C src clean-build
 
     - name: Handle failure
@@ -252,18 +253,18 @@ jobs:
 
     - name: Generate documentation
       run: |
-          make -C src doc
-          if [[ -s ../doc/doxygen_warnings.txt ]]; then
-            grep -v "The selected output language \"czech\" has not been updated" \
-            ../doc/doxygen_warnings.txt > ../doc/filtered_warnings.txt
-            if [[ -s ../doc/filtered_warnings.txt ]]; then
+        make -C src doc
+        if [[ -s ./doc/doxygen_warnings.log ]]; then
+            tail -n +4 ./doc/doxygen_warnings.log > ./doc/filtered_warnings.log
+            if [[ -s ./doc/filtered_warnings.log ]]; then
               echo "::error::Doxygen generated warnings:"
-              cat ../doc/filtered_warnings.txt
+              cat ./doc/filtered_warnings.log
               false
             fi
-            else echo "::error::Failed to generate documentation."
+        else 
+            echo "::error::Failed to generate documentation."
             false
-          fi
+        fi
           
     - name: Delete documentation
       run: make -C src clean-doc
