@@ -163,7 +163,29 @@ bool isOperator(char c){
 
 vector<string> parse(string expression){
     vector<string> result;
-    result.push_back(expression);
+    string token = "";
+    
+    for(char c : expression){
+        if(isspace(c)){
+            if(token.length() > 0){
+                result.push_back(token);
+                token.clear();
+            }
+        }else if(isOperator(c) || c == '(' || c == ')'){
+            if(token.length() > 0){
+                result.push_back(token);
+                token.clear();
+            }
+            result.push_back(string(1,c));
+        }else{
+            token.append(string(1,c));
+        }
+    }
+
+    if(token.length() > 0){
+        result.push_back(token);
+    }
+
     return result;
 }
 
