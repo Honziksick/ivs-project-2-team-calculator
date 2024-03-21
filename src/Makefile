@@ -50,6 +50,7 @@ TEST_DIR = tests
 # Hlavní adresář pro zkompilovaný projekt a jeho podadresář pro Gtest knihovny
 BUILD_DIR = build
 TEST_BUILD_DIR = $(BUILD_DIR)/tests
+COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 
 
 ###                                 ###
@@ -201,7 +202,10 @@ build-coverage: clean-build test-coverage
 
 
 # Cíl 'process-coverage' zpracuje data/výstup o pokrytí kódu
+# Volitelně: lcov --quiet --remove $(BUILD_DIR)/filtered_coverage.info \
+#	'*/cat_calc_core_tests.cpp' --output-file $(BUILD_DIR)/filtered_coverage.info
 process-coverage:
+	mkdir -p $(COVERAGE_BUILD_DIR)
 	lcov --quiet --directory $(BUILD_DIR) --capture \
 	--output-file $(BUILD_DIR)/coverage.info
 
@@ -211,12 +215,11 @@ process-coverage:
 	lcov --quiet --remove $(BUILD_DIR)/filtered_coverage.info \
 	'*/googletest-src/*' --output-file $(BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(BUILD_DIR)/filtered_coverage.info \
-	'*/cat_calc_core_tests.cpp' --output-file $(BUILD_DIR)/filtered_coverage.info
-
 	genhtml $(BUILD_DIR)/filtered_coverage.info \
-	--output-directory $(BUILD_DIR)/coverage
+	--output-directory $(COVERAGE_BUILD_DIR)
 	
-	rm $(BUILD_DIR)/*.gcda $(BUILD_DIR)/*.gcno
-
-	rm $(BUILD_DIR)/coverage.info $(BUILD_DIR)/filtered_coverage.info
+	mkdir -p $(COVERAGE_BUILD_DIR)
+	mv $(BUILD_DIR)/*.gcda $(COVERAGE_BUILD_DIR)/
+	mv $(BUILD_DIR)/*.gcno $(COVERAGE_BUILD_DIR)/
+	mv $(BUILD_DIR)/coverage.info $(COVERAGE_BUILD_DIR)/
+	mv $(BUILD_DIR)/filtered_coverage.info $(COVERAGE_BUILD_DIR)/
