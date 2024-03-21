@@ -150,6 +150,17 @@ void formatCheck(string expression){
     }
 }
 
+bool isOperator(char c){
+    if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
+        c == '#' || c == '!' || c == 's' || c == 'c' || c == 't')
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 vector<string> parse(string expression){
     vector<string> result;
     result.push_back(expression);
