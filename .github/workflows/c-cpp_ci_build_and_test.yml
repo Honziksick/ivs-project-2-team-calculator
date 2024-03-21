@@ -230,7 +230,6 @@ jobs:
       with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Honziksick/ivs-project-2-team-calculator
-          files: ./src/build/test/coverage/
 
   documentation:
 

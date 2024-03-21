@@ -1,0 +1,28 @@
+codecov:
+  require_ci_to_pass: false
+comment:
+  behavior: default
+  layout: reach,diff,flags,files,footer
+  require_changes: true
+coverage:
+  precision: 2
+  range:
+  - 75.0
+  - 100.0
+  round: down
+ignore:
+- (?s:.*/googletest\-src/.*/[^\/]*)\Z
+- (?s:.*/build/.*/[^\/]*)\Z
+- (?s:.*/info/.*/[^\/]*)\Z
+- (?s:.*/sandbox/.*/[^\/]*)\Z
+- (?s:.*/raw/.*/[^\/]*)\Z
+- (?s:.*/doc/.*/[^\/]*)\Z
+- (?s:.*/plan/.*/[^\/]*)\Z
+- (?s:.*/kostra_repozitare/.*/[^\/]*)\Z
+parsers:
+  gcov:
+    branch_detection:
+      conditional: true
+      loop: true
+      macro: true
+      method: true
