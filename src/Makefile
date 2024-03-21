@@ -77,17 +77,17 @@ CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
 ################################################################################
 
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy soubory
-.PHONY: all test coverage doc clean clean-build clean-doc build_coverage process_coverage
+.PHONY: all test coverage doc clean clean-build clean-doc test-coverage build-coverage process-coverage
 
 # Příkaz 'all' kompiluje hlavní projekt (TO-DO také profiler)
 all: $(BUILD_DIR)/$(PROJECT).o
 
 # Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
 test: $(BUILD_DIR)/$(PROJECT)_test
-	./$(BUILD_DIR)/$(PROJECT)_test || true
+	./$(BUILD_DIR)/$(PROJECT)_test
 
 # Příkaz 'coverage' vytvoří a zpracuje data o pokrytí kódu testy
-coverage: build_coverage process_coverage
+coverage: build-coverage process-coverage
 
 # Příkaz 'doc' vygeneruje dokumentaci k projektu
 doc:
@@ -183,19 +183,25 @@ $(TEST_BUILD_DIR)/gtest_main.a: $(TEST_BUILD_DIR)/gtest-all.o \
 #                                                                              #
 ################################################################################
 
+# Stavba testů s informacemi pro generování pokrytí kódu a ignorováním chybového
+# návratového kódu, pokud některý z testů selže (tedy se nezastaví generování pokrytí)
+test-coverage: $(BUILD_DIR)/$(PROJECT)_test
+	./$(BUILD_DIR)/$(PROJECT)_test 2>/dev/null || true
+
+
 # Přidáme přepínače pro generování dat pokrytí kódu do kompilačních přepínačů
 # pro testy a matematickou knihovnu
-build_coverage: CXXFLAGS_TEST += $(COVERAGE)
-build_coverage: CXXFLAGS_CORE += $(COVERAGE)
+build-coverage: CXXFLAGS_TEST += $(COVERAGE)
+build-coverage: CXXFLAGS_CORE += $(COVERAGE)
 
 
 # Nejprve vyčistíme předchozí "build" a opětovně sestavíme a spustíme testy
 # s informacemi pro generování pokrytí kódu
-build_coverage: clean-build test
+build-coverage: clean-build test-coverage
 
 
-# Cíl 'process_coverage' zpracuje data/výstup o pokrytí kódu
-process_coverage:
+# Cíl 'process-coverage' zpracuje data/výstup o pokrytí kódu
+process-coverage:
 	lcov --quiet --directory $(BUILD_DIR) --capture \
 	--output-file $(BUILD_DIR)/coverage.info
 
