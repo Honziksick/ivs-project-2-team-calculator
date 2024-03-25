@@ -35,7 +35,7 @@ size_t factorial(size_t num){
 double root(int root, double num){
 
     if(num < 0 && root%2 == 0){
-        throw invalid_argument("MathError");
+        throw invalid_argument("Math error");
     }
     if(num == 0 || num == 1 || num == -1){
         return num;
@@ -73,7 +73,7 @@ double root(int root, double num){
 double power(int exp, double num){
     if(exp < 0){
         if(num == 0){
-            throw invalid_argument("MathError");
+            throw invalid_argument("Math error");
         }else{
             double result = 1/power(-exp, num);
             return result;
@@ -137,7 +137,7 @@ double ctan(double ang){
     if(absVal(normalizeAngle(ang) - PI/2) < CALC_PRECISION ||
      absVal(normalizeAngle(ang) - 3*PI/2) < CALC_PRECISION)
     {
-        throw invalid_argument("MathError");
+        throw invalid_argument("Math error");
     }
     double result = csin(ang)/ccos(ang);
     return result;
@@ -240,7 +240,7 @@ vector<string> postfix(vector<string> parsedExpression){
         }else if(token == ")"){
             while(stack.back() != "("){
                 if(stack.size() == 0){
-                    throw invalid_argument("ParenthesisMismatch");
+                    throw invalid_argument("Parenthesis mismatch");
                 }else{
                     postfixExpression.push_back(stack.back());
                     stack.pop_back();

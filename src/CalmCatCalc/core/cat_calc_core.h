@@ -23,34 +23,15 @@ using namespace std;
 
 /**
  * @brief Výčet možných výjimek
+ * 
+ * invalid_argument("Math error") pro neplatné matematické operace jako dělení 0
+ * 
+ * overflow_error("Overflow") pro přetečení datových typů
+ * 
+ * invalid_argument("Parenthesis mismatch") pro nesedící páry závorek
+ * 
 */
-enum exceptionCodes{
-    // TODO Přidat detailní popis případů vyjímek
-    /**
-     * @brief Pro špatný zápis výrazu.
-     * 
-     * @example " 64/ *8 " 
-    */
-    SyntaxError,
-    /**
-     * @brief Pro nesedící páry závorek.
-     * 
-     * @example " 6+8)*2 "
-    */
-    ParenthesisMismatch,
-    /**
-     * @brief Pro neplatné matematické operace.
-     * 
-     * @example " 5/0 "
-     * @example " 4.2! "
-     * @example " 0^-2 "
-    */
-    MathError,
-    /**
-     * @brief Pro přetečení maximální hodnoty double.
-    */
-    Overflow
-};
+
 
 
 /******************************************************************************
