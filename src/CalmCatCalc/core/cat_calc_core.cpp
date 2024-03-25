@@ -44,7 +44,7 @@ double root(int root, double num){
     double minVal, maxVal;
     if(num > 0 && num < 1){
         minVal = num;
-        maxVal = 1;
+        maxVal = 1; 
     }else if(num > -1 && num < 0){
         minVal = -1;
         maxVal = num;
@@ -152,7 +152,7 @@ void formatCheck(string expression){
 
 bool isOperator(char c){
     if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
-        c == '#' || c == '!' || c == 's' || c == 'c' || c == 't')
+        c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~')
     {
         return true;
     }
@@ -164,6 +164,8 @@ bool isOperator(char c){
 vector<string> parse(string expression){
     vector<string> result;
     string token = "";
+    // true, pokud poslední token byl operand nebo "("
+    bool lastOp = true;
     
     for(char c : expression){
         if(isspace(c)){
@@ -176,9 +178,21 @@ vector<string> parse(string expression){
                 result.push_back(token);
                 token.clear();
             }
-            result.push_back(string(1,c));
+            if(c == '-' && lastOp){
+                result.push_back("~");
+            }else if(c == '+' && lastOp){
+                //Unární + nic nemění, může se zahodit
+            }else{
+                result.push_back(string(1,c));
+            }
+            if(c == ')'){
+                lastOp = false;
+            }else{
+                lastOp = true;
+            }
         }else{
             token.append(string(1,c));
+            lastOp = false;
         }
     }
 
@@ -189,8 +203,78 @@ vector<string> parse(string expression){
     return result;
 }
 
+int priority(string op){
+    if(op == "(" || op == ")"){
+        return 0;
+    }else if(op == "+" || op == "-"){
+        return 1;
+    }else if(op == "*" || op == "/"){
+        return 2;
+    }else if(op == "~" || op == "!"){
+        return 4;
+    }else{
+        return 3;
+    }
+}
+
+bool associativity(string op){
+    if(op == "+" || op == "-" || op == "*" || op == "/" || op == "(" || op == ")"){
+        return true; // Left
+    }else{
+        return false; // Right
+    }
+}
+
 vector<string> postfix(vector<string> parsedExpression){
-    return parsedExpression;
+    vector<string> postfixExpression;
+    vector<string> stack;
+
+    for(string token : parsedExpression){
+
+        if(isdigit(token[0])){
+            postfixExpression.push_back(token);
+
+        }else if(token == "("){
+            stack.push_back(token);
+
+        }else if(token == ")"){
+            while(stack.back() != "("){
+                if(stack.size() == 0){
+                    throw invalid_argument("ParenthesisMismatch");
+                }else{
+                    postfixExpression.push_back(stack.back());
+                    stack.pop_back();
+                }
+            }
+            stack.pop_back();
+
+        }else{
+            if(stack.size() == 0){
+                stack.push_back(token);
+            }else if(priority(token) > priority(stack.back()) ||
+                    (priority(token) == priority(stack.back()) && associativity(token) == true))
+            {
+                stack.push_back(token);
+            }else{
+                while(priority(token) < priority(stack.back()) ||
+                    (priority(token) == priority(stack.back()) && associativity(token) == false))
+                {
+                    postfixExpression.push_back(stack.back());
+                    stack.pop_back();
+                    if(stack.size() == 0){
+                        break;
+                    }
+                }
+                stack.push_back(token);
+            }
+        }
+    }
+    while(stack.size() > 0){
+        postfixExpression.push_back(stack.back());
+        stack.pop_back();
+    }
+
+    return postfixExpression;
 }
 
 string evaluate(vector<string> postfixExpression){

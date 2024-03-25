@@ -125,7 +125,7 @@ TEST(Parse, BasicExpressions){
 }
 
 TEST(Parse, ComplexExpressions){
-    vector<string> expected = {"558", "*", "0.5", "-", "(", "-", "2", ")",
+    vector<string> expected = {"558", "*", "0.5", "-", "(", "~", "2", ")",
                                 "+", "2", "#", "3", "^", "4"};
     vector<string> result = parse(" 558*0.5 - (-2) + 2#3^4 ");
     EXPECT_PRED2(compareVectors, expected, result);
@@ -142,9 +142,9 @@ TEST(Postfix, BasicExpressions){
 }
 
 TEST(Postfix, ComplexExpressions){
-    vector<string> expected = {"558", "0.5", "*", "-2", "-",
-                                "2", "+", "3", "4", "^", "#"};
-    vector<string> result = postfix({"558", "*", "0.5", "-", "(", "-",
+    vector<string> expected = {"558", "0.5", "*", "2", "~", "2",
+                                 "3", "#", "4", "^", "+", "-"};
+    vector<string> result = postfix({"558", "*", "0.5", "-", "(", "~",
                                     "2", ")", "+", "2", "#", "3", "^", "4"});
     EXPECT_PRED2(compareVectors, expected, result);
 }
