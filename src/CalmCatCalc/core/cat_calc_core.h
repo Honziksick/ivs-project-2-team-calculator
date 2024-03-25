@@ -64,7 +64,7 @@ enum exceptionCodes{
  * @param[in] expression Výraz, který má být vyhodnocen.
  * @return Výsledek zadaného výrazu v podobě řetězce.
  * @warning Nekontroluje neplatné znaky.
- *          Platné znaky jsou: bílé znaky, čísla, operandy + - * / ^ # s c t
+ *          Platné znaky jsou: bílé znaky, čísla, operandy + - ~ * / ^ # s c t
  *          # značí odmocninu, kde 3#27 je třetí odmocnina z 27
  *          s, c, t značí sinus, cosinus a tangens 
  * @exception SyntaxError
@@ -194,11 +194,29 @@ double ctan(double ang);
  * Ostatní funkce
  * 
 ******************************************************************************/
+
 /**
  * @brief Je zadaný znak operátor
  * @return True, pokud je znak operátor, jinak false
 */
 bool isOperator(char c);
+
+/**
+ * @brief Priorita operace.
+ * 
+ * @param[in] op Operace, jejíž priorita se má zjistit.
+ * @return Priorita operace.
+*/
+int priority(string op);
+
+/**
+ * @brief Asociativita operace.
+ * 
+ * @param[in] op Operace, jejíž asociativita se má zjistit.
+ * @return True pro asociativitu zleva. False pro zprava.
+*/
+bool associativity(string op);
+
 
 #endif // CAT_CALC_CORE_H_
 
