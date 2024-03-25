@@ -24,6 +24,8 @@ using namespace std;
 /**
  * @brief Výčet možných výjimek
  * 
+ * invalid_argument("Syntax error")
+ * 
  * invalid_argument("Math error") pro neplatné matematické operace jako dělení 0
  * 
  * overflow_error("Overflow") pro přetečení datových typů
