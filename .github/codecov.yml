@@ -1,8 +1,8 @@
 codecov:
-  require_ci_to_pass: false
+  require_ci_to_pass: no
 comment:
+  layout: "reach, diff, flags, files"
   behavior: default
-  layout: reach,diff,flags,files,footer
   require_changes: true
 coverage:
   precision: 2
