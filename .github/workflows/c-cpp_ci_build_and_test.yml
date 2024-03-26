@@ -13,87 +13,86 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: sudo apt-get install -y make g++ gcc
-    - name: Check for Makefile
+    - name: Install dependencies - test-case 'build'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ gcc
+    - name: Check for Makefile - test-case 'build'
       run: |
         if [ ! -f src/Makefile ]; then
             echo "::error::Makefile not found, skipping build."
             false
-            exit 78
+            exit 42
         fi
 
     - name: Build by 'make'
-      run: make -C src
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to build the project via 'make'."
-        false
+        make -C src
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to build the project via 'make'."
+          false
+          exit 42
+        fi
 
     - name: Copy build 1
-      run: cp -r src/build src/build1
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to copy first build into 'build1' folder."
-        false
+        cp -r src/build src/build1
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to copy first build into 'build1' folder."
+          false
+          exit 42
+        fi
 
     - name: Clean build 1
-      run: make -C src clean-build
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to clean the first build via 'make clean-build'"
-        false
+        make -C src clean-build
+        if test -d "src/build"; then
+          echo "::error::Failed to clean the first build via 'make clean-build'."
+          false
+          exit 42
+        fi
 
     - name: Build by 'make all'
-      run: make -C src all
-
-    - name: Handle failure
-      if: failure()
       run: |
-       echo "::error::Failed to build the project via 'make all'."
-       false
+        make -C src all
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to build the project via 'make all'."
+          false
+          exit 42
+        fi
 
     - name: Copy build 2
-      run: cp -r src/build src/build2
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to copy second build into 'build2' folder."
-        false
+        cp -r src/build src/build2
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to copy second build into 'build2' folder."
+          false
+          exit 42
+        fi
 
     - name: Clean build 2
-      run: make -C src clean-build
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to clean the second build via 'make clean-build'."
-        false
+        make -C src clean-build
+        if test -d "src/build"; then
+          echo "::error::Failed to clean the second build via 'make clean-build'."
+          false
+          exit 42
+        fi
 
     - name: Compare build folders and files
-      run: diff -r src/build1 src/build2
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::The two builds aren't identical."
-        false
+        diff -r src/build1 src/build2
+        if [ $? -ne 0 ]; then
+          echo "::error::The two builds aren't identical."
+          false
+          exit 42
+        fi
 
     - name: Final cleanup
-      run: rm -rf src/build1 src/build2
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to delete folders 'build1' and 'build2'."
-        false
+        rm -rf src/build1 src/build2
+
+
 
   test:
 
@@ -101,40 +100,40 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: sudo apt-get install -y make g++ gcc
-    - name: Check for Makefile
+    - name: Install dependencies - test-case 'test'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ gcc
+    - name: Check for Makefile - test-case 'test'
       run: |
         if [ ! -f src/Makefile ]; then
             echo "::error::Makefile not found, skipping build."
             false
-            exit 78
+            exit 42
         fi
 
     - name: Test of Calm CatCalc Core
       run: |
-        make -C src test | tee test.log
-        grep FAILED test.log | while IFS= read -r line
-        do
-          echo "::error::Test failed: $line"
-          false
-        done
-
-    - name: Handle failure
-      if: failure()
-      run: |
-        echo "::error::Some tests ended with status 'FAILED'."
-        false
+        make -C src test | tee /dev/fd/2 | awk '
+          BEGIN { error = 0 }
+          /^[[:space:]]*[0-9]+ FAILED TESTS/ || /\([0-9]+ ms\)/ { next }
+          /FAILED/ {
+            print "::error::" $0;
+            error = 1
+          }
+          END { if (error) false }'
+        make -C src test
 
     - name: Clean build
       if: always()
-      run: make -C src clean-build
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to clean the build folder via 'make clean-build'."
-        false
+        make -C src clean-build
+        if test -d "src/build"; then
+          echo "::error::Failed to clean the build folder via 'make clean-build'"
+          false
+          exit 42
+        fi
+
 
   generate_coverage:
 
@@ -142,62 +141,66 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: sudo apt-get install -y make g++ gcc lcov
-    - name: Check for Makefile
+    - name: Install dependencies - test-case 'generate_coverage'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make g++ gcc lcov
+    - name: Check for Makefile - test-case 'generate_coverage'
       run: |
         if [ ! -f src/Makefile ]; then
             echo "::error::Makefile not found, skipping build."
             false
-            exit 78
+            exit 42
         fi
 
     - name: Build by 'make test'
-      run: make -C src test || true
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to build Google Tests or unit tests via 'make test'."
-        false
+        make -C src test || true
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to build GoogleTest library or unit tests via 'make test'."
+          false
+          exit 42
+        fi
 
-    - name: Re-build by 'make coverage'
-      run: make -C src coverage
-    
-    - name: Handle failure
-      if: failure()
+    - name: Re-build by 'make coverage
       run: |
-        echo "::error::Failed to Re-build Google Tests or unit tests with 'coverage \
-        flags' via 'make coverage'."
-        false
+        make -C src coverage
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to Re-build GoogleTest library or unit tests \
+          with 'coverage flags' via 'make coverage'."
+          false
+          exit 42
+        fi
   
     - name: Clean build 1
-      run: make -C src clean-build
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to clean the first build via 'make clean-build'."
-        false
+        make -C src clean-build
+        if test -d "src/build"; then
+          echo "::error::Failed to clean the first build via 'make clean-build'."
+          false
+          exit 42
+        fi
 
     - name: Directly build by 'make coverage'
-      run: make -C src coverage
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to Google Tests or unit tests with 'coverage flags' \
-        Directly via 'make coverage'."
-        false
+        make -C src coverage
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to Re-build GoogleTest library or unit tests \
+          with 'coverage flags' via 'make coverage'."
+          false
+          exit 42
+        fi
+
 
     - name: Clean build 2
-      run: make -C src clean-build
-
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to clean the second build via 'make clean-build'."
-        false
+        make -C src clean-build
+        if test -d "src/build"; then
+          echo "::error::Failed to clean the first build via 'make clean-build'."
+          false
+          exit 42
+        fi
+
 
   codecov:
 
@@ -205,25 +208,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: sudo apt-get install -y make g++ gcc lcov
-    - name: Check for Makefile
+    - name: Install dependencies - test-case 'codecov'
       run: |
-          if [ ! -f src/Makefile ]; then
-                  echo "::error::Makefile not found, skipping build."
-                  false
-                  exit 78
-          fi
+        sudo apt-get update
+        sudo apt-get install -y make g++ gcc lcov
+    - name: Check for Makefile - test-case 'codecov'
+      run: |
+        if [ ! -f src/Makefile ]; then
+                echo "::error::Makefile not found, skipping build."
+                false
+                exit 42
+        fi
 
     - name: Build by 'make coverage'
-      run: make -C src coverage
-    
-    - name: Handle failure
-      if: failure()
       run: |
-        echo "::error::Failed to Build Google Tests or unit tests with \
-        'coverage flags' via 'make coverage'."
-        false
+        make -C src coverage
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to Re-build GoogleTest library or unit tests \
+          with 'coverage flags' via 'make coverage'."
+          false
+          exit 42
+        fi
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
@@ -231,23 +236,23 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: Honziksick/ivs-project-2-team-calculator
 
+
   documentation:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install dependencies
+    - name: Install dependencies - test-case 'documentation'
       run: |
         sudo apt-get update
-        sudo apt-get install -y doxygen
-        sudo apt-get install -y graphviz
-    - name: Check for Makefile
+        sudo apt-get install -y make doxygen graphviz
+    - name: Check for Makefile - test-case 'documentation'
       run: |
         if [ ! -f src/Makefile ]; then
             echo "::error::Makefile not found, skipping build."
             false
-            exit 78
+            exit 42
         fi
 
     - name: Generate documentation
