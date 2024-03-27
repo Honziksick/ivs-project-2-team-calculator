@@ -142,8 +142,8 @@ TEST(Postfix, BasicExpressions){
 }
 
 TEST(Postfix, ComplexExpressions){
-    vector<string> expected = {"558", "0.5", "*", "2", "~", "2",
-                                 "3", "#", "4", "^", "+", "-"};
+    vector<string> expected = {"558", "0.5", "*", "2", "~", "-",
+                                 "2", "3", "4", "^", "#", "+"};
     vector<string> result = postfix({"558", "*", "0.5", "-", "(", "~",
                                     "2", ")", "+", "2", "#", "3", "^", "4"});
     EXPECT_PRED2(compareVectors, expected, result);
@@ -156,14 +156,14 @@ TEST(Evaluate, BasicExpressions){
     EXPECT_STREQ(expected.c_str(), result.c_str());
 
     expected = "29.4";
-    result = evaluate({"5.4" "4" "!" "+"});
+    result = evaluate({"5.4", "4", "!", "+"});
     EXPECT_STREQ(expected.c_str(), result.c_str());
 }
 
 TEST(Evaluate, ComplexExpressions){
     string expected = "290";
-    string result = evaluate({"558", "0.5", "*", "-2", "-",
-                                "2", "+", "3", "4", "^", "#"});
+    string result = evaluate({"558", "0.5", "*", "2", "~", "-",
+                                 "2", "3", "4", "^", "#", "+"});
     EXPECT_STREQ(expected.c_str(), result.c_str());
 }
 
