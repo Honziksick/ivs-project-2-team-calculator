@@ -1,14 +1,33 @@
+/** @cond */
+/*
+ * Název projektu:  Calm CatCalc
+ *
+ * Soubor:          cat_calc_core.h
+ * Datum:           19.03.2024
+ * Poslední změna:  27.03.2024
+ *
+ * Tým:     Calm CatCalc Coders
+ *
+ * Autoři:  Farkašovský Lukáš    <xfarkal00>
+ *         	Hýža Pavel           <xhyzapa00>
+ *         	Kalina Jan           <xkalinj00>
+ *         	Krejčí David         <xkrejcd00>
+ */
+/** @endcond */
+
+/**
+ * @file cat_calc_core.cpp
+ * @author David Krejčí \<xkrejcd00>
+ * @brief __Definice/implementace funkcí matematické knihovny Calm CatCalc Core.__
+ * @details _Tento soubor obsahuje implementace funkcí, které jsou definovány
+ * v matematické knihovně Calm CatCalc Core (souboru cat_calc_core.h)._
+ */
+
 #include "cat_calc_core.h"
 
 using namespace std;
 
-/**
- *  Globání proměnná určující, jestli jsou hodnoty zadány ve stupních nebo radiánech
- *  false = stupně
- *  true = radiány
- */
 bool degRad = false;
-
 
 double absVal(double num){
     if(num >= 0){
