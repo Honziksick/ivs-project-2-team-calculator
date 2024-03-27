@@ -1,6 +1,7 @@
-# 2. projekt IVS - Týmový projekt: Kalkulačka
+<h1>2. projekt IVS - Týmový projekt: Kalkulačka</h1>
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![C/C++ Workflow](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml/badge.svg)](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml)
+[![C/C++ CI](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml/badge.svg?branch=main)](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml)
 [![codecov](https://codecov.io/gh/Honziksick/ivs-project-2-team-calculator/graph/badge.svg?token=TYLF21ENO2)](https://codecov.io/gh/Honziksick/ivs-project-2-team-calculator)
 
 ## O projektu: Calm CatCalc 😺
