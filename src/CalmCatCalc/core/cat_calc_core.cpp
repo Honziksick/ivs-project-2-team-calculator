@@ -200,7 +200,7 @@ int priority(string op){
         return 1;
     }else if(op == "*" || op == "/"){
         return 2;
-    }else if(op == "~" || op == "!"){
+    }else if(op == "~"){
         return 5;
     }else if(op == "s" || op == "c" || op == "t"){
         return 4;
@@ -476,7 +476,7 @@ string evaluateOperation(char op, vector<string> *stack){
             if(stack->size() < 1){
                 throw invalid_argument("Syntax error");
             }
-            if(stack->back()[0] == '-'){
+            if(stack->back().find_first_of('-') != string::npos){
                 throw invalid_argument("Math error");
             }
             for(char c : stack->back()){
