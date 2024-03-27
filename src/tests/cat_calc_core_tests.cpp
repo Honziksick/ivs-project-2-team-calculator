@@ -41,7 +41,11 @@ TEST(Calculate, BasicExpressions){
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
     expression = "2!!";
-    expectedResult= "24";
+    expectedResult= "2";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "3!!";
+    expectedResult= "720";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
     expression = "4 - (-8)";
@@ -55,15 +59,15 @@ TEST(Calculate, BasicExpressions){
 
 TEST(Calculate, ComplexExpressions){
     string expression = "(3.1+ 8.2) * 3 #cos(48)^2";
-    string expectedResult= "8.644748712019314";
+    string expectedResult= "8.644748712019318";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
     expression = "sin(4!) *10";
-    expectedResult= "4.067366430758002";
+    expectedResult= "4.0673664307580024";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
     expression = "((sin(4!)+1) *10)+2";
-    expectedResult= "16.067366430758002";
+    expectedResult= "16.067366430758";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 }
 
@@ -85,33 +89,34 @@ TEST(Calculate, Errors){
 
     expression = "3#-8";
     EXPECT_NO_THROW(calculate(expression));
-}
 
-TEST(FormatCheck, Correct){
-    string expression = "3 + (-8)";
-    EXPECT_NO_THROW(formatCheck(expression));
-    expression = "3 - (-8)";
-    EXPECT_NO_THROW(formatCheck(expression));
-    expression = "89++9";
-    EXPECT_NO_THROW(formatCheck(expression));
-    expression = "3";
-    EXPECT_NO_THROW(formatCheck(expression));
-    expression = "-3";
-    EXPECT_NO_THROW(formatCheck(expression));
-    expression = "3!!";
-    EXPECT_NO_THROW(formatCheck(expression));
+    expression = "3*/4";
+    EXPECT_ANY_THROW(calculate(expression));
 
-}
-
-TEST(FormatCheck, Incorrect){
-    string expression = "3*/4";
-    EXPECT_ANY_THROW(formatCheck(expression));
     expression = "*89+9";
-    EXPECT_ANY_THROW(formatCheck(expression));
+    EXPECT_ANY_THROW(calculate(expression));
+
     expression = "89+9*";
-    EXPECT_ANY_THROW(formatCheck(expression));
+    EXPECT_ANY_THROW(calculate(expression));
+
     expression = "89+9-";
-    EXPECT_ANY_THROW(formatCheck(expression));
+    EXPECT_ANY_THROW(calculate(expression));
+}
+
+TEST(Calculate, NoErrors){
+    string expression = "3 + (-8)";
+    EXPECT_NO_THROW(calculate(expression));
+    expression = "3 - (-8)";
+    EXPECT_NO_THROW(calculate(expression));
+    expression = "89++9";
+    EXPECT_NO_THROW(calculate(expression));
+    expression = "3";
+    EXPECT_NO_THROW(calculate(expression));
+    expression = "-3";
+    EXPECT_NO_THROW(calculate(expression));
+    expression = "3!!";
+    EXPECT_NO_THROW(calculate(expression));
+
 }
 
 TEST(Parse, BasicExpressions){

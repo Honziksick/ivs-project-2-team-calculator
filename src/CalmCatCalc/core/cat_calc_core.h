@@ -59,14 +59,6 @@ using namespace std;
 string calculate(string expression);
 
 /**
- * @brief Kontrola zadaného výrazu.
- * 
- * @param[in] expression Vstupní výraz, který má být zkontrolován.
- * @exception SyntaxError Pro špatný zápis výrazu.
-*/
-void formatCheck(string expression);
-
-/**
  * @brief Rozděluje vstupní výraz na jednotlivé tokeny.
  * 
  * @param[in] expression Vstupní výraz, který má být rozdělen.
