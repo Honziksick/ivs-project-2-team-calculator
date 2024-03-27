@@ -252,12 +252,12 @@ vector<string> postfix(vector<string> parsedExpression){
             if(stack.size() == 0){
                 stack.push_back(token);
             }else if(priority(token) > priority(stack.back()) ||
-                    (priority(token) == priority(stack.back()) && associativity(token) == true))
+                    (priority(token) == priority(stack.back()) && associativity(token) == false))
             {
                 stack.push_back(token);
             }else{
                 while(priority(token) < priority(stack.back()) ||
-                    (priority(token) == priority(stack.back()) && associativity(token) == false))
+                    (priority(token) == priority(stack.back()) && associativity(token) == true))
                 {
                     postfixExpression.push_back(stack.back());
                     stack.pop_back();
@@ -277,7 +277,246 @@ vector<string> postfix(vector<string> parsedExpression){
     return postfixExpression;
 }
 
+string doubleToString(double x){
+    size_t numLen = 0;
+    size_t i = 10;
+    while(x/i > 1){
+        numLen++;
+        i = i*10;
+    }
+
+    ostringstream stream;
+    stream << fixed << setprecision(16-numLen) << x;
+    string result = stream.str();
+    size_t dotIdx = result.find('.');
+    if(dotIdx != string::npos){
+        size_t notZeroIdx = result.find_last_not_of('0');
+        if(notZeroIdx <= dotIdx){
+            cout << "CHOP" << endl;
+            result.erase(dotIdx);
+        }else if(notZeroIdx < result.size()){
+            cout << "Chop" << endl;
+            result.erase(notZeroIdx+1);
+        }
+    }
+    size_t nineIdx = result.find_last_of('9');
+    if(nineIdx == string::npos){
+        return result;
+    }
+    if(nineIdx >= result.size()-4 && (dotIdx == string::npos || dotIdx < nineIdx)){
+        result.erase(nineIdx);
+        while(result.back() == '9'){
+            result.erase(result.size()-1);
+            if(result.back() == '.'){
+                result.erase(result.size()-1);
+                break;
+            }
+        }
+        size_t inc = result.find_last_not_of('9');
+        if(inc == string::npos){
+            string tmp = "";
+            tmp.push_back('1');
+            for(int i = result.size(); i > 0; i--){
+                tmp.push_back('0');
+            }
+            result = tmp;
+            return result;
+        }
+        result[inc] = result[inc]+1;
+    }
+    return result;
+}
+
+
+
+
+string evalAdd(string num1, string num2){
+    if(num1.find('.') != string::npos || num2.find('.') != string::npos){
+        double x = stod(num1);
+        double y = stod(num2);
+        return doubleToString(x+y);
+    }else{
+        long long x = stoll(num1);
+        long long y = stoll(num2);
+        return to_string(x+y);
+    }
+}
+
+string evalSub(string num1, string num2){
+    if(num1.find('.') != string::npos || num2.find('.') != string::npos){
+        double x = stod(num1);
+        double y = stod(num2);
+        return doubleToString(x-y);
+    }else{
+        long long x = stoll(num1);
+        long long y = stoll(num2);
+        return to_string(x-y);
+    }
+}
+
+string evalMul(string num1, string num2){
+    if(num1.find('.') != string::npos || num2.find('.') != string::npos){
+        double x = stod(num1);
+        double y = stod(num2);
+        return doubleToString(x*y);
+    }else{
+        long long x = stoll(num1);
+        long long y = stoll(num2);
+        return to_string(x*y);
+    }
+}
+
+string evalDiv(string num1, string num2){
+    if(num1.find('.') != string::npos || num2.find('.') != string::npos){
+        double x = stod(num1);
+        double y = stod(num2);
+        return doubleToString(x/y);
+    }else{
+        long long x = stoll(num1);
+        long long y = stoll(num2);
+        if(x%y > 0){
+            double x = stod(num1);
+            double y = stod(num2);
+            return doubleToString(x/y);
+        }
+        return to_string(x/y);
+    }
+}
+
+string evalNeg(string num1){
+    if(num1.find('.') != string::npos){
+        double x = stod(num1);
+        return doubleToString(-x);
+    }else{
+        long long x = stoll(num1);
+        return to_string(-x);
+    }
+}
+
+
+
+
+
+string evaluateOperation(char op, vector<string> *stack){
+    string xs;
+    string ys;
+    double xd;
+    size_t z;
+    int exp;
+    cout << "Operation " << op << endl;
+    switch(op){
+        case '+':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            xs = stack->back();
+            stack->pop_back();
+            ys = stack->back();
+            stack->pop_back();
+            return evalAdd(xs,ys);
+        case '-':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            xs = stack->back();
+            stack->pop_back();
+            ys = stack->back();
+            stack->pop_back();
+            return evalSub(ys,xs);
+        case '*':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            xs = stack->back();
+            stack->pop_back();
+            ys = stack->back();
+            stack->pop_back();
+            return evalMul(xs,ys);
+        case '/':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            xs = stack->back();
+            stack->pop_back();
+            ys = stack->back();
+            stack->pop_back();
+            return evalDiv(ys,xs);
+        case '~':
+            if(stack->size() < 1){
+                throw invalid_argument("Syntax error");
+            }
+            xs = stack->back();
+            stack->pop_back();
+            return evalNeg(xs);
+        case '^':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            for(char c : stack->back()){
+                if(c == '.'){
+                    throw invalid_argument("Math error");
+                }
+            }
+
+            exp = stoi(stack->back());
+            stack->pop_back();
+            xd = stod(stack->back());
+            stack->pop_back();
+            return doubleToString(power(exp,xd));
+        case '#':
+            if(stack->size() < 2){
+                throw invalid_argument("Syntax error");
+            }
+            xd = stod(stack->back());
+            stack->pop_back();
+            for(char c : stack->back()){
+                if(c == '.'){
+                    throw invalid_argument("Math error");
+                }
+            }
+            exp = stoi(stack->back());
+            stack->pop_back();
+            return doubleToString(root(exp,xd));
+        case '!':
+            if(stack->size() < 1){
+                throw invalid_argument("Syntax error");
+            }
+            if(stack->back()[0] == '-'){
+                throw invalid_argument("Math error");
+            }
+            for(char c : stack->back()){
+                if(c == '.'){
+                    throw invalid_argument("Math error");
+                }
+            }
+            z = stoul(stack->back());
+            stack->pop_back();
+            return to_string(factorial(z));
+        default :
+            throw invalid_argument("Syntax error");
+    }
+}
+
 string evaluate(vector<string> postfixExpression){
+
+    while(postfixExpression.size() > 1){
+        vector<string> stack;
+        bool flag = false;
+        for(string token : postfixExpression){
+            if(token.length() == 1 && isOperator(token[0]) && flag == false){
+                string result = evaluateOperation(token[0], &stack);
+                stack.push_back(result);
+                flag = true;
+            }else{
+                stack.push_back(token);
+            }
+        }
+        cout << "Stack: " << endl;
+        for(string s : stack){
+            cout << s << endl;
+        }
+        postfixExpression = stack;
+    }
     return postfixExpression.front();
 }
 

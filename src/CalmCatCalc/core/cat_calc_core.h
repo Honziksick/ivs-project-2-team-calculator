@@ -11,6 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <iomanip>
 
 /** Přesnost kalkulačky pro */
 #define CALC_PRECISION 0.000000000000001
@@ -91,6 +92,17 @@ vector<string> postfix(vector<string> parsedExpression);
 */
 string evaluate(vector<string> postfixExpression);
 
+/**
+ * @brief Vyhodnotí jednu operaci.
+ * 
+ * @param[in] op Znak vyhodnocované operace.
+ * @param[in] stack Ukazatel na zásobník s operandy.
+ * @return Vrací string výsledku operace.
+ * @exception invalid_argument("Syntax error") pokud zásobník nemá potřebné operandy.
+ * @exception invalid_argument("Math error") pokud se má vyhodnotit neplatná operace.
+*/
+string evaluateOperation(char op, vector<string> *stack);
+
 
 
 /******************************************************************************
@@ -112,15 +124,15 @@ double absVal(double num);
  * 
  * @param[in] num Číslo, ze kterého se má získat faktoriál.
  * @return Faktoriál zadaného čísla.
- * @exception Overlow, pokud se výsledek nevejde do 8 bytů
+ * @exception Overlow, pokud se výsledek nevejde do 8 bytů.
 */
 size_t factorial(size_t num);
 
 /**
- * @brief Normalizace úhlu
+ * @brief Normalizace úhlu.
  * 
- * @param[in] ang Úhel, který se má normalizovat
- * @return Normalizovaný úhel
+ * @param[in] ang Úhel, který se má normalizovat.
+ * @return Normalizovaný úhel.
 */
 double normalizeAngle(double ang);
 
@@ -130,7 +142,7 @@ double normalizeAngle(double ang);
  * @param[in] root Základ odmocniny.
  * @param[in] num Číslo, které má být odmocněno.
  * @return Odmocnina zadaného čísla.
- * @exception MathError Pro odmocninu ze záporného čísla se sudým základem
+ * @exception MathError Pro odmocninu ze záporného čísla se sudým základem.
  * @exception MathError Pro odmocninu se záporným základem.
 */
 double root(int root, double num);
@@ -149,7 +161,7 @@ double power(int exp, double num);
  * @brief Výpočet sinu zadaného úhlu.
  * 
  * @param[in] ang Zadaný úhel.
- * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány.
  * @return Sinus zadaného úhlu.
 */
 double csin(double ang);
@@ -158,7 +170,7 @@ double csin(double ang);
  * @brief Výpočet cosinu zadaného úhlu.
  * 
  * @param[in] ang Zadaný úhel.
- * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány.
  * @return Cosinus zadaného úhlu.
 */
 double ccos(double ang);
@@ -167,11 +179,36 @@ double ccos(double ang);
  * @brief Výpočet tangens zadaného úhlu.
  * 
  * @param[in] ang Zadaný úhel.
- * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány
+ * @param degRad False, pokud je úhel zadaný ve stupních, true pro radiány.
  * @return Tangens zadaného úhlu.
  * @exception MathError, pokud v zadaném úhlu není funkce definovaná.
 */
 double ctan(double ang);
+
+/**
+ * @brief Součet 2 stringů.
+*/
+string evalAdd(string num1, string num2);
+
+/**
+ * @brief Rozdíl 2 stringů.
+*/
+string evalSub(string num1, string num2);
+
+/**
+ * @brief Násobek 2 stringů.
+*/
+string evalMul(string num1, string num2);
+
+/**
+ * @brief Podíl 2 stringů.
+*/
+string evalDiv(string num1, string num2);
+
+/**
+ * @brief Negace stringu.
+*/
+string evalNeg(string num1);
 
 /******************************************************************************
  * Ostatní funkce
@@ -199,6 +236,11 @@ int priority(string op);
  * @return True pro asociativitu zleva. False pro zprava.
 */
 bool associativity(string op);
+
+/**
+ * @brief Převod double na string.
+*/
+string doubleToString(double x);
 
 
 #endif // CAT_CALC_CORE_H_
