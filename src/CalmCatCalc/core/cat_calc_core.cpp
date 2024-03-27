@@ -9,9 +9,6 @@ using namespace std;
  */
 bool degRad = false;
 
-string calculate(string expression){
-    return expression;
-}
 
 double absVal(double num){
     if(num >= 0){
@@ -143,13 +140,6 @@ double ctan(double ang){
     return result;
 }
 
-void formatCheck(string expression){
-    // Jen blbost, aby šlo přeložit
-    if(!expression.empty()){
-       throw overflow_error("");
-    }
-}
-
 bool isOperator(char c){
     if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
         c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~')
@@ -211,6 +201,8 @@ int priority(string op){
     }else if(op == "*" || op == "/"){
         return 2;
     }else if(op == "~" || op == "!"){
+        return 5;
+    }else if(op == "s" || op == "c" || op == "t"){
         return 4;
     }else{
         return 3;
@@ -292,10 +284,10 @@ string doubleToString(double x){
     if(dotIdx != string::npos){
         size_t notZeroIdx = result.find_last_not_of('0');
         if(notZeroIdx <= dotIdx){
-            cout << "CHOP" << endl;
+            //cout << "CHOP" << endl;
             result.erase(dotIdx);
-        }else if(notZeroIdx < result.size()){
-            cout << "Chop" << endl;
+        }else if(notZeroIdx < result.size()-1){
+            //cout << "Chop" << endl;
             result.erase(notZeroIdx+1);
         }
     }
@@ -303,7 +295,7 @@ string doubleToString(double x){
     if(nineIdx == string::npos){
         return result;
     }
-    if(nineIdx >= result.size()-4 && (dotIdx == string::npos || dotIdx < nineIdx)){
+    if(nineIdx >= result.size()-3 && (dotIdx == string::npos || dotIdx < nineIdx)){
         result.erase(nineIdx);
         while(result.back() == '9'){
             result.erase(result.size()-1);
@@ -367,6 +359,9 @@ string evalMul(string num1, string num2){
 }
 
 string evalDiv(string num1, string num2){
+    if(num2 == "0"){
+        throw invalid_argument("Math error");
+    }
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
@@ -492,6 +487,28 @@ string evaluateOperation(char op, vector<string> *stack){
             z = stoul(stack->back());
             stack->pop_back();
             return to_string(factorial(z));
+        case 's':
+            if(stack->size() < 1){
+                throw invalid_argument("Syntax error");
+            }
+            xd = stod(stack->back());
+            stack->pop_back();
+            return doubleToString(csin(xd));
+        case 'c':
+            if(stack->size() < 1){
+                throw invalid_argument("Syntax error");
+            }
+            xd = stod(stack->back());
+            stack->pop_back();
+            return doubleToString(ccos(xd));
+        case 't':
+            if(stack->size() < 1){
+                throw invalid_argument("Syntax error");
+            }
+            xd = stod(stack->back());
+            stack->pop_back();
+            return doubleToString(ctan(xd));
+        
         default :
             throw invalid_argument("Syntax error");
     }
@@ -518,6 +535,36 @@ string evaluate(vector<string> postfixExpression){
         postfixExpression = stack;
     }
     return postfixExpression.front();
+}
+
+string calculate(string expression){
+    bool onlyWhite = true;
+    for(char c : expression){
+        if(!isspace(c)){
+            onlyWhite = false;
+        }
+    }
+    if(onlyWhite == true){
+        return "";
+    }
+    size_t idx = expression.find("sin");
+    while (idx != string::npos) {
+        expression.replace(idx, 3, "s");
+        idx = expression.find("sin");
+    }
+    idx = expression.find("cos");
+    while (idx != string::npos) {
+        expression.replace(idx, 3, "c");
+        idx = expression.find("cos");
+    }
+    idx = expression.find("tan");
+    while (idx != string::npos) {
+        expression.replace(idx, 3, "t");
+        idx = expression.find("tan");
+    }
+    vector<string> tokens = parse(expression);
+    tokens = postfix(tokens);
+    return evaluate(tokens);
 }
 
 /*** Konec souboru cat_calc_core.cpp ***/
