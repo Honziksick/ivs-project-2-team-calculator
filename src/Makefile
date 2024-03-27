@@ -91,7 +91,7 @@ test: $(BUILD_DIR)/$(PROJECT)_test
 coverage: build-coverage process-coverage
 
 # Příkaz 'doc' vygeneruje dokumentaci k projektu
-doc:
+doc: clean-doc
 	doxygen Doxyfile
 
 # Příkaz 'clean-build' odstraní všechny soubory z adresáře 'build'
