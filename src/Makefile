@@ -1,18 +1,18 @@
 #
-# Název projektu: 	Calm CatCalc
+# Název projektu:   Calm CatCalc
 #
-# Soubor: 			Makefile
-# Datum: 			20.03.2024
-# Poslední změna: 	20.03.2024
+# Soubor:           Makefile
+# Autor:            Jan Kalina <xkalinj00>ma
+# Datum:            20.03.2024
+# Poslední změna:   07.04.2024
 #
-# Tým:		Calm CatCalc Coders
+# Tým:      Calm CatCalc Coders
+# Členové:  Farkašovský Lukáš    <xfarkal00>
+#           Hýža Pavel           <xhyzapa00>
+#           Kalina Jan           <xkalinj00>
+#           Krejčí David         <xkrejcd00>
 #
-# Autoři: 	Farkašovský Lukáš    <xfarkal00>
-#         	Hýža Pavel           <xhyzapa00>
-#         	Kalina Jan           <xkalinj00>
-#         	Krejčí David         <xkrejcd00>
-#
-# Popis: 	Tento soubor obsahuje Makefile pro projekt Calm CatCalc.
+# Popis:    Tento soubor obsahuje Makefile pro projekt Calm CatCalc.
 #
 
 
@@ -27,7 +27,9 @@
 ###                                           ###
 
 # Název projektu
-PROJECT = cat_calc_core
+EXECUTABLE = cat_calc_core
+PROFILER = stddev
+$(VERBOSE)SILENTOPT = -s
 
 
 ###                                                                     ###
@@ -41,6 +43,7 @@ GMOCK_DIR = ./tests/googletest-src/googlemock
 # Cesta ke zdrojovým souborům matematické knihovny "Calm CatCalc Core" a testů
 CORE_DIR = CalmCatCalc/core
 TEST_DIR = tests
+PROFILE_DIR = profiler
 
 
 ###                                                        ###
@@ -48,9 +51,10 @@ TEST_DIR = tests
 ###                                                        ###
 
 # Hlavní adresář pro zkompilovaný projekt a jeho podadresář pro Gtest knihovny
-BUILD_DIR = build
-TEST_BUILD_DIR = $(BUILD_DIR)/tests
-COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
+CORE_BUILD_DIR = build
+TEST_BUILD_DIR = $(CORE_BUILD_DIR)/tests
+COVERAGE_BUILD_DIR = $(CORE_BUILD_DIR)/coverage
+PROFILE_BUILD_DIR = $(CORE_BUILD_DIR)/profiling
 
 
 ###                                 ###
@@ -64,11 +68,12 @@ CPPFLAGS += -I$(CORE_DIR) -I$(GTEST_DIR) -I$(GMOCK_DIR)
 STANDARD = -std=c++17
 WARNING = -Wall -Wextra -Werror -pedantic -pthread
 DEBUG = -g
+PROFILE = -pg
 COVERAGE = -fprofile-arcs -ftest-coverage
 
 # Flagy pro překlad matematické knihovny a testů
 CXXFLAGS_CORE = $(STANDARD) -O2 $(WARNING) 
-CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
+CXXFLAGS_DEV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE) $(PROFILE)
 
 
 ################################################################################
@@ -78,17 +83,39 @@ CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
 ################################################################################
 
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy soubory
-.PHONY: all test coverage doc clean clean-build clean-doc test-coverage build-coverage process-coverage
+.PHONY: all test coverage doc clean \
+        clean-build clean-doc \
+		test-coverage process-coverage
 
 # Příkaz 'all' kompiluje hlavní projekt (TO-DO také profiler)
-all: $(BUILD_DIR)/$(PROJECT).o
+all: build-profiler build-core
+
+build-core: $(CORE_BUILD_DIR)/$(EXECUTABLE).o
+	@$(MAKE) $(SILENTOPT) move-coverage-data
 
 # Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
-test: $(BUILD_DIR)/$(PROJECT)_test
-	./$(BUILD_DIR)/$(PROJECT)_test
+test: run-tests move-coverage-data
+
+run-tests: $(CORE_BUILD_DIR)/$(EXECUTABLE)_test
+	./$(CORE_BUILD_DIR)/$(EXECUTABLE)_test
 
 # Příkaz 'coverage' vytvoří a zpracuje data o pokrytí kódu testy
-coverage: build-coverage process-coverage
+coverage: build-coverage test-coverage process-coverage
+
+# Příkaz 'profile' sestaví a spustí profiling matematické knihovny
+profile:
+	@$(MAKE) $(SILENTOPT) build-profiler
+	@$(MAKE) $(SILENTOPT) rebuild-core
+	@rm -f $(PROFILE_BUILD_DIR)/gmon.out $(PROFILE_BUILD_DIR)/gmon.sum
+	./$(CORE_BUILD_DIR)/stddev
+	@mv gmon.out gmon.sum
+	@./$(CORE_BUILD_DIR)/stddev
+	@gprof -s ./$(CORE_BUILD_DIR)/stddev gmon.out gmon.sum
+	@gprof ./$(CORE_BUILD_DIR)/stddev gmon.sum > gprof-report.txt
+	@mv gmon.out $(PROFILE_BUILD_DIR)/
+	@mv gmon.sum $(PROFILE_BUILD_DIR)/
+	@mv gprof-report.txt $(PROFILE_BUILD_DIR)/
+	@$(MAKE) $(SILENTOPT) move-coverage-data
 
 # Příkaz 'doc' vygeneruje dokumentaci k projektu
 doc: clean-doc
@@ -96,7 +123,10 @@ doc: clean-doc
 
 # Příkaz 'clean-build' odstraní všechny soubory z adresáře 'build'
 clean-build:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(CORE_BUILD_DIR)
+
+clean-core:
+	@rm -f $(CORE_BUILD_DIR)/$(EXECUTABLE).o
 
 # Příkaz 'clean-doc' odstraní všechny soubory z adresáře 'doc' (kromě /images)
 clean-doc:
@@ -114,9 +144,8 @@ clean: clean-build clean-doc
 
 # Objektový soubor závisí na zdrojovém a hlavičkovém souboru. Vytvoří složku pro
 # výsledky kompilace, pokud neexistuje. Kompiluje zdrojový soubor do objektového.
-$(BUILD_DIR)/$(PROJECT).o: $(CORE_DIR)/$(PROJECT).cpp \
-                           $(CORE_DIR)/$(PROJECT).h
-	mkdir -p $(BUILD_DIR)
+$(CORE_BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
+	mkdir -p $(CORE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_CORE) -c $< -o $@
 
 
@@ -129,40 +158,32 @@ $(BUILD_DIR)/$(PROJECT).o: $(CORE_DIR)/$(PROJECT).cpp \
 # Testovací binární soubor do sebe linkuje všechny závislosti spojené s unit
 # testy. Soubor závisí na objektovém souboru testů, objektovém souboru 
 # matematické knihovny a Google Test knihovně. 
-$(BUILD_DIR)/$(PROJECT)_test: $(TEST_BUILD_DIR)/$(PROJECT)_test.o \
-                              $(BUILD_DIR)/$(PROJECT).o \
+$(CORE_BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
+                              $(CORE_BUILD_DIR)/$(EXECUTABLE).o \
                               $(TEST_BUILD_DIR)/gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -lpthread $^ -o $@
-
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) $^ -o $@
+	
 
 # Objektový soubor testů závisí na zdrojovém souboru testů, hlavičkovém souboru
 # matematické knihovny a hlavičkových souborech Google Test a Google Mock
 # knihoven. Kompiluje zdrojový soubor testů do objektového souboru.
-$(TEST_BUILD_DIR)/$(PROJECT)_test.o: $(TEST_DIR)/$(PROJECT)_tests.cpp \
-                                     $(CORE_DIR)/$(PROJECT).h \
-                                     $(GTEST_DIR)/gtest/*.h \
-                                     $(GMOCK_DIR)/gmock/*.h \
-                                     $(GMOCK_DIR)/gmock/internal/*.h
+$(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
 	mkdir -p $(TEST_BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) -c $< -o $@
 
 
 # Objektový soubor "gtest-all.o" závisí na zdrojových a hlavičkových souborech
 # Google Test. Kompiluje zdrojový soubor "gtest-all.cc" do objektového souboru.
-$(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc \
-                               $(GTEST_DIR)/gtest/*.h \
-                               $(GTEST_DIR)/gtest/internal/*.h
+$(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc
 	mkdir -p $(TEST_BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 
 # Objektový soubor "gtest_main.o" závisí na zdrojových a hlavičkových souborech
 # Google Test. Kompiluje zdrojový soubor "gtest_main.cc" do objektového souboru
-$(TEST_BUILD_DIR)/gtest_main.o: $(GTEST_DIR)/src/*.cc \
-                                $(GTEST_DIR)/gtest/*.h \
-                                $(GTEST_DIR)/gtest/internal/*.h
+$(TEST_BUILD_DIR)/gtest_main.o: $(GTEST_DIR)/src/*.cc
 	mkdir -p $(TEST_BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
 
 
 # Vytvoří se statická knihovna "gtest.a", která závisí na objektovém souboru
@@ -186,40 +207,71 @@ $(TEST_BUILD_DIR)/gtest_main.a: $(TEST_BUILD_DIR)/gtest-all.o \
 
 # Stavba testů s informacemi pro generování pokrytí kódu a ignorováním chybového
 # návratového kódu, pokud některý z testů selže (tedy se nezastaví generování pokrytí)
-test-coverage: $(BUILD_DIR)/$(PROJECT)_test
-	./$(BUILD_DIR)/$(PROJECT)_test 2>/dev/null || true
+test-coverage: $(CORE_BUILD_DIR)/$(EXECUTABLE)_test
+	@./$(CORE_BUILD_DIR)/$(EXECUTABLE)_test 2>/dev/null || true
+	@$(MAKE) $(SILENTOPT) move-coverage-data
 
+# Stavba matematické knihovny s přepínači pro generování pokrytí kódu
+CXXFLAGS_CORE += $(COVERAGE)
+build-coverage:
+	@$(MAKE) $(SILENTOPT) clean-core
+	@$(MAKE) $(SILENTOPT) build-core
 
-# Přidáme přepínače pro generování dat pokrytí kódu do kompilačních přepínačů
-# pro testy a matematickou knihovnu
-build-coverage: CXXFLAGS_TEST += $(COVERAGE)
-build-coverage: CXXFLAGS_CORE += $(COVERAGE)
-
-
-# Nejprve vyčistíme předchozí "build" a opětovně sestavíme a spustíme testy
-# s informacemi pro generování pokrytí kódu
-build-coverage: clean-build test-coverage
+move-coverage-data:
+	@mkdir -p $(COVERAGE_BUILD_DIR)
+	@mv -f $(CORE_BUILD_DIR)/*.gcda $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
+	@mv -f $(CORE_BUILD_DIR)/*.gcno $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
+	@mv -f $(TEST_BUILD_DIR)/*.gcda $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
+	@mv -f $(TEST_BUILD_DIR)/*.gcno $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
+	@mv -f $(PROFILE_BUILD_DIR)/stddev.gcno $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
+	@mv -f $(PROFILE_BUILD_DIR)/*.gcda $(COVERAGE_BUILD_DIR)/ 2>/dev/null || true
 
 
 # Cíl 'process-coverage' zpracuje data/výstup o pokrytí kódu
-# Volitelně: lcov --quiet --remove $(BUILD_DIR)/filtered_coverage.info \
-#	'*/cat_calc_core_tests.cpp' --output-file $(BUILD_DIR)/filtered_coverage.info
+# Volitelně: lcov --quiet --remove $(CORE_BUILD_DIR)/filtered_coverage.info \
+# '*/cat_calc_core_tests.cpp' --output-file $(CORE_BUILD_DIR)/filtered_coverage.info
 process-coverage:
-	mkdir -p $(COVERAGE_BUILD_DIR)
-	lcov --quiet --directory $(BUILD_DIR) --capture \
-	--output-file $(BUILD_DIR)/coverage.info
+	lcov --quiet --directory $(CORE_BUILD_DIR) --capture \
+	--output-file $(CORE_BUILD_DIR)/coverage.info
 
-	lcov --quiet --remove $(BUILD_DIR)/coverage.info '/usr/*' \
-	--output-file $(BUILD_DIR)/filtered_coverage.info
+	lcov --quiet --remove $(CORE_BUILD_DIR)/coverage.info '/usr/*' \
+	--output-file $(CORE_BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(BUILD_DIR)/filtered_coverage.info \
-	'*/googletest-src/*' --output-file $(BUILD_DIR)/filtered_coverage.info
+	lcov --quiet --remove $(CORE_BUILD_DIR)/filtered_coverage.info \
+	'*/googletest-src/*' --output-file $(CORE_BUILD_DIR)/filtered_coverage.info
 
-	genhtml $(BUILD_DIR)/filtered_coverage.info \
+	lcov --quiet --remove $(CORE_BUILD_DIR)/filtered_coverage.info \
+	'*/profiler/*' --output-file $(CORE_BUILD_DIR)/filtered_coverage.info
+
+	genhtml $(CORE_BUILD_DIR)/filtered_coverage.info \
 	--output-directory $(COVERAGE_BUILD_DIR)
 	
-	mkdir -p $(COVERAGE_BUILD_DIR)
-	mv $(BUILD_DIR)/*.gcda $(COVERAGE_BUILD_DIR)/
-	mv $(BUILD_DIR)/*.gcno $(COVERAGE_BUILD_DIR)/
-	mv $(BUILD_DIR)/coverage.info $(COVERAGE_BUILD_DIR)/
-	mv $(BUILD_DIR)/filtered_coverage.info $(COVERAGE_BUILD_DIR)/
+	@mv $(CORE_BUILD_DIR)/coverage.info $(COVERAGE_BUILD_DIR)/
+	@mv $(CORE_BUILD_DIR)/filtered_coverage.info $(COVERAGE_BUILD_DIR)/
+
+
+################################################################################
+#                                                                              #
+#                    PROFILER - VÝPOČET SMĚRODATNÉ ODCHYLKY                    #
+#                                                                              #
+################################################################################
+
+# Stavba programu na výpočet směrodatné odchylky a stavba knihovny s '-pg'
+
+CXXFLAGS_CORE += $(DEBUG)
+CXXFLAGS_CORE += $(PROFILE)
+rebuild-core: clean-core build-core
+
+build-profiler: rebuild-core build-stddev
+	@$(MAKE) $(SILENTOPT) move-coverage-data
+
+build-stddev: $(CORE_BUILD_DIR)/$(PROFILER)
+
+$(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
+	mkdir -p $(PROFILE_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) -c $< -o $@
+
+$(CORE_BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
+                          $(CORE_BUILD_DIR)/$(EXECUTABLE).o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) $^ -o $@
+
