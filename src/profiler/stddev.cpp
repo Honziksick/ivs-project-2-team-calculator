@@ -32,6 +32,26 @@
 using namespace std;
 
 
+void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
+    ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
+
+    // Pokud se podařilo otevřít soubor, čti z něj vstupní data
+    if(dataFile.is_open()){
+        readData(dataFile, valueSum, powerSum, N);
+        dataFile.close();
+    }
+    // Pokud se nepodařilo otevřít soubor, vyhoď vyjímku
+    else{
+        throw runtime_error("Error: Unable to open data file.");
+    }
+}
+
+
+void readDataFromStdin(string &valueSum, string &powerSum, int &N){
+    readData(cin, valueSum, powerSum, N);
+}
+
+
 double standardDeviation(){
     string valueSum = "0.0";        // Součet hodnot X ze vstupu
     string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
