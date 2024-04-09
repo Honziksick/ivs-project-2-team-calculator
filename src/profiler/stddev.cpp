@@ -54,7 +54,7 @@ void generateNumbers(){
     for(int i = 0; i < AUTO_GEN_NUM; i++){
         // Generování náhodného čísla
         double autoGenNum = dis(gen);
-        
+
         // Zápis náhodného čísla do souboru s přesností určenou 'PRECISION'
         file << fixed << setprecision(PRECISION) << autoGenNum << endl;
     }
@@ -69,7 +69,8 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
     // Cyklus k načtení vstupních dat z datového proudu 
     while(dataStream >> valueX){
         // Pokud je načtená hodnota číslem
-        if(stod(valueX)){           
+        if(stod(valueX)){
+
             // Přičte hodnotu X k součtu hodnot
             valueSum = evalAdd(valueSum, valueX);
 
@@ -102,7 +103,7 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
 
 
 void readDataFromStdin(string &valueSum, string &powerSum, int &N){
-    readData(cin, valueSum, powerSum, N);
+    readData(cin, valueSum, powerSum, N);  // čteme ze 'stdin'
 }
 
 
@@ -111,17 +112,21 @@ double standardDeviation(){
     string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
     int N = 0;                      // Sočet načtených hodnot
 
+    // Čti datový proud hodnot ze 'stdin' a zjisti, zda obsahuje alespoň 2 čísla
+    readDataFromStdin(valueSum, powerSum, N);
+
     // Ošetření dělení nulou při nedostatečném vstupu
     if(N < 2){
+        // Úkolid prostředí pro vygenerovaná data
+        valueSum = "0.0";
+        powerSum = "0.0"; 
+        N = 0;
+
         // Došlo by k dělení nulou -> vygeneruj náhodná čísla na vstup
         generateNumbers();     
 
         // Čtení vygenerovanychhodnot z 'auto_gen.txt'
         readDataFromAutoGenFile(valueSum, powerSum, N);
-    }
-    else{
-        // Jiank čtení hodnot ze 'stdin'
-        readDataFromStdin(valueSum, powerSum, N);
     }
 
     // Výpočet aritmetického průměru načtených hodnot 

@@ -41,10 +41,10 @@
 #define ROOT 2    /**< Kořen odmocniny používaný ve funkci `root()` */
 #define EXP  2    /**< Exponent používaný ve funkci `power()` */
 #define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
-#define AUTO_GEN_NUM  1000000     /**< Počet náhodně generovaných čísel */
-#define AUTO_GEN_MIN -50000       /**< Nejmenší možná vygenerovaná hodnota */
-#define AUTO_GEN_MAX  50000       /**< Nejmenší možná vygenerovaná hodnota */
-#define PRECISION 10       /**< Přesnost desetinné části vygenerovaných čísel */
+#define AUTO_GEN_NUM  1000000      /**< Počet náhodně generovaných čísel */
+#define AUTO_GEN_MIN -100000       /**< Nejmenší možná vygenerovaná hodnota */
+#define AUTO_GEN_MAX  100000       /**< Nejmenší možná vygenerovaná hodnota */
+#define PRECISION 15       /**< Přesnost desetinné části vygenerovaných čísel */
 
 
 /**
