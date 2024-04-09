@@ -31,6 +31,40 @@
 
 using namespace std;
 
+
+double standardDeviation(){
+    string valueSum = "0.0";        // Součet hodnot X ze vstupu
+    string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
+    int N = 0;                      // Sočet načtených hodnot
+
+    // Ošetření dělení nulou při nedostatečném vstupu
+    if(N < 2){
+        // Došlo by k dělení nulou -> vygeneruj náhodná čísla na vstup
+        generateNumbers();     
+
+        // Čtení vygenerovanychhodnot z 'auto_gen.txt'
+        readDataFromAutoGenFile(valueSum, powerSum, N);
+    }
+    else{
+        // Jiank čtení hodnot ze 'stdin'
+        readDataFromStdin(valueSum, powerSum, N);
+    }
+
+    // Výpočet aritmetického průměru načtených hodnot 
+    string mean = evalDiv(valueSum, doubleToString(N));
+
+    // Výpočet radikandu (tj. "to pod odmocninou")
+    string radicand = evalSub(powerSum, evalMul(doubleToString(N), 
+                                        doubleToString(power(EXP, stod(mean)))));
+    radicand = evalDiv(radicand, doubleToString(N - 1));
+
+    // Výpočet výběrové směrodatné odchylky
+    string standardDeviation = doubleToString(root(ROOT, stod(radicand)));
+
+    return stod(standardDeviation);
+}
+
+
 int main(){
     // Výpočet výběrové směrodatné odchylky
     try{
