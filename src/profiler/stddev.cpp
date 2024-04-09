@@ -32,6 +32,29 @@
 using namespace std;
 
 
+void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
+    string valueX;      // Načtená hodnota ze vstupu (stdin nebo souboru)
+
+    // Cyklus k načtení vstupních dat z datového proudu 
+    while(dataStream >> valueX){
+        // Pokud je načtená hodnota číslem
+        if(stod(valueX)){           
+            // Přičte hodnotu X k součtu hodnot
+            valueSum = evalAdd(valueSum, valueX);
+
+            // Přičte hodnotu X^2 k součtu druhých mocnin
+            powerSum = evalAdd(powerSum, doubleToString(power(EXP, stod(valueX))));
+
+            N++;    // Inkrementuje počítadlo načtených hodnot
+        }
+        // Pokud načtená hodnota není číslo, vyhodí výjimku
+        else{
+            throw invalid_argument("Error: Invalid input data (not a number).");
+        }
+    }
+}
+
+
 void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
     ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
 
