@@ -4,7 +4,7 @@
  *                                                                             *
  * Soubor:           stddev.cpp                                                *
  * Datum:            01.04.2024                                                *
- * Poslední změna:   01.04.2024                                                *
+ * Poslední změna:   09.04.2024                                                *
  *                                                                             *
  * Tým:      Calm CatCalc Coders                                               *
  *                                                                             *
@@ -18,7 +18,14 @@
  * @file stddev.cpp
  * @author Jan Kalina \<xkalinj00>
  * @brief __Program na výpočet výběrové směrodatné odchylky.__
- * @details TO-DO
+ * @details Tento program načítá číselné hodnoty ze standardního vstupu
+ *          nebo ze souboru a počítá jejich výběrovou směrodatnou
+ *          odchylku. Pokud je načtená hodnota neplatná (např. není číslo),
+ *          program vyhodí výjimku. Program dále podporuje načítání dat ze
+ *          souboru pomocí přesměrování vstupu. V případě opomenutí předání
+ *          vstupních dat si program vygeneruje své vlastní hodnoty a ty
+ *          následně využije jako vstupní data. Výsledná směrodatná odchylka je
+ *          vypsána na standardní výstup.
  */
 
 #include "../CalmCatCalc/core/cat_calc_core.h"
@@ -30,6 +37,30 @@
 #include <random>
 
 using namespace std;
+
+
+void generateNumbers(){
+    ofstream file;            // Vytvoření objektu pro zápis do souboru
+    file.open(FILE_PATH);	  // Otevření soubor pro generované hodnoty pro zápis
+
+    // Inicializace generátoru náhodných čísel
+    random_device rd;
+    mt19937 gen(rd());
+
+    // Definice rozsah, z jakého se mají generovat náhodná čísla
+    uniform_real_distribution<> dis(AUTO_GEN_MIN, AUTO_GEN_MAX);
+
+    // Generujeme tolik čísel, kolik udává konstanta 'AUTO_GEN_NUM'
+    for(int i = 0; i < AUTO_GEN_NUM; i++){
+        // Generování náhodného čísla
+        double autoGenNum = dis(gen);
+        
+        // Zápis náhodného čísla do souboru s přesností určenou 'PRECISION'
+        file << fixed << setprecision(PRECISION) << autoGenNum << endl;
+    }
+    
+    file.close();
+}
 
 
 void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
