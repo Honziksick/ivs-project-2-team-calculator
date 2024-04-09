@@ -31,3 +31,23 @@
 
 using namespace std;
 
+int main(){
+    // Výpočet výběrové směrodatné odchylky
+    try{
+        cout << standardDeviation() << endl;    // výpis výsledku na 'stdout'
+    }
+    // Funkci byly předány neplatné vstupní hodnoty (tj. nečíselné)
+    catch(invalid_argument& error){
+        cerr << error.what() << endl;    // Výpis chyby na 'stderr''
+        return E_INV_DATA;
+    }
+    // Nepodařilo se otevřít soubor s vstupními daty
+    catch(runtime_error& error){
+        cerr << error.what() << endl;    // Výpis chyby na 'stderr'
+        return E_FILE_OPEN;
+    }
+
+    return OK;
+}
+
+/*** Konec souboru stddev.cpp ***/
