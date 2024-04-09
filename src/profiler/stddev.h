@@ -4,7 +4,7 @@
  *                                                                             *
  * Soubor:           stddev.cpp                                                *
  * Datum:            01.04.2024                                                *
- * Poslední změna:   01.04.2024                                                *
+ * Poslední změna:   09.04.2024                                                *
  *                                                                             *
  * Tým:      Calm CatCalc Coders                                               *
  *                                                                             *
@@ -18,7 +18,10 @@
  * @file stddev.h
  * @author Jan Kalina \<xkalinj00>
  * @brief __Deklarace funkcí pro výpočet výběrové směrodatné odchylky.__
- * @details TO-DO
+ * @details Deklarované funkce zahrnují načítání dat ze standardního vstupu nebo
+ *          ze souboru, výpočet součtu a součtu druhých mocnin načtených hodnot,
+ *          a výpočet výběrové směrodatné odchylky. Tento soubor také definuje
+ *          také konstanty, a výčtový typ pro návratové hodnoty funkcí.
  */
 
 #pragma once
@@ -37,10 +40,10 @@
 
 #define ROOT 2    /**< Kořen odmocniny používaný ve funkci `root()` */
 #define EXP  2    /**< Exponent používaný ve funkci `power()` */
-#define FILE_PATH "auto_gen.txt"    /**< Název generovaného souboru s náhodným daty */
-#define AUTO_GEN_NUM 5     /**< Počet náhodně generovaných čísel */
-#define AUTO_GEN_MIN 0     /**< Nejmenší možná vygenerovaná hodnota */
-#define AUTO_GEN_MAX 20    /**< Nejmenší možná vygenerovaná hodnota */
+#define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
+#define AUTO_GEN_NUM  1000000     /**< Počet náhodně generovaných čísel */
+#define AUTO_GEN_MIN -50000       /**< Nejmenší možná vygenerovaná hodnota */
+#define AUTO_GEN_MAX  50000       /**< Nejmenší možná vygenerovaná hodnota */
 #define PRECISION 10       /**< Přesnost desetinné části vygenerovaných čísel */
 
 
