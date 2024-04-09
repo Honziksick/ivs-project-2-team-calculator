@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>542</width>
-    <height>644</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -74,7 +74,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="14" column="2">
-     <widget class="QPushButton" name="Bpet">
+     <widget class="QPushButton" name="B5">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -169,7 +169,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="14" column="3">
-     <widget class="QPushButton" name="Bsest">
+     <widget class="QPushButton" name="B6">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -218,7 +218,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="14" column="1">
-     <widget class="QPushButton" name="Bctyri">
+     <widget class="QPushButton" name="B4">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -267,7 +267,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="18" column="2">
-     <widget class="QPushButton" name="Bdva">
+     <widget class="QPushButton" name="B2">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -362,7 +362,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="19" column="2">
-     <widget class="QPushButton" name="Bnula">
+     <widget class="QPushButton" name="B0">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -457,7 +457,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="8" column="3">
-     <widget class="QPushButton" name="Bdevet">
+     <widget class="QPushButton" name="B9">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -512,7 +512,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="8" column="2">
-     <widget class="QPushButton" name="Bosm">
+     <widget class="QPushButton" name="B8">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -561,7 +561,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QPushButton" name="Zzavz">
+     <widget class="QPushButton" name="Lza">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -687,7 +687,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="2" column="0" colspan="4">
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="Display">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -738,7 +738,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QPushButton" name="Zzavo">
+     <widget class="QPushButton" name="Pza">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -778,7 +778,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="18" column="3">
-     <widget class="QPushButton" name="Btri">
+     <widget class="QPushButton" name="B3">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -827,7 +827,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="18" column="1">
-     <widget class="QPushButton" name="Bjedna">
+     <widget class="QPushButton" name="B1">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -922,7 +922,7 @@ QPushButton::pressed {
      </widget>
     </item>
     <item row="8" column="1">
-     <widget class="QPushButton" name="Bsedm">
+     <widget class="QPushButton" name="B7">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
