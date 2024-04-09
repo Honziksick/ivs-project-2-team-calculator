@@ -22,9 +22,9 @@
 #                                                                              #
 ################################################################################
 
-###                                           ###
-# Proměnné pro opakující se částí názvů souborů #
-###                                           ###
+###                                             ###
+#  Proměnné pro opakující se částí názvů souborů  #
+###                                             ###
 
 # Název projektu
 EXECUTABLE = cat_calc_core
@@ -32,9 +32,27 @@ PROFILER = stddev
 $(VERBOSE)SILENTOPT = -s
 
 
-###                                                                     ###
-# Definice cest k různým složkám obsahující zdrojové soubory ke kompilaci #
-###                                                                     ###
+###                                         ###
+#  Argumenty, které je možné předat Makefilu  #
+###                                          ###
+
+# Pokud je proměnná 'DATA_FILE' nastavena na '-1',
+# tak pro profilování budou vygenerována náhodná data
+
+DATA_FILE ?= -1
+AUTO_GEN_DATA_FILE = auto_gen.txt
+
+
+###                                 ###
+#  Definice cest pro některé výstupy  #
+###                                 ###
+
+DOC_OUT_DIR = ../doc
+PROFILE_OUT_DIR = ../profiling
+
+###                                                                       ###
+#  Definice cest k různým složkám obsahující zdrojové soubory ke kompilaci  #
+###                                                                       ###
 
 # Cesta ke zdrojovým souborům Google Test a Google Mock knihoven
 GTEST_DIR = ./tests/googletest-src/googletest
@@ -46,9 +64,9 @@ TEST_DIR = tests
 PROFILE_DIR = profiler
 
 
-###                                                        ###
-#  Deklarace cest k adresářům určeným pro kompilaci projektu #
-###                                                        ###
+###                                                         ###
+#  Deklarace cest k adresářům určeným pro kompilaci projektu  #
+###                                                         ###
 
 # Hlavní adresář pro zkompilovaný projekt a jeho podadresář pro Gtest knihovny
 CORE_BUILD_DIR = build
@@ -57,9 +75,9 @@ COVERAGE_BUILD_DIR = $(CORE_BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(CORE_BUILD_DIR)/profiling
 
 
-###                                 ###
-# Předdefinované flagy pro kompilátor #
-###                                 ###
+###                                   ###
+#  Předdefinované flagy pro kompilátor  #
+###                                   ###
 
 # Flagy obsahující cesty k hlavičkovým souborům
 CPPFLAGS += -I$(CORE_DIR) -I$(GTEST_DIR) -I$(GMOCK_DIR)
@@ -104,18 +122,38 @@ coverage: build-coverage test-coverage process-coverage
 
 # Příkaz 'profile' sestaví a spustí profiling matematické knihovny
 profile:
-	@$(MAKE) $(SILENTOPT) build-profiler
-	@$(MAKE) $(SILENTOPT) rebuild-core
+	$(MAKE) $(SILENTOPT) build-profiler
+	$(MAKE) $(SILENTOPT) rebuild-core
+	@$(MAKE) $(SILENTOPT) clean-profile
 	@rm -f $(PROFILE_BUILD_DIR)/gmon.out $(PROFILE_BUILD_DIR)/gmon.sum
-	./$(CORE_BUILD_DIR)/stddev
+	@rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
+	$(MAKE) $(SILENTOPT) run-first-profile
 	@mv gmon.out gmon.sum
-	@./$(CORE_BUILD_DIR)/stddev
+	$(MAKE) $(SILENTOPT) run-other-profile
 	@gprof -s ./$(CORE_BUILD_DIR)/stddev gmon.out gmon.sum
-	@gprof ./$(CORE_BUILD_DIR)/stddev gmon.sum > gprof-report.txt
+	gprof ./$(CORE_BUILD_DIR)/stddev gmon.sum > gprof-report.txt
 	@mv gmon.out $(PROFILE_BUILD_DIR)/
 	@mv gmon.sum $(PROFILE_BUILD_DIR)/
-	@mv gprof-report.txt $(PROFILE_BUILD_DIR)/
+	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
+	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	@$(MAKE) $(SILENTOPT) move-coverage-data
+
+run-first-profile:
+	if [ "$(DATA_FILE)" = "-1" ]; then \
+        echo -1 > temp.txt; \
+        $(CORE_BUILD_DIR)/stddev < temp.txt; \
+        rm temp.txt; \
+    else \
+        $(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+    fi
+
+run-other-profile:
+	if [ "$(DATA_FILE)" = "-1" ]; then \
+	    $(CORE_BUILD_DIR)/stddev < $(AUTO_GEN_DATA_FILE); \
+    else \
+        $(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+    fi
+
 
 # Příkaz 'doc' vygeneruje dokumentaci k projektu
 doc: clean-doc
@@ -130,10 +168,13 @@ clean-core:
 
 # Příkaz 'clean-doc' odstraní všechny soubory z adresáře 'doc' (kromě /images)
 clean-doc:
-	find ../doc -mindepth 1 ! -path '../doc/images*' -delete
+	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/images*' -delete
+
+clean-profile:
+	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
 
 # Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
-clean: clean-build clean-doc
+clean: clean-build clean-doc clean-profile
 
 
 ################################################################################
@@ -258,9 +299,9 @@ process-coverage:
 
 # Stavba programu na výpočet směrodatné odchylky a stavba knihovny s '-pg'
 
-CXXFLAGS_CORE += $(DEBUG)
-CXXFLAGS_CORE += $(PROFILE)
-rebuild-core: clean-core build-core
+
+rebuild-core: clean-core
+	$(MAKE) build-core CXXFLAGS_CORE+="$(CXXFLAGS_CORE) $(DEBUG) $(PROFILE)"
 
 build-profiler: rebuild-core build-stddev
 	@$(MAKE) $(SILENTOPT) move-coverage-data
@@ -274,4 +315,3 @@ $(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
 $(CORE_BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
                           $(CORE_BUILD_DIR)/$(EXECUTABLE).o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_DEV) $^ -o $@
-
