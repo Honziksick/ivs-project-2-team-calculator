@@ -70,6 +70,7 @@ dkms.conf
 
 # Build
 **/build/*
+/profiling/gprof-report.txt
 
 # General folders and files
 **/kostra_repozitare
