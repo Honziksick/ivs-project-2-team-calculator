@@ -120,38 +120,48 @@ run-tests: $(CORE_BUILD_DIR)/$(EXECUTABLE)_test
 # Příkaz 'coverage' vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage test-coverage process-coverage
 
+# $(MAKE) $(SILENTOPT) build-profiler
+# $(MAKE) $(SILENTOPT) rebuild-core
+
 # Příkaz 'profile' sestaví a spustí profiling matematické knihovny
 profile:
 	$(MAKE) $(SILENTOPT) build-profiler
 	$(MAKE) $(SILENTOPT) rebuild-core
 	@$(MAKE) $(SILENTOPT) clean-profile
-	@rm -f $(PROFILE_BUILD_DIR)/gmon.out $(PROFILE_BUILD_DIR)/gmon.sum
+	@rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
 	@rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
 	$(MAKE) $(SILENTOPT) run-first-profile
-	@mv gmon.out gmon.sum
+	@mv ./$(CORE_BUILD_DIR)/gmon.out ./$(CORE_BUILD_DIR)/gmon.sum
 	$(MAKE) $(SILENTOPT) run-other-profile
-	@gprof -s ./$(CORE_BUILD_DIR)/stddev gmon.out gmon.sum
-	gprof ./$(CORE_BUILD_DIR)/stddev gmon.sum > gprof-report.txt
-	@mv gmon.out $(PROFILE_BUILD_DIR)/
-	@mv gmon.sum $(PROFILE_BUILD_DIR)/
-	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
-	mv gprof-report.txt $(PROFILE_OUT_DIR)/
+	@cd $(CORE_BUILD_DIR) && gprof -s ./stddev gmon.out gmon.sum
+	@cd $(CORE_BUILD_DIR) && gprof ./stddev gmon.sum > gprof-report.txt
+	@mv ./$(CORE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/
+	@mv ./$(CORE_BUILD_DIR)/gmon.sum ./$(PROFILE_BUILD_DIR)/
+	@mv -f ./$(CORE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
+	mv ./$(CORE_BUILD_DIR)/gprof-report.txt $(PROFILE_OUT_DIR)/
 	@$(MAKE) $(SILENTOPT) move-coverage-data
+
 
 run-first-profile:
 	if [ "$(DATA_FILE)" = "-1" ]; then \
-        echo -1 > temp.txt; \
-        $(CORE_BUILD_DIR)/stddev < temp.txt; \
-        rm temp.txt; \
+		cd $(CORE_BUILD_DIR) && echo -1 > temp.txt; \
+		./stddev < temp.txt; \
+		rm -f temp.txt; \
     else \
-        $(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+		pwd; \
+		$(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+		mv gmon.out $(CORE_BUILD_DIR)/gmon.out; \
+		pwd; \
     fi
 
 run-other-profile:
 	if [ "$(DATA_FILE)" = "-1" ]; then \
-	    $(CORE_BUILD_DIR)/stddev < $(AUTO_GEN_DATA_FILE); \
+		cd $(CORE_BUILD_DIR) && ./stddev < $(AUTO_GEN_DATA_FILE); \
     else \
-        $(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+		pwd; \
+		$(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
+		mv gmon.out $(CORE_BUILD_DIR)/gmon.out; \
+		pwd; \
     fi
 
 
