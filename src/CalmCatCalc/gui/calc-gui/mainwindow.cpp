@@ -36,6 +36,11 @@ string calcVal = "";
 int comma_rate = 0;
 int rbra_rate = 0;
 int lbra_rate = 0;
+int num_rate = 0;
+int mult_rate = 0;
+
+/*exception v cat_calc_core.cpp*/
+std::exception e;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -67,6 +72,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Pza, SIGNAL(clicked()), this, SLOT(rbra()));
     connect(ui->Zcarka, SIGNAL(clicked()), this, SLOT(comma()));
     connect(ui->Zplus, SIGNAL(clicked()), this, SLOT(plus()));
+    connect(ui->Zkrat, SIGNAL(clicked()), this, SLOT(multiply()));
+    connect(ui->Zdeleno, SIGNAL(clicked()), this, SLOT(div()));
+    connect(ui->Zminus, SIGNAL(clicked()), this, SLOT(minus()));
 }
 
 MainWindow::~MainWindow()
@@ -79,13 +87,22 @@ void MainWindow::equal(){
     QString dis_val = ui->Display->text();
     /*prevedeni QString na string*/
     std::string dis_val_s = dis_val.toStdString();
-    /*prevedeni zpatky do QString formatu*/
-    QString result = QString::fromStdString(calculate(dis_val_s));
 
-    if(result == ""){
-        ui->Display->setText("");
-    }else{
-        ui->Display->setText(result);
+    try {
+        /*prevedeni zpatky do QString formatu*/
+        QString result = QString::fromStdString(calculate(dis_val_s));
+        if(result == ""){
+            ui->Display->setText("");
+        }else{
+            ui->Display->setText(result);
+        }
+
+        comma_rate = 0;
+
+    } catch (std::invalid_argument& e) {
+            /*vypise exception, ktery byl thrownut v knihovne*/
+            ui->Display->setText(QString::fromStdString(e.what()));
+            QPushButton *button = (QPushButton *)sender();
     }
 }
 
@@ -100,6 +117,8 @@ void MainWindow::del(){
 void MainWindow::num_pressed(){
     /*sender je funkce, která vrátí ukazatel na objekt, který poslal signál*/
     QPushButton *button = (QPushButton *)sender();
+
+    num_rate++;
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
@@ -153,7 +172,7 @@ void MainWindow::comma(){
     comma_rate++;
 
     if(comma_rate == 1){
-        QString val_button = button->text();
+        QString val_button = ".";
         QString dis_val = ui->Display->text();
         QString new_val = dis_val + val_button;
 
@@ -169,6 +188,48 @@ void MainWindow::plus(){
     QPushButton *button = (QPushButton *)sender();
 
     QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    if(dis_val == ""){
+        new_val = "0" + val_button;
+    }
+    ui->Display->setText(new_val);
+
+}
+
+void MainWindow::minus(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    if(dis_val == ""){
+        new_val = "0" + val_button;
+    }
+    ui->Display->setText(new_val);
+
+}
+
+void MainWindow::multiply(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = "*";
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    if(dis_val == ""){
+        new_val = "0" + val_button;
+    }
+    ui->Display->setText(new_val);
+
+}
+
+void MainWindow::div(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = "/";
     QString dis_val = ui->Display->text();
     QString new_val = dis_val + val_button;
 

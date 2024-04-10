@@ -68,6 +68,9 @@ private slots:
     void comma();
     void equal();
     void plus();
+    void multiply();
+    void minus();
+    void div();
 };
 
 #endif // MAINWINDOW_H
