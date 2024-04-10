@@ -25,10 +25,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QWidget>
 /*přidání matematické knihovny*/
 #include "../../core/cat_calc_core.h"
-
-
 /**
  * @brief Makra pro definici bloku NAMESPACE
  * dále definice třídy MainWindow
@@ -63,8 +63,11 @@ private slots:
     //void calculate_clicked();
     void num_pressed();
     void del();
-    void lza();
-    void pza();
+    void lbra();
+    void rbra();
+    void comma();
+    void equal();
+    void plus();
 };
 
 #endif // MAINWINDOW_H

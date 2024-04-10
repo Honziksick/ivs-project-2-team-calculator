@@ -25,9 +25,17 @@
  * @details QT vygenerovaná část kódu
  */
 #include "mainwindow.h"
+#include <QKeyEvent>
+#include <QWidget>
 #include "./ui_mainwindow.h"
+#include "../../core/cat_calc_core.h"
+#include "../../core/cat_calc_core.cpp"
+
 
 string calcVal = "";
+int comma_rate = 0;
+int rbra_rate = 0;
+int lbra_rate = 0;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,12 +58,15 @@ MainWindow::MainWindow(QWidget *parent)
         num_buttons[i] = MainWindow::findChild<QPushButton *>(button);
 
         /*propojeni tlacitek*/
-        connect(num_buttons[i], SIGNAL(clicked()), this, SLOT(num_pressed()));
+        connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num_pressed()));
     }
 
+    connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
     connect(ui->DELETE, SIGNAL(clicked()), this, SLOT(del()));
-    connect(ui->Lza, SIGNAL(clicked()), this, SLOT(lza()));
-    connect(ui->Pza, SIGNAL(clicked()), this, SLOT(pza()));
+    connect(ui->Lza, SIGNAL(clicked()), this, SLOT(lbra()));
+    connect(ui->Pza, SIGNAL(clicked()), this, SLOT(rbra()));
+    connect(ui->Zcarka, SIGNAL(clicked()), this, SLOT(comma()));
+    connect(ui->Zplus, SIGNAL(clicked()), this, SLOT(plus()));
 }
 
 MainWindow::~MainWindow()
@@ -64,9 +75,26 @@ MainWindow::~MainWindow()
 
 }
 
+void MainWindow::equal(){
+    QString dis_val = ui->Display->text();
+    /*prevedeni QString na string*/
+    std::string dis_val_s = dis_val.toStdString();
+    /*prevedeni zpatky do QString formatu*/
+    QString result = QString::fromStdString(calculate(dis_val_s));
+
+    if(result == ""){
+        ui->Display->setText("");
+    }else{
+        ui->Display->setText(result);
+    }
+}
+
 void MainWindow::del(){
 
     ui->Display->setText("");
+
+    /*reset, aby se znovu mohla napsat carka*/
+    comma_rate = 0;
 }
 
 void MainWindow::num_pressed(){
@@ -86,8 +114,10 @@ void MainWindow::num_pressed(){
     }
 }
 
-void MainWindow::lza(){
+void MainWindow::lbra(){
     QPushButton *button = (QPushButton *)sender();
+
+    lbra_rate++;
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
@@ -100,8 +130,10 @@ void MainWindow::lza(){
     }
 }
 
-void MainWindow::pza(){
+void MainWindow::rbra(){
     QPushButton *button = (QPushButton *)sender();
+
+    rbra_rate++;
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
@@ -112,5 +144,38 @@ void MainWindow::pza(){
         QString new_val = dis_val + val_button;
         ui->Display->setText(new_val);
     }
+}
+
+void MainWindow::comma(){
+    QPushButton *button = (QPushButton *)sender();
+
+    /*zaruci, ze se nepouzije vicekrat*/
+    comma_rate++;
+
+    if(comma_rate == 1){
+        QString val_button = button->text();
+        QString dis_val = ui->Display->text();
+        QString new_val = dis_val + val_button;
+
+        /*pokud neni nastavena hodnota, tak se da 0 pred carku*/
+        if(dis_val == ""){
+            new_val = "0" + val_button;
+        }
+        ui->Display->setText(new_val);
+    }
+}
+
+void MainWindow::plus(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    if(dis_val == ""){
+        new_val = "0" + val_button;
+    }
+    ui->Display->setText(new_val);
+
 }
 /*** Konec souboru mainwindow.cpp ***/
