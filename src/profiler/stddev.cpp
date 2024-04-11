@@ -29,7 +29,8 @@
  *          vypsána na standardní výstup.
  */
 
-
+// Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
+#define DEBUG
 
 #include "../CalmCatCalc/core/cat_calc_core.h"
 #include "stddev.h"
@@ -63,6 +64,8 @@ static const string C_BR = C_BRACKET_SYM;  // Symbol pro uzavírací závorku `)
 
 /*  ~~~ Funkce pro generování náhodných čísel do souboru 'auto_gen.txt' ~~~   */
 void generateNumbers(){
+    LOG0("  Generating random numbers...");
+
     ofstream file;            // Vytvoření objektu pro zápis do souboru
     file.open(FILE_PATH);	  // Otevření soubor pro generované hodnoty pro zápis
 
@@ -80,6 +83,8 @@ void generateNumbers(){
     for(int i = 0; i < AUTO_GEN_NUM; i++){
         // Generování náhodného čísla
         double autoGenNum = dis(gen);
+
+        LOG("    Generated: %f", autoGenNum);
 
         // Zápis náhodného čísla do souboru s přesností určenou 'PRECISION'
         file << fixed << setprecision(PRECISION) << autoGenNum << endl;
@@ -99,6 +104,8 @@ void generateNumbers(){
 
 /*            ~~~ Funkce pro načítání čísel z datového proudu ~~~             */
 void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
+    LOG0("  Reading input data...");
+
     string valueX;      // Načtená hodnota ze vstupu (stdin nebo souboru)
 
     // Cyklus k načtení vstupních dat z datového proudu 
@@ -113,6 +120,12 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
             powerSum = powerSum + ADD + (valueX + POW);
 
             N++;    // Inkrementuje počítadlo načtených hodnot (stringově)
+
+            /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
+            LOG("    Read: valueX = %-15s", valueX.c_str());
+            LOG("      State: valueSum = %-15s,", valueSum.c_str());
+            LOG("             powerSum = %-15s,", powerSum.c_str());
+            LOG("             N = %d", N);
         }
         // Pokud načtená hodnota není číslo, vyhodí výjimku
         else{
@@ -124,6 +137,7 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
 
 /* ~~~ Funkce pro načítání čísel ze vygenerovaného souboru `auto_gen.txt` ~~~ */
 void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
+    LOG0("Going to read data from 'auto_gen.txt'...");
     ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
 
     // Pokud se podařilo otevřít soubor, čti z něj vstupní data
@@ -139,6 +153,7 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
 
 /*     ~~~ Funkce pro načítání čísel ze standardního vstupu (`stdin`) ~~~     */
 void readDataFromStdin(string &valueSum, string &powerSum, int &N){
+    LOG0("Reading data from 'STDIN'...");
     readData(cin, valueSum, powerSum, N);  // čteme ze 'stdin'
 }
 
@@ -156,6 +171,8 @@ string standardDeviation(){
 
     // Ošetření dělení nulou při nedostatečném vstupu
     if(N < 2){
+        LOG0("  Less than 2 numbers passed to STDIN.");
+
         // Úklid prostředí pro vygenerovaná data
         valueSum = O_BRACKET_SYM;
         valueSum = valueSum + "0.0";   
@@ -177,11 +194,27 @@ string standardDeviation(){
     // Výpočet aritmetického průměru načtených hodnot 
     string mean = valueSum + DIV + to_string(N);
 
+    /* LOGOVÁNÍ STAVU PŘED VÝPOČTEM RADIKANDU */
+    LOG0("Prepared mathematical expressions:");
+    LOG("  State: valueSum = %-15s,", valueSum.c_str());
+    LOG("         powerSum = %-15s,", powerSum.c_str());
+    LOG("             mean = %-15s,", mean.c_str());
+    LOG("          N (int) = %d", N);
+    LOG("       N (string) = %s", to_string(N).c_str());
+
     // Konkatenace matematického výazu pro výpočet radikandu ("pod odmocninou")
     string radicand = (O_BR + (O_BR + (O_BR + "1" + DIV + (O_BR + to_string(N) + SUB + "1" + C_BR) + C_BR) + C_BR) + MUL + (O_BR + powerSum + SUB + (O_BR + to_string(N) + MUL + (O_BR + (O_BR + mean + C_BR) + POW + C_BR) + C_BR) + C_BR) + C_BR);
+    
+    /* LOGOVÁNÍ PŘIPRAVENÉHO RADIKANDU */
+    LOG0("Calculating radicand:");
+    LOG("  Radicand: %s", radicand.c_str());
 
     // Výpočet výběrové směrodatné odchylky
     string standardDeviation = calculate(ROOT + radicand);
+
+    /* LOGOVÁNÍ VÝSLEDKU */
+    LOG0("Calculating standard deviation:");
+    LOG("  Result: %s", standardDeviation.c_str());
 
     return standardDeviation;
 }
