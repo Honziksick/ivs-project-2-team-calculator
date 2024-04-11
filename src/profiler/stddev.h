@@ -40,6 +40,34 @@
 
 
 /**
+ *
+ * @brief Makra pro logování programu v režimu ladění na `stderr`.
+ *
+ * @details Tato makra vypisují zprávu na standardní chybový výstup (`stderr`).
+ *          Zpráva obsahuje název souboru, číslo řádku a název funkce, kde bylo
+ *          makro `LOG0` nebo `LOG` zavoláno, spolu se zprávou, kterou jste
+ *          poskytli.
+ *
+ * Makro `LOG0()`:
+ * @param s Formátovací řetězec pro zprávu.
+ *
+ * Makro `LOG()`:
+ * @param s Formátovací řetězec pro zprávu. Může obsahovat libovolný počet
+ *          formátovacích specifikátorů, které jsou nahrazeny dalšími argumenty
+ *          makra.
+ * @param ... Další argumenty makra. Tyto argumenty jsou vloženy do
+ *            formátovacího řetězce `s`.
+ */
+#ifdef DEBUG
+#define LOG0(s) fprintf(stderr, "%s:%-3u:%-20s" s "\n", __FILE__, __LINE__, __func__)
+#define LOG(s, ...) fprintf(stderr, "%s:%-3u:%-20s" s "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#else
+#define LOG0(s) do {} while (0)
+#define LOG(...) do {} while (0)
+#endif
+
+
+/**
  * @brief Definice konstant pro generátor náhodných čísel
  */
 #define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
