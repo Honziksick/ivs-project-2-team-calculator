@@ -134,11 +134,13 @@ profile:
 	@mv ./$(CORE_BUILD_DIR)/gmon.out ./$(CORE_BUILD_DIR)/gmon.sum
 	$(MAKE) $(SILENTOPT) run-other-profile
 	@cd $(CORE_BUILD_DIR) && gprof -s ./stddev gmon.out gmon.sum
-	@cd $(CORE_BUILD_DIR) && gprof ./stddev gmon.sum > gprof-report.txt
+	@cd $(CORE_BUILD_DIR) && gprof ./stddev gmon.sum | tee gprof-report.txt | gprof2dot -s | dot -Gdpi=100 -Tpng -o gprof-report.png
 	@mv ./$(CORE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/
 	@mv ./$(CORE_BUILD_DIR)/gmon.sum ./$(PROFILE_BUILD_DIR)/
 	@mv -f ./$(CORE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
 	mv ./$(CORE_BUILD_DIR)/gprof-report.txt $(PROFILE_OUT_DIR)/
+	mv ./$(CORE_BUILD_DIR)/gprof-report.png $(PROFILE_OUT_DIR)/
+	
 	@$(MAKE) $(SILENTOPT) move-coverage-data
 
 
@@ -148,20 +150,16 @@ run-first-profile:
 		./stddev < temp.txt; \
 		rm -f temp.txt; \
     else \
-		pwd; \
 		$(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
 		mv gmon.out $(CORE_BUILD_DIR)/gmon.out; \
-		pwd; \
     fi
 
 run-other-profile:
 	if [ "$(DATA_FILE)" = "-1" ]; then \
 		cd $(CORE_BUILD_DIR) && ./stddev < $(AUTO_GEN_DATA_FILE); \
     else \
-		pwd; \
 		$(CORE_BUILD_DIR)/stddev < $(DATA_FILE); \
 		mv gmon.out $(CORE_BUILD_DIR)/gmon.out; \
-		pwd; \
     fi
 
 
@@ -182,6 +180,7 @@ clean-doc:
 
 clean-profile:
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
+	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
 
 # Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
 clean: clean-build clean-doc clean-profile
@@ -308,8 +307,6 @@ process-coverage:
 ################################################################################
 
 # Stavba programu na výpočet směrodatné odchylky a stavba knihovny s '-pg'
-
-
 rebuild-core: clean-core
 	$(MAKE) build-core CXXFLAGS_CORE+="$(CXXFLAGS_CORE) $(DEBUG) $(PROFILE)"
 
