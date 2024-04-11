@@ -38,33 +38,96 @@
 #include <iomanip>
 #include <random>
 
-#define ROOT 2    /**< Kořen odmocniny používaný ve funkci `root()` */
-#define EXP  2    /**< Exponent používaný ve funkci `power()` */
+
+/**
+ * @brief Definice konstant pro generátor náhodných čísel
+ */
 #define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
-#define AUTO_GEN_NUM  1000000      /**< Počet náhodně generovaných čísel */
-#define AUTO_GEN_MIN -100000       /**< Nejmenší možná vygenerovaná hodnota */
-#define AUTO_GEN_MAX  100000       /**< Nejmenší možná vygenerovaná hodnota */
-#define PRECISION 15       /**< Přesnost desetinné části vygenerovaných čísel */
+#define AUTO_GEN_NUM  1000        /**< Počet náhodně generovaných čísel */
+#define AUTO_GEN_MIN -10000       /**< Nejmenší možná vygenerovaná hodnota */
+#define AUTO_GEN_MAX  10000       /**< Největší možná vygenerovaná hodnota */
+#define PRECISION 10       /**< Přesnost desetinné části vygenerovaných čísel */
+
+
+/**
+ * @brief Definice konstant (stringů) matematických operací pro funkci
+ *        `calculate()`
+ */
+#define ADD_OP " + "    /**< Operátor sčítání v podobě `string` */
+#define SUB_OP " - "    /**< Operátor odčítání v podobě `string` */
+#define MUL_OP " * "    /**< Operátor násobení v podobě `string` */
+#define DIV_OP " / "    /**< Operátor dělení v podobě `string`  */
+#define POW_OP  "^2"    /**< Operátor umocnění na druhou v podobě `string` */
+#define ROOT_OP "#2"    /**< Operátor druhé odmocniny v podobě `string` */
+
+
+/**
+ * @brief Definice konstant (znaků) pro závorky
+ */
+
+#define O_BRACKET_SYM "("    /**< Otevírací závorka v podobě `string` */
+#define C_BRACKET_SYM ")"    /**< Zavírací závorka v podobě `string` */
+
+
+/**
+ * @namespace MathSymbols
+ * @brief Obsahuje třídy a konstanty pro matematické symboly
+ *
+ * @details Tento namespace obsahuje třídy a konstanty pro různé matematické
+ *          symboly, které jsou využívány matematickou knihovnou `cat_calc_core`.
+ */
+namespace MathSymbols{
+    /**
+     * @class CoreOperands
+     * @brief Třída obsahující operandy využívané matematickou knihovnou
+     *        `cat_calc_core`.
+     *
+     * @details Definované konstanty jsou statické, takže mohou být přístupné
+     *          bez vytvoření instance třídy CoreOperands.
+     */
+    class CoreOperands{
+    public:
+        static const std::string ADD;        /**< Symbol pro sčítání. */
+        static const std::string SUB;        /**< Symbol pro odečítání. */
+        static const std::string MUL;        /**< Symbol pro násobení. */
+        static const std::string DIV;        /**< Symbol pro dělení. */
+        static const std::string POW;        /**< Symbol pro mocninu. */
+        static const std::string ROOT;       /**< Symbol pro odmocninu. */
+    };
+
+    /**
+     * @class CoreSymbols
+     * @brief Třída obsahující konstanty pro další matematické symboly
+     *
+     * @details Tyto konstanty jsou statické, takže mohou být přístupné bez
+     *          vytvoření instance třídy CoreSymbols.
+     */
+    class CoreSymbols{
+    public:
+        static const std::string O_BRACKET;  /**< Symbol pro otevírací závorku. */
+        static const std::string C_BRACKET;  /**< Symbol pro uzavírací závorku. */
+    };
+}
 
 
 /**
  * @brief Výčtový typ pro návratové hodnoty funkcí
  */
 enum returnValues{
-    OK,             /**< OK: Funkce skončila úspěšně */
+    OK,             /**< OK:    Funkce skončila úspěšně */
     E_INV_DATA,     /**< Error: Načtení nečíselné hodnoty */
-    E_FILE_OPEN     /**< Error: Nepodařilo se otevřít soubor s vstupními daty */
+    E_FILE_OPEN     /**< Error: Nepodařilo se otevřít soubor se vstupními daty */
 };
 
 
 /**
- * @brief Funkce pro generování náhodných čísel do souboru
+ * @brief Funkce pro generování náhodných čísel do souboru `auto_gen.txt`
  *
  * @details Tato funkce generuje náhodná čísla v rozsahu definovaném konstantami
  *          `PRECISION_MIN` a `PRECISION_MAX` a zapisuje je do souboru určeného
  *          konstantou `FILE_PATH`. Počet generovaných čísel je určen konstantou
  *          `AUTO_GEN_NUM`. Generovaná čísla jsou vypsána na standardní výstup a
- *          `zapsána do souboru s pevnou přesností určenou konstantou
+ *          zapsána do souboru s pevnou přesností určenou konstantou
  *          `PRECISION`.
  */
 void generateNumbers();
@@ -87,11 +150,11 @@ void generateNumbers();
  *
  * @exception invalid_argument Pokud načtená hodnota není číslo
  */
-
 void readData(istream& dataStream, string &valueSum, string &powerSum, int &N);
 
+
 /**
- * @brief Funkce pro načítání čísel ze souboru
+ * @brief Funkce pro načítání čísel ze vygenerovaného souboru `auto_gen.txt`
  *
  * @details Tato funkce otevírá soubor určený konstantou `FILE_PATH` a volá
  *          funkci `readData()` s otevřeným souborem jako parametrem, což
@@ -129,14 +192,18 @@ void readDataFromStdin(string &valueSum, string &powerSum, int &N);
 /**
  * @brief Funkce na výpočet výběrové směrodatné odchylky
  *
- * @note V případě, že je funkce spuštěna jako `./stddev < data.txt`, je
- *       výběrová směrodatná odchylka vypočtena z hodnot v souboru `data.txt`.
- *       V opačném případě je generátor náhodných čísel vygenerován soubor
- *       s daty `auto_gen.txt` a vstup programu je braný právě z tohoto souboru.
+ * @details V případě, že je funkce spuštěna jako `./stddev < data.txt`, je
+ *          výběrová směrodatná odchylka vypočtena z hodnot v souboru `data.txt`.
+ *          V opačném případě je generátor náhodných čísel vygenerován soubor
+ *          s daty `auto_gen.txt` a vstup programu je braný právě z tohoto souboru.
+ *
+ * @note **Vzorec pro výpočet výběrové směrodatné odchylky:**
+ *       \f[ s=\sqrt{\frac{1}{N-1}\left(\sum_{i=1}^{N}x_{i}^{2}-
+ *           N\overline{x}^{2}\right)} \f]
  *
  * @return `standardDeviation` Výběrová směrodatná odchylka
  */
-double standardDeviation();
+string standardDeviation();
 
 
 /**
