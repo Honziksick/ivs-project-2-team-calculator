@@ -258,6 +258,9 @@ string standardDeviation();
  *          výstup (`stderr`) a funkce `main()` vrátí `1`. Pokud nedošlo k žádné
  *          chybě, funkce `main()` vrátí `0`.
  *
+ *          Pokud je jako argument předán přepínač `-h` nebo `--help`, funkce
+ *          vypíše nápovědu k programu a vrátí `0`.
+ *
  * @return OK Pokud nedošlo k žádné chybě
  * @return E_INV_DATA Pokud byla vyhozena výjimku typu `invalid_argument`
  * @return E_FILE_OPEN Pokud byla vyhozena výjimka typu `runtime_error`
@@ -267,7 +270,7 @@ string standardDeviation();
  * @exception runtime_error Pokud funkce `standardDeviation()` vyhodí výjimku
  *            tohoto typu
  */
-int main();
+int main(int argc, char **argv);
 
 
 #endif // STDDEV_H_
