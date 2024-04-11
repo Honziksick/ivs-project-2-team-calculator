@@ -62,6 +62,57 @@ static const string O_BR = O_BRACKET_SYM;  // Symbol pro otevírací závorku `(
 static const string C_BR = C_BRACKET_SYM;  // Symbol pro uzavírací závorku `)`
 
 
+/*            ~~~ Funkce na výpis nápovědy k programu `stddev` ~~~            */
+void help() {
+    printf("Nápověda k programu na výpočet výběrové směrodatné odchylky (profiling)\n\n");
+
+    // Synposis
+    printf("SYNOPSIS:\n");
+    printf("  './stddev < data_file'\n\n");
+
+    // Popis
+    printf("POPIS:\n");
+    printf("  -> Tento program načítá číselné hodnoty ze standardního vstupu nebo ze souboru\n");
+    printf("     a počítá jejich výběrovou směrodatnou odchylku.\n");
+    printf("  -> Pokud je načtená hodnota neplatná (např. není číslo), program vyhodí výjimku.\n");
+    printf("  -> Program podporuje následující způsoby zadání vstupu:\n");
+    printf("     - prázdný (program vygeneruje vlastní data)\n");
+    printf("     - souborem přesměrovaným na stdin pomocí '<'\n\n");
+
+    // Příklady užití
+    printf("PŘÍKLADY UŽITÍ:\n");
+    printf("  $ ./stddev\n");
+    printf("    -> Program vygeneruje vlastní data a vypočítá výběrovou směrodatnou\n");
+    printf("       odchylku\n");
+    printf("\n");
+    printf("  $ ./stddev data.txt\n");
+    printf("    -> Program načte data ze souboru 'data.txt' a vypočítá výběrovou směrodatnou\n");
+    printf("       odchylku.\n");
+    printf("\n");
+    printf("  $ cat data.txt | ./stddev\n");
+    printf("    -> Program načte data ze souboru 'data.txt' pomocí přesměrování vstupu\n");
+    printf("\n");
+    printf("  $ echo \"1 2 3 4 5\" | ./stddev\n");
+    printf("    -> Program načte data ze zadaného textového řetězce pomocí přesměrování vstupu\n\n");
+
+    // Nápověda pro autogen
+    printf("AUTO-GENERÁTOR:\n");
+    printf("  -> Pokud nejsou předány žádné vstupní data, spustí se automatická generace:\n");
+    printf("  -> Výsledná data budou uložena do souboru 'build/profiling/auto_gen.txt'.\n");
+    printf("\n");
+    printf("  $ ./stddev\n");
+    printf("    -> Bude vygenerováno %d čísel z intervalu < %d; %d > s přesností\n",
+                  AUTO_GEN_NUM, AUTO_GEN_MIN, AUTO_GEN_MAX);
+    printf("      na %d cifer.\n\n", PRECISION);
+
+    // Chybové kódy
+    printf("NÁVRATOVÉ HODNOTY:\n");
+    printf("  0 - Úspěšné ukončení programu\n");
+    printf("  1 - Neplatné vstupní hodnoty (např. nečíselné)\n");
+    printf("  2 - Chyba při otevírání souboru s vstupními daty\n\n");
+}
+
+
 /*  ~~~ Funkce pro generování náhodných čísel do souboru 'auto_gen.txt' ~~~   */
 void generateNumbers(){
     LOG0("  Generating random numbers...");
@@ -123,9 +174,7 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
 
             /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
             LOG("    Read: valueX = %-15s", valueX.c_str());
-            LOG("      State: valueSum = %-15s,", valueSum.c_str());
-            LOG("             powerSum = %-15s,", powerSum.c_str());
-            LOG("             N = %d", N);
+            LOG("      State: N = %d", N);
         }
         // Pokud načtená hodnota není číslo, vyhodí výjimku
         else{
@@ -203,7 +252,23 @@ string standardDeviation(){
     LOG("       N (string) = %s", to_string(N).c_str());
 
     // Konkatenace matematického výazu pro výpočet radikandu ("pod odmocninou")
-    string radicand = (O_BR + (O_BR + (O_BR + "1" + DIV + (O_BR + to_string(N) + SUB + "1" + C_BR) + C_BR) + C_BR) + MUL + (O_BR + powerSum + SUB + (O_BR + to_string(N) + MUL + (O_BR + (O_BR + mean + C_BR) + POW + C_BR) + C_BR) + C_BR) + C_BR);
+    string radicand = (O_BR +
+                        (O_BR +
+                          (O_BR + "1" + DIV +
+                            (O_BR +
+                              to_string(N) + SUB + "1" + C_BR) +
+                            C_BR) +
+                           C_BR) +
+                        MUL +
+                        (O_BR + powerSum + SUB +
+                          (O_BR + to_string(N) + MUL +
+                            (O_BR +
+                              (O_BR + mean + C_BR) +
+                              POW +
+                            C_BR) +
+                          C_BR) +
+                        C_BR) +
+                      C_BR);
     
     /* LOGOVÁNÍ PŘIPRAVENÉHO RADIKANDU */
     LOG0("Calculating radicand:");
@@ -222,9 +287,22 @@ string standardDeviation(){
 
 /*                           ~~~ FUNKCE MAIN() ~~~                            */
 int main(int argc, char **argv){
+    // Zpracování přepínačů - zda-li chceme vypsat nápovědu
+    // Pozn. 1: Nepřipouštíme žádné jiné přepínače, proto 'argc == 2'
+    // Pozn. 2: Nápověda je tedy vždy prvním přepínačem, proto 'argv[1]'
+    if(argc == 2){
+        string arg = argv[1];    // Přepínač pro výpis nápovědy
+
+        if(arg == "-h" || arg == "--help"){
+            help();  
+
+            return 0;   // Zavolání funkce help a ukončení programu
+        }
+    }
+
     // Výpočet výběrové směrodatné odchylky
     try{
-        cout << standardDeviation() << endl;    // Výpis výsledku na 'stdout'
+        cout << standardDeviation() << endl;    // výpis výsledku na 'stdout'
     }
     // Funkci byly předány neplatné vstupní hodnoty (tj. nečíselné)
     catch(invalid_argument& error){
