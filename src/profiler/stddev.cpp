@@ -73,6 +73,9 @@ void generateNumbers(){
     // Definice rozsah, z jakého se mají generovat náhodná čísla
     uniform_real_distribution<> dis(AUTO_GEN_MIN, AUTO_GEN_MAX);
 
+    // Proměnná pro zobrazení stavu generování náhodných čísel
+    int progressBar = AUTO_GEN_NUM / 10;   // Počet kroků pro 10% pokroku
+
     // Generujeme tolik čísel, kolik udává konstanta 'AUTO_GEN_NUM'
     for(int i = 0; i < AUTO_GEN_NUM; i++){
         // Generování náhodného čísla
@@ -80,7 +83,15 @@ void generateNumbers(){
 
         // Zápis náhodného čísla do souboru s přesností určenou 'PRECISION'
         file << fixed << setprecision(PRECISION) << autoGenNum << endl;
+
+        // Aktualizace progress baru po každých 10%
+        if (i % progressBar == 0) {
+            cout << "\rProgress: " << i / progressBar * 10 << "%% completed" << flush;
+        }
     }
+
+    // Generování hodnot dokončeno
+    cout << "\rProgress: 100%% completed" << endl;
     
     file.close();
 }
