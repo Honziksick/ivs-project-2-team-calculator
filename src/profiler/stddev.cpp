@@ -30,7 +30,7 @@
  */
 
 // Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
-#define DEBUG
+//#define DEBUG
 
 #include "../CalmCatCalc/core/cat_calc_core.h"
 #include "stddev.h"
@@ -64,52 +64,54 @@ static const string C_BR = C_BRACKET_SYM;  // Symbol pro uzavírací závorku `)
 
 /*            ~~~ Funkce na výpis nápovědy k programu `stddev` ~~~            */
 void help() {
-    printf("Nápověda k programu na výpočet výběrové směrodatné odchylky (profiling)\n\n");
+    printf("       ~~~ STDDEV: The sample standard deviation calculator & profiler ~~~       \n\n");
 
-    // Synposis
+    // Synopsis
     printf("SYNOPSIS:\n");
-    printf("  './stddev < data_file'\n\n");
+    printf("  ./stddev < data_file\n\n");
 
     // Popis
-    printf("POPIS:\n");
-    printf("  -> Tento program načítá číselné hodnoty ze standardního vstupu nebo ze souboru\n");
-    printf("     a počítá jejich výběrovou směrodatnou odchylku.\n");
-    printf("  -> Pokud je načtená hodnota neplatná (např. není číslo), program vyhodí výjimku.\n");
-    printf("  -> Program podporuje následující způsoby zadání vstupu:\n");
-    printf("     - prázdný (program vygeneruje vlastní data)\n");
-    printf("     - souborem přesměrovaným na stdin pomocí '<'\n\n");
+    printf("DESCRIPTION:\n");
+    printf("  -> This program reads numerical values from the standard input or from\n");
+    printf("     a file and calculates their sample standard deviation.\n");
+    printf("  -> If the read value is invalid (e.g., not a number), the program throws\n");
+    printf("     an exception.\n");
+    printf("  -> The program supports the following ways of input:\n");
+    printf("     - empty (the program generates its own data with Auto-Gen function)\n");
+    printf("     - file redirected to STDIN using '<' operator\n\n");
 
     // Příklady užití
-    printf("PŘÍKLADY UŽITÍ:\n");
+    printf("USAGE EXAMPLES:\n");
     printf("  $ ./stddev\n");
-    printf("    -> Program vygeneruje vlastní data a vypočítá výběrovou směrodatnou\n");
-    printf("       odchylku\n");
+    printf("    -> The program generates its own data and calculates the sample standard\n");
+    printf("       deviation\n");
     printf("\n");
     printf("  $ ./stddev data.txt\n");
-    printf("    -> Program načte data ze souboru 'data.txt' a vypočítá výběrovou směrodatnou\n");
-    printf("       odchylku.\n");
+    printf("    -> The program reads data from the 'data.txt' file and calculates the sample\n");
+    printf("       standard deviation.\n");
     printf("\n");
     printf("  $ cat data.txt | ./stddev\n");
-    printf("    -> Program načte data ze souboru 'data.txt' pomocí přesměrování vstupu\n");
+    printf("    -> The program reads data from the 'data.txt' file using input redirection\n");
     printf("\n");
     printf("  $ echo \"1 2 3 4 5\" | ./stddev\n");
-    printf("    -> Program načte data ze zadaného textového řetězce pomocí přesměrování vstupu\n\n");
+    printf("    -> The program reads data from the given text string using input redirection\n\n");
 
     // Nápověda pro autogen
-    printf("AUTO-GENERÁTOR:\n");
-    printf("  -> Pokud nejsou předány žádné vstupní data, spustí se automatická generace:\n");
-    printf("  -> Výsledná data budou uložena do souboru 'build/profiling/auto_gen.txt'.\n");
+    printf("AUTO-GENERATOR:\n");
+    printf("  -> If no input data are provided, automatic generator is launched:\n");
+    printf("  -> The generated inpit data will be saved to the 'build/profiling/auto_gen.txt'\n");
+    printf("     file.\n");
     printf("\n");
     printf("  $ ./stddev\n");
-    printf("    -> Bude vygenerováno %d čísel z intervalu < %d; %d > s přesností\n",
+    printf("    -> %d numbers will be generated from the interval < %d; %d > with\n",
                   AUTO_GEN_NUM, AUTO_GEN_MIN, AUTO_GEN_MAX);
-    printf("      na %d cifer.\n\n", PRECISION);
+    printf("      precision to %d digits in total.\n\n", PRECISION);
 
     // Chybové kódy
-    printf("NÁVRATOVÉ HODNOTY:\n");
-    printf("  0 - Úspěšné ukončení programu\n");
-    printf("  1 - Neplatné vstupní hodnoty (např. nečíselné)\n");
-    printf("  2 - Chyba při otevírání souboru s vstupními daty\n\n");
+    printf("RETURN VALUES:\n");
+    printf("  0 - Success\n");
+    printf("  1 - ERROR: Invalid input values (e.g., non-numerical)\n");
+    printf("  2 - ERROR: Unable to open input data file\n\n");
 }
 
 
@@ -129,6 +131,8 @@ void generateNumbers(){
 
     // Proměnná pro zobrazení stavu generování náhodných čísel
     int progressBar = AUTO_GEN_NUM / 10;   // Počet kroků pro 10% pokroku
+    
+    cout << "Launching Auto-Gen, generating random numbers: " << endl;
 
     // Generujeme tolik čísel, kolik udává konstanta 'AUTO_GEN_NUM'
     for(int i = 0; i < AUTO_GEN_NUM; i++){
@@ -142,12 +146,12 @@ void generateNumbers(){
 
         // Aktualizace progress baru po každých 10%
         if (i % progressBar == 0) {
-            cout << "\rProgress: " << i / progressBar * 10 << "%% completed" << flush;
+            cout << "\rProgress: " << i / progressBar * 10 << "% completed" << flush;
         }
     }
 
     // Generování hodnot dokončeno
-    cout << "\rProgress: 100%% completed" << endl;
+    cout << "\rProgress: 100% completed" << endl;
     
     file.close();
 }
