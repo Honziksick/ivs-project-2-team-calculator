@@ -48,10 +48,10 @@
  *          makro `LOG0` nebo `LOG` zavoláno, spolu se zprávou, kterou jste
  *          poskytli.
  *
- * Makro `LOG0()`:
+ * __Makro `LOG0()`:__
  * @param s Formátovací řetězec pro zprávu.
  *
- * Makro `LOG()`:
+ * __Makro `LOG()`:__
  * @param s Formátovací řetězec pro zprávu. Může obsahovat libovolný počet
  *          formátovacích specifikátorů, které jsou nahrazeny dalšími argumenty
  *          makra.
@@ -146,6 +146,20 @@ enum returnValues{
     E_INV_DATA,     /**< Error: Načtení nečíselné hodnoty */
     E_FILE_OPEN     /**< Error: Nepodařilo se otevřít soubor se vstupními daty */
 };
+
+
+/**
+ * @brief Funkce na výpis nápovědy k programu `stddev`
+ *
+ * @details Funkce `help()` vypíše na standardní výstup nápovědu k programu na
+ *          výpočet výběrové směrodatné odchylky. Nápověda obsahuje informace o
+ *          tom, jak program používat, jaké jsou možné vstupy a jaké jsou
+ *          návratové hodnoty programu.
+ *
+ * @note Nápovědu může uživatel zobrazit spuštěním programu s parametrem `-h`
+ *       nebo `--help`.
+ */
+void help();
 
 
 /**
