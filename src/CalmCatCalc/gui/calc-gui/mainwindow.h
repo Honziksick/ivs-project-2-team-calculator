@@ -60,7 +60,6 @@ private:
     Ui::MainWindow *ui;
 
 private slots:
-    //void calculate_clicked();
     void num();
     void del();
     void lbra();
@@ -77,6 +76,7 @@ private slots:
     void sin();
     void cos();
     void tan();
+    void deg_rad();
 };
 
 #endif // MAINWINDOW_H

@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zsin, SIGNAL(clicked()), this, SLOT(sin()));
     connect(ui->Zcos, SIGNAL(clicked()), this, SLOT(cos()));
     connect(ui->Ztan, SIGNAL(clicked()), this, SLOT(tan()));
+    connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
 }
 
 MainWindow::~MainWindow(){
@@ -323,4 +324,7 @@ void MainWindow::cos(){
     gon_rate++;
 }
 
+void MainWindow::deg_rad(){
+
+}
 /*** Konec souboru mainwindow.cpp ***/
