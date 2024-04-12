@@ -74,6 +74,9 @@ private slots:
     void root();
     void sqr();
     void fact();
+    void sin();
+    void cos();
+    void tan();
 };
 
 #endif // MAINWINDOW_H

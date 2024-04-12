@@ -32,7 +32,7 @@
 #include "../../core/cat_calc_core.cpp"
 
 
-/**/
+/*todo chybná slova, DEG/RAD, odmocnina po výpočtu*/
 
 QString calcVal = "";
 int comma_rate = 0;
@@ -40,6 +40,7 @@ int rbra_rate = 0;
 int lbra_rate = 0;
 int num_rate = 0;
 int mult_rate = 0;
+int gon_rate = 0;
 int err = 0;
 
 /*exception v cat_calc_core.cpp*/
@@ -81,6 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zodmo, SIGNAL(clicked()), this, SLOT(root()));
     connect(ui->Zmoc, SIGNAL(clicked()), this, SLOT(sqr()));
     connect(ui->Zfact, SIGNAL(clicked()), this, SLOT(fact()));
+    connect(ui->Zsin, SIGNAL(clicked()), this, SLOT(sin()));
+    connect(ui->Zcos, SIGNAL(clicked()), this, SLOT(cos()));
+    connect(ui->Ztan, SIGNAL(clicked()), this, SLOT(tan()));
 }
 
 MainWindow::~MainWindow(){
@@ -103,12 +107,13 @@ void MainWindow::equal(){
         }
 
         comma_rate = 0;
+        gon_rate = 0;
     } catch (std::invalid_argument& e) {
             /*vypise exception, ktery byl thrownut v knihovne*/
             ui->Display->setText(QString::fromStdString(e.what()));
 
             err = 1;
-            printf("%d", err);
+            gon_rate = 0;
         }
 }
 
@@ -118,6 +123,7 @@ void MainWindow::del(){
 
     /*reset, aby se znovu mohla napsat carka*/
     comma_rate = 0;
+    gon_rate = 0;
 }
 
 void MainWindow::num(){
@@ -220,7 +226,6 @@ void MainWindow::minus(){
         new_val = "0" + val_button;
     }
     ui->Display->setText(new_val);
-
 }
 
 void MainWindow::multiply(){
@@ -244,7 +249,6 @@ void MainWindow::div(){
         new_val = "0" + val_button;
     }
     ui->Display->setText(new_val);
-
 }
 
 void MainWindow::root(){
@@ -253,7 +257,6 @@ void MainWindow::root(){
     QString new_val = dis_val + val_button;
 
     ui->Display->setText(new_val);
-
 }
 
 void MainWindow::sqr(){
@@ -262,7 +265,6 @@ void MainWindow::sqr(){
     QString new_val = dis_val + val_button;
 
     ui->Display->setText(new_val);
-
 }
 
 void MainWindow::fact(){
@@ -271,6 +273,54 @@ void MainWindow::fact(){
     QString new_val = dis_val + val_button;
 
     ui->Display->setText(new_val);
+}
+
+void MainWindow::sin(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = val_button + "(" + dis_val + ")";
+
+    if(gon_rate > 0){
+
+        new_val = dis_val + val_button;
+    }
+
+    ui->Display->setText(new_val);
+    gon_rate++;
+}
+
+void MainWindow::tan(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = val_button + "(" + dis_val + ")";
+
+    if(gon_rate > 0){
+
+        new_val = dis_val + val_button;
+    }
+
+    ui->Display->setText(new_val);
+    gon_rate++;
+}
+
+void MainWindow::cos(){
+    QPushButton *button = (QPushButton *)sender();
+
+    QString val_button = button->text();
+    QString dis_val = ui->Display->text();
+    QString new_val = val_button + "(" + dis_val + ")";
+
+    if(gon_rate > 0){
+
+        new_val = dis_val + val_button;
+    }
+
+    ui->Display->setText(new_val);
+    gon_rate++;
 }
 
 /*** Konec souboru mainwindow.cpp ***/
