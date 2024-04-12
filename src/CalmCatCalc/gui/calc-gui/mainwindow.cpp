@@ -32,12 +32,15 @@
 #include "../../core/cat_calc_core.cpp"
 
 
-string calcVal = "";
+/**/
+
+QString calcVal = "";
 int comma_rate = 0;
 int rbra_rate = 0;
 int lbra_rate = 0;
 int num_rate = 0;
 int mult_rate = 0;
+int err = 0;
 
 /*exception v cat_calc_core.cpp*/
 std::exception e;
@@ -51,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     /** @brief Převod inputu na klávesnici do kalkulačky pro čísla */
 
     /*nastaví text v display aby zobrazoval prazdny string*/
-    ui->Display->setText(QString::fromStdString(calcVal));
+    ui->Display->setText(calcVal);
 
     /*definice tlačítek všech čísel*/
     QPushButton *num_buttons[10];
@@ -63,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
         num_buttons[i] = MainWindow::findChild<QPushButton *>(button);
 
         /*propojeni tlacitek*/
-        connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num_pressed()));
+        connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
 
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
@@ -75,10 +78,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zkrat, SIGNAL(clicked()), this, SLOT(multiply()));
     connect(ui->Zdeleno, SIGNAL(clicked()), this, SLOT(div()));
     connect(ui->Zminus, SIGNAL(clicked()), this, SLOT(minus()));
+    connect(ui->Zodmo, SIGNAL(clicked()), this, SLOT(root()));
+    connect(ui->Zmoc, SIGNAL(clicked()), this, SLOT(sqr()));
+    connect(ui->Zfact, SIGNAL(clicked()), this, SLOT(fact()));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
 
 }
@@ -90,31 +95,32 @@ void MainWindow::equal(){
 
     try {
         /*prevedeni zpatky do QString formatu*/
-        QString result = QString::fromStdString(calculate(dis_val_s));
+        QString result = QString::fromStdString(calculate(dis_val_s));      
         if(result == ""){
-            ui->Display->setText("");
+            ui->Display->setText(calcVal);
         }else{
             ui->Display->setText(result);
         }
 
         comma_rate = 0;
-
     } catch (std::invalid_argument& e) {
             /*vypise exception, ktery byl thrownut v knihovne*/
             ui->Display->setText(QString::fromStdString(e.what()));
-            QPushButton *button = (QPushButton *)sender();
-    }
+
+            err = 1;
+            printf("%d", err);
+        }
 }
 
 void MainWindow::del(){
 
-    ui->Display->setText("");
+    ui->Display->setText(calcVal);
 
     /*reset, aby se znovu mohla napsat carka*/
     comma_rate = 0;
 }
 
-void MainWindow::num_pressed(){
+void MainWindow::num(){
     /*sender je funkce, která vrátí ukazatel na objekt, který poslal signál*/
     QPushButton *button = (QPushButton *)sender();
 
@@ -123,13 +129,20 @@ void MainWindow::num_pressed(){
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
 
-    /*pokud neni nic napsano, napise jedno cislo*/
-    if(dis_val == ""){
+    if(err == 1){
+        ui->Display->setText("");
         ui->Display->setText(val_button);
+        err = 0;
+
     }else{
-        /*pokud uz se jedno cislo napsalo, zacne psat dalsi za sebe*/
-        QString new_val = dis_val + val_button;
-        ui->Display->setText(new_val);
+        /*pokud neni nic napsano, napise jedno cislo*/
+        if(dis_val == ""){
+            ui->Display->setText(val_button);
+        }else{
+            /*pokud uz se jedno cislo napsalo, zacne psat dalsi za sebe*/
+            QString new_val = dis_val + val_button;
+            ui->Display->setText(new_val);
+        }
     }
 }
 
@@ -166,8 +179,6 @@ void MainWindow::rbra(){
 }
 
 void MainWindow::comma(){
-    QPushButton *button = (QPushButton *)sender();
-
     /*zaruci, ze se nepouzije vicekrat*/
     comma_rate++;
 
@@ -213,8 +224,6 @@ void MainWindow::minus(){
 }
 
 void MainWindow::multiply(){
-    QPushButton *button = (QPushButton *)sender();
-
     QString val_button = "*";
     QString dis_val = ui->Display->text();
     QString new_val = dis_val + val_button;
@@ -227,8 +236,6 @@ void MainWindow::multiply(){
 }
 
 void MainWindow::div(){
-    QPushButton *button = (QPushButton *)sender();
-
     QString val_button = "/";
     QString dis_val = ui->Display->text();
     QString new_val = dis_val + val_button;
@@ -239,4 +246,31 @@ void MainWindow::div(){
     ui->Display->setText(new_val);
 
 }
+
+void MainWindow::root(){
+    QString val_button = "#";
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    ui->Display->setText(new_val);
+
+}
+
+void MainWindow::sqr(){
+    QString val_button = "^";
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    ui->Display->setText(new_val);
+
+}
+
+void MainWindow::fact(){
+    QString val_button = "!";
+    QString dis_val = ui->Display->text();
+    QString new_val = dis_val + val_button;
+
+    ui->Display->setText(new_val);
+}
+
 /*** Konec souboru mainwindow.cpp ***/

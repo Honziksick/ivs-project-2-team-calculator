@@ -61,7 +61,7 @@ private:
 
 private slots:
     //void calculate_clicked();
-    void num_pressed();
+    void num();
     void del();
     void lbra();
     void rbra();
@@ -71,6 +71,9 @@ private slots:
     void multiply();
     void minus();
     void div();
+    void root();
+    void sqr();
+    void fact();
 };
 
 #endif // MAINWINDOW_H
