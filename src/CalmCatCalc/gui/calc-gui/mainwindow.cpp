@@ -28,7 +28,6 @@
 #include <QKeyEvent>
 #include <QWidget>
 #include "./ui_mainwindow.h"
-#include "../../core/cat_calc_core.h"
 #include "../../core/cat_calc_core.cpp"
 
 
@@ -39,7 +38,6 @@ int comma_rate = 0;
 int rbra_rate = 0;
 int lbra_rate = 0;
 int num_rate = 0;
-int mult_rate = 0;
 int gon_rate = 0;
 int err = 0;
 
@@ -86,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zcos, SIGNAL(clicked()), this, SLOT(cos()));
     connect(ui->Ztan, SIGNAL(clicked()), this, SLOT(tan()));
     connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
+    connect(ui->Zdel_ch, SIGNAL(clicked()), this, SLOT(delete_char()));
 }
 
 MainWindow::~MainWindow(){
@@ -125,6 +124,15 @@ void MainWindow::del(){
     /*reset, aby se znovu mohla napsat carka*/
     comma_rate = 0;
     gon_rate = 0;
+}
+
+
+void MainWindow::delete_char(){
+    QString text = ui->Display->text();
+    /*text.left vrati n znaku zleva == velikost qstringu - 1 znak*/
+    QString new_val = text.left(text.size() - 1);
+
+    ui->Display->setText(new_val);
 }
 
 void MainWindow::num(){
@@ -281,6 +289,12 @@ void MainWindow::sin(){
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
+
+    if(dis_val == calcVal){
+
+        dis_val = "0";
+    }
+
     QString new_val = val_button + "(" + dis_val + ")";
 
     if(gon_rate > 0){
@@ -297,6 +311,12 @@ void MainWindow::tan(){
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
+
+    if(dis_val == calcVal){
+
+        dis_val = "0";
+    }
+
     QString new_val = val_button + "(" + dis_val + ")";
 
     if(gon_rate > 0){
@@ -313,6 +333,12 @@ void MainWindow::cos(){
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
+
+    if(dis_val == calcVal){
+
+        dis_val = "0";
+    }
+
     QString new_val = val_button + "(" + dis_val + ")";
 
     if(gon_rate > 0){

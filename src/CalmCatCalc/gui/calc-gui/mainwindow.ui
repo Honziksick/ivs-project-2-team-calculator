@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>542</width>
-    <height>687</height>
+    <height>683</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,8 +27,8 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="3">
-     <widget class="QPushButton" name="Zodmo">
+    <item row="21" column="6">
+     <widget class="QPushButton" name="Zrovna">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -69,64 +69,15 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>n√x</string>
+       <string>=</string>
       </property>
       <property name="shortcut">
-       <string>R</string>
+       <string notr="true">Return, Enter</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="Zmoc">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>x^n</string>
-      </property>
-      <property name="shortcut">
-       <string>E</string>
-      </property>
-     </widget>
-    </item>
-    <item row="17" column="2">
-     <widget class="QPushButton" name="B2">
+    <item row="8" column="3">
+     <widget class="QPushButton" name="B7">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -170,418 +121,14 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>2</string>
+       <string>7</string>
       </property>
       <property name="shortcut">
-       <string>2</string>
+       <string>7</string>
       </property>
      </widget>
     </item>
-    <item row="18" column="1">
-     <widget class="QPushButton" name="Zcarka">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>,</string>
-      </property>
-      <property name="shortcut">
-       <string>,</string>
-      </property>
-     </widget>
-    </item>
-    <item row="17" column="1">
-     <widget class="QPushButton" name="B1">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(80, 80, 80);
-
-	/*odstraneni ohraniceni a zakulaceni hran*/
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(70, 70, 70);
-}
-
-/*pri zmacknuti tlacitka, se zmeni barva*/
-QPushButton::pressed {
-
-	background-color: rgb(60, 60, 60);
-}</string>
-      </property>
-      <property name="text">
-       <string>1</string>
-      </property>
-      <property name="shortcut">
-       <string>1</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="4">
-     <widget class="QPushButton" name="Zkrat">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>×</string>
-      </property>
-      <property name="shortcut">
-       <string>*</string>
-      </property>
-     </widget>
-    </item>
-    <item row="17" column="4">
-     <widget class="QPushButton" name="Zminus">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>-</string>
-      </property>
-      <property name="shortcut">
-       <string>-</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QPushButton" name="B8">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(80, 80, 80);
-
-	/*odstraneni ohraniceni a zakulaceni hran*/
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(70, 70, 70);
-}
-
-/*pri zmacknuti tlacitka, se zmeni barva*/
-QPushButton::pressed {
-
-	background-color: rgb(60, 60, 60);
-}</string>
-      </property>
-      <property name="text">
-       <string>8</string>
-      </property>
-      <property name="shortcut">
-       <string>8</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="0">
-     <widget class="QPushButton" name="Zcos">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>cos</string>
-      </property>
-      <property name="shortcut">
-       <string>C</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="3">
-     <widget class="QPushButton" name="B6">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(80, 80, 80);
-
-	/*odstraneni ohraniceni a zakulaceni hran*/
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(70, 70, 70);
-}
-
-/*pri zmacknuti tlacitka, se zmeni barva*/
-QPushButton::pressed {
-
-	background-color: rgb(60, 60, 60);
-}</string>
-      </property>
-      <property name="text">
-       <string>6</string>
-      </property>
-      <property name="shortcut">
-       <string>6</string>
-      </property>
-     </widget>
-    </item>
-    <item row="17" column="3">
-     <widget class="QPushButton" name="B3">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(80, 80, 80);
-
-	/*odstraneni ohraniceni a zakulaceni hran*/
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(70, 70, 70);
-}
-
-/*pri zmacknuti tlacitka, se zmeni barva*/
-QPushButton::pressed {
-
-	background-color: rgb(60, 60, 60);
-}</string>
-      </property>
-      <property name="text">
-       <string>3</string>
-      </property>
-      <property name="shortcut">
-       <string>3</string>
-      </property>
-     </widget>
-    </item>
-    <item row="18" column="2">
+    <item row="21" column="4">
      <widget class="QPushButton" name="B0">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -633,7 +180,503 @@ QPushButton::pressed {
       </property>
      </widget>
     </item>
-    <item row="13" column="2">
+    <item row="19" column="7">
+     <widget class="QPushButton" name="Zminus">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+      <property name="shortcut">
+       <string>-</string>
+      </property>
+     </widget>
+    </item>
+    <item row="21" column="7">
+     <widget class="QPushButton" name="Zplus">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+      <property name="shortcut">
+       <string>+</string>
+      </property>
+     </widget>
+    </item>
+    <item row="19" column="4">
+     <widget class="QPushButton" name="B2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(80, 80, 80);
+
+	/*odstraneni ohraniceni a zakulaceni hran*/
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(70, 70, 70);
+}
+
+/*pri zmacknuti tlacitka, se zmeni barva*/
+QPushButton::pressed {
+
+	background-color: rgb(60, 60, 60);
+}</string>
+      </property>
+      <property name="text">
+       <string>2</string>
+      </property>
+      <property name="shortcut">
+       <string>2</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QPushButton" name="Pza">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>)</string>
+      </property>
+      <property name="shortcut">
+       <string>)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="4">
+     <widget class="QPushButton" name="Zmoc">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>x^n</string>
+      </property>
+      <property name="shortcut">
+       <string>E</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="3">
+     <widget class="QPushButton" name="B4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(80, 80, 80);
+
+	/*odstraneni ohraniceni a zakulaceni hran*/
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(70, 70, 70);
+}
+
+/*pri zmacknuti tlacitka, se zmeni barva*/
+QPushButton::pressed {
+
+	background-color: rgb(60, 60, 60);
+}</string>
+      </property>
+      <property name="text">
+       <string>4</string>
+      </property>
+      <property name="shortcut">
+       <string>4</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="6">
+     <widget class="QPushButton" name="B6">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(80, 80, 80);
+
+	/*odstraneni ohraniceni a zakulaceni hran*/
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(70, 70, 70);
+}
+
+/*pri zmacknuti tlacitka, se zmeni barva*/
+QPushButton::pressed {
+
+	background-color: rgb(60, 60, 60);
+}</string>
+      </property>
+      <property name="text">
+       <string>6</string>
+      </property>
+      <property name="shortcut">
+       <string>6</string>
+      </property>
+     </widget>
+    </item>
+    <item row="19" column="3">
+     <widget class="QPushButton" name="B1">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(80, 80, 80);
+
+	/*odstraneni ohraniceni a zakulaceni hran*/
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(70, 70, 70);
+}
+
+/*pri zmacknuti tlacitka, se zmeni barva*/
+QPushButton::pressed {
+
+	background-color: rgb(60, 60, 60);
+}</string>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="shortcut">
+       <string>1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="21" column="3">
+     <widget class="QPushButton" name="Zcarka">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>,</string>
+      </property>
+      <property name="shortcut">
+       <string>,</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="7">
+     <widget class="QPushButton" name="Zfact">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>n!</string>
+      </property>
+      <property name="shortcut">
+       <string>!</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="4">
      <widget class="QPushButton" name="B5">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -685,7 +728,56 @@ QPushButton::pressed {
       </property>
      </widget>
     </item>
-    <item row="7" column="3">
+    <item row="8" column="7">
+     <widget class="QPushButton" name="Zdeleno">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>÷</string>
+      </property>
+      <property name="shortcut">
+       <string>/</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="6">
      <widget class="QPushButton" name="B9">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -743,51 +835,8 @@ QPushButton::pressed {
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QPushButton" name="Pza">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>)</string>
-      </property>
-      <property name="shortcut">
-       <string>)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="17" column="0">
-     <widget class="QPushButton" name="Ztan">
+    <item row="14" column="7">
+     <widget class="QPushButton" name="Zkrat">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -828,64 +877,15 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>tan</string>
+       <string>×</string>
       </property>
       <property name="shortcut">
-       <string>T</string>
+       <string>*</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="4">
-     <widget class="QPushButton" name="Zfact">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>n!</string>
-      </property>
-      <property name="shortcut">
-       <string>!</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="1">
-     <widget class="QPushButton" name="B4">
+    <item row="19" column="6">
+     <widget class="QPushButton" name="B3">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -929,15 +929,205 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>4</string>
+       <string>3</string>
       </property>
       <property name="shortcut">
-       <string>4</string>
+       <string>3</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="4">
+    <item row="8" column="4">
+     <widget class="QPushButton" name="B8">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(80, 80, 80);
+
+	/*odstraneni ohraniceni a zakulaceni hran*/
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(70, 70, 70);
+}
+
+/*pri zmacknuti tlacitka, se zmeni barva*/
+QPushButton::pressed {
+
+	background-color: rgb(60, 60, 60);
+}</string>
+      </property>
+      <property name="text">
+       <string>8</string>
+      </property>
+      <property name="shortcut">
+       <string>8</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="6">
+     <widget class="QPushButton" name="Zodmo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>70</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>n√x</string>
+      </property>
+      <property name="shortcut">
+       <string>R</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="6">
+     <widget class="QPushButton" name="Zdel_ch">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>⌫</string>
+      </property>
+      <property name="shortcut">
+       <string>Backspace</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="7">
+     <widget class="QPushButton" name="DELETE">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+
+	background-color: rgb(60, 60, 60);
+	border: none;
+	border-radius: 5px;
+}
+
+/*pro vsechny tlacitka a terminalu pro cisla
+* kdyz se prejede mysi, zesvetli dane talictko
+**/
+QPushButton::hover {
+
+	background-color: rgb(50, 50, 50);
+}
+
+QPushButton::pressed {
+
+	background-color: rgb(40, 40, 40);
+}</string>
+      </property>
+      <property name="text">
+       <string>DEL</string>
+      </property>
+      <property name="shortcut">
+       <string>Del</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2" colspan="3">
      <widget class="QLineEdit" name="Display">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -958,32 +1148,35 @@ QPushButton::pressed {
         <hintingpreference>PreferFullHinting</hintingpreference>
        </font>
       </property>
-      <property name="tabletTracking">
+      <property name="cursor">
+       <cursorShape>IBeamCursor</cursorShape>
+      </property>
+      <property name="mouseTracking">
        <bool>true</bool>
+      </property>
+      <property name="tabletTracking">
+       <bool>false</bool>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton {
-
+       <string notr="true">QLineEdit{
+	
+	/*barva pozadi tmava a text bily*/
 	background-color: rgb(60, 60, 60);
+	color: white;
+
+	/*uprava ohraniceni*/
 	border: none;
-	border-radius: 10px;
-}
+	border-radius: 5px;
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
+	/*odsazeni textu*/
+	padding-right: 20px;
 }</string>
+      </property>
+      <property name="inputMethodHints">
+       <set>Qt::ImhNone</set>
       </property>
       <property name="text">
        <string/>
@@ -996,19 +1189,13 @@ QPushButton::pressed {
       </property>
      </widget>
     </item>
-    <item row="7" column="4">
-     <widget class="QPushButton" name="Zdeleno">
+    <item row="4" column="2">
+     <widget class="QPushButton" name="Lza">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
       </property>
       <property name="font">
        <font>
@@ -1038,15 +1225,15 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>÷</string>
+       <string>(</string>
       </property>
       <property name="shortcut">
-       <string>/</string>
+       <string>(</string>
       </property>
      </widget>
     </item>
-    <item row="7" column="1">
-     <widget class="QPushButton" name="B7">
+    <item row="8" column="2">
+     <widget class="QPushButton" name="Zdeg">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -1062,15 +1249,13 @@ QPushButton::pressed {
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>20</pointsize>
+        <pointsize>16</pointsize>
        </font>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton {
 
-	background-color: rgb(80, 80, 80);
-
-	/*odstraneni ohraniceni a zakulaceni hran*/
+	background-color: rgb(60, 60, 60);
 	border: none;
 	border-radius: 5px;
 }
@@ -1080,24 +1265,23 @@ QPushButton::pressed {
 **/
 QPushButton::hover {
 
-	background-color: rgb(70, 70, 70);
+	background-color: rgb(50, 50, 50);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
 QPushButton::pressed {
 
-	background-color: rgb(60, 60, 60);
+	background-color: rgb(40, 40, 40);
 }</string>
       </property>
       <property name="text">
-       <string>7</string>
+       <string>DEG/RAD</string>
       </property>
-      <property name="shortcut">
-       <string>7</string>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
+    <item row="14" column="2">
      <widget class="QPushButton" name="Zsin">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -1146,51 +1330,8 @@ QPushButton::pressed {
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="Lza">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>(</string>
-      </property>
-      <property name="shortcut">
-       <string>(</string>
-      </property>
-     </widget>
-    </item>
-    <item row="18" column="3">
-     <widget class="QPushButton" name="Zrovna">
+    <item row="19" column="2">
+     <widget class="QPushButton" name="Zcos">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -1231,104 +1372,15 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>=</string>
+       <string>cos</string>
       </property>
       <property name="shortcut">
-       <string notr="true">Return, Enter</string>
+       <string>C</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="4">
-     <widget class="QPushButton" name="DELETE">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>DEL</string>
-      </property>
-      <property name="shortcut">
-       <string>Del</string>
-      </property>
-     </widget>
-    </item>
-    <item row="18" column="0">
-     <widget class="QPushButton" name="Zdeg">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>70</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>16</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton {
-
-	background-color: rgb(60, 60, 60);
-	border: none;
-	border-radius: 5px;
-}
-
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
-**/
-QPushButton::hover {
-
-	background-color: rgb(50, 50, 50);
-}
-
-QPushButton::pressed {
-
-	background-color: rgb(40, 40, 40);
-}</string>
-      </property>
-      <property name="text">
-       <string>DEG/RAD</string>
-      </property>
-     </widget>
-    </item>
-    <item row="18" column="4">
-     <widget class="QPushButton" name="Zplus">
+    <item row="21" column="2">
+     <widget class="QPushButton" name="Ztan">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -1369,10 +1421,10 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>+</string>
+       <string>tan</string>
       </property>
       <property name="shortcut">
-       <string>+</string>
+       <string>T</string>
       </property>
      </widget>
     </item>

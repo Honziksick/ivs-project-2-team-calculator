@@ -27,6 +27,7 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QWidget>
+#include <QLineEdit>
 /*přidání matematické knihovny*/
 #include "../../core/cat_calc_core.h"
 /**
@@ -77,7 +78,7 @@ private slots:
     void cos();
     void tan();
     void deg_rad();
+    void delete_char();
 };
-
 #endif // MAINWINDOW_H
 /*** Konec souboru mainwindow.h ***/
