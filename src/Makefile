@@ -90,7 +90,7 @@ PROFILE = -pg
 COVERAGE = -fprofile-arcs -ftest-coverage
 
 # Flagy pro překlad matematické knihovny a testů
-CXXFLAGS_CORE = $(STANDARD) -O2 $(WARNING) 
+CXXFLAGS_STD = $(STANDARD) -O2 $(WARNING) 
 CXXFLAGS_DEV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE) $(PROFILE)
 
 
@@ -108,20 +108,18 @@ CXXFLAGS_DEV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE) $(PROFILE)
 # Příkaz 'all' kompiluje hlavní projekt (TO-DO také profiler)
 all: build-profiler build-core
 
-build-core: $(CORE_BUILD_DIR)/$(EXECUTABLE).o
-	@$(MAKE) $(SILENTOPT) move-coverage-data
+# Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
+clean: clean-build clean-doc clean-profile
 
 # Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
 test: run-tests move-coverage-data
 
-run-tests: $(CORE_BUILD_DIR)/$(EXECUTABLE)_test
-	./$(CORE_BUILD_DIR)/$(EXECUTABLE)_test
+# Příkaz 'doc' vygeneruje dokumentaci k projektu
+doc: clean-doc
+	doxygen Doxyfile
 
 # Příkaz 'coverage' vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage test-coverage process-coverage
-
-# $(MAKE) $(SILENTOPT) build-profiler
-# $(MAKE) $(SILENTOPT) rebuild-core
 
 # Příkaz 'profile' sestaví a spustí profiling matematické knihovny
 profile:
@@ -140,9 +138,7 @@ profile:
 	@mv -f ./$(CORE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
 	mv ./$(CORE_BUILD_DIR)/gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv ./$(CORE_BUILD_DIR)/gprof-report.png $(PROFILE_OUT_DIR)/
-	
 	@$(MAKE) $(SILENTOPT) move-coverage-data
-
 
 run-first-profile:
 	if [ "$(DATA_FILE)" = "-1" ]; then \
@@ -162,17 +158,15 @@ run-other-profile:
 		mv gmon.out $(CORE_BUILD_DIR)/gmon.out; \
     fi
 
-
-# Příkaz 'doc' vygeneruje dokumentaci k projektu
-doc: clean-doc
-	doxygen Doxyfile
+################################################################################
+#                                                                              #
+#                        KONKRETIZOVANÉ PŘÍKAZY 'CLEAN'                        #
+#                                                                              #
+################################################################################
 
 # Příkaz 'clean-build' odstraní všechny soubory z adresáře 'build'
 clean-build:
 	rm -rf $(CORE_BUILD_DIR)
-
-clean-core:
-	@rm -f $(CORE_BUILD_DIR)/$(EXECUTABLE).o
 
 # Příkaz 'clean-doc' odstraní všechny soubory z adresáře 'doc' (kromě /images)
 clean-doc:
@@ -182,15 +176,18 @@ clean-profile:
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
 
-# Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
-clean: clean-build clean-doc clean-profile
-
 
 ################################################################################
 #                                                                              #
 #              KOMPILACE MATEMATICKÉ KNIHOVNY "Calm CatCalc Core"              #
 #                                                                              #
 ################################################################################
+
+build-core: $(CORE_BUILD_DIR)/$(EXECUTABLE).o
+	@$(MAKE) $(SILENTOPT) move-coverage-data
+
+clean-core:
+	@rm -f $(CORE_BUILD_DIR)/$(EXECUTABLE).o
 
 # Objektový soubor závisí na zdrojovém a hlavičkovém souboru. Vytvoří složku pro
 # výsledky kompilace, pokud neexistuje. Kompiluje zdrojový soubor do objektového.
@@ -204,6 +201,9 @@ $(CORE_BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #          KOMPILACE GOOGLE TEST UNIT TESTŮ PRO MATEMATICKOU KNIHOVNU          #
 #                                                                              #
 ################################################################################
+
+run-tests: $(CORE_BUILD_DIR)/$(EXECUTABLE)_test
+	./$(CORE_BUILD_DIR)/$(EXECUTABLE)_test
 
 # Testovací binární soubor do sebe linkuje všechny závislosti spojené s unit
 # testy. Soubor závisí na objektovém souboru testů, objektovém souboru 
