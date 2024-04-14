@@ -39,6 +39,12 @@
 #include <fstream>
 #include <iomanip>
 #include <random>
+#include <regex>
+
+/* Workaround: Pro chybu v operaci sčítání z matematického knihovny,
+               která způsobuje odseknutí desetinné části a přidání lomítka,
+               které je následně chybně interpretováno jako dělení */
+#include <algorithm>
 
 using namespace std;                // standardní knihovna C++
 using namespace MathSymbols;        // třídy s matematickými symboly
@@ -132,7 +138,8 @@ void generateNumbers(){
     // Proměnná pro zobrazení stavu generování náhodných čísel
     int progressBar = AUTO_GEN_NUM / 10;   // Počet kroků pro 10% pokroku
     
-    cout << "Launching Auto-Gen, generating random numbers: " << endl;
+    cout << "Launching Auto-Gen, generating "
+         << AUTO_GEN_NUM << " random numbers: " << endl;
 
     // Generujeme tolik čísel, kolik udává konstanta 'AUTO_GEN_NUM'
     for(unsigned long i = 0; i < AUTO_GEN_NUM; i++){
@@ -144,7 +151,7 @@ void generateNumbers(){
 
         // Aktualizace progress baru po každých 10%
         if (i % progressBar == 0) {
-            cout << "\rProgress: " << i / progressBar * 10 << "% completed" << flush;
+            cout << "\rProgress: " << i/progressBar*10 << "% completed" << flush;
         }
     }
 
@@ -163,24 +170,35 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
 
     // Cyklus k načtení vstupních dat z datového proudu 
     while(dataStream >> valueX){
-        // Pokud je načtená hodnota číslem
-        if(stod(valueX)){
+        try {
+            // Pokud je načtená hodnota číslem (navíc speciální ošetření nulu)
+            if(stod(valueX) || regex_match(valueX, regex("-?0*\\.?0*"))){
 
-            // Konkatenuje hodnotu X k řetězci součtu hodnot X
-            valueSum = calculate(valueSum + ADD + valueX);
+                // Přičtení hodnoty X k řetězci součtu hodnot X
+                valueSum = calculate(O_BR + valueSum + C_BR + 
+                                        ADD + 
+                                        O_BR + valueX + C_BR );
 
-            // Konkatenuje hodnotu X^2 k řetězci součtu druhých mocnin X
-            powerSum = calculate(powerSum + ADD + (valueX + POW));
+                // Přičtení hodnoty X^2 k řetězci součtu druhých mocnin X
+                powerSum = calculate(powerSum + ADD + (valueX + POW));
 
-            N++;    // Inkrementuje počítadlo načtených hodnot (stringově)
+                N++;    // Inkrementuje počítadlo načtených hodnot
 
-            /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
-            LOG("    Read: valueX = %-10s    N = %-6ld    valueSum = %-21s    powerSum = %-21s", 
-                valueX.c_str(), N, valueSum.c_str(), powerSum.c_str());
+                /*  ~~~ WORKARNOUD - START ~~~  */
+                valueSum.erase(remove(valueSum.begin(), valueSum.end(), '/'), valueSum.end());
+                powerSum.erase(remove(powerSum.begin(), powerSum.end(), '/'), powerSum.end());
+                /*  ~~~ WORKARNOUD - END ~~~  */
+
+                /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
+                LOG("    Read: valueX = %-10s    N = %-6ld    "
+                                "valueSum = %-21s    powerSum = %-21s", 
+                    valueX.c_str(), N, valueSum.c_str(), powerSum.c_str());
+            }
         }
-        // Pokud načtená hodnota není číslo, vyhodí výjimku
-        else{
-            throw invalid_argument("Error: Invalid input data (not a number).");
+        // Funkci byly předány neplatné vstupní hodnoty (tj. nečíselné)
+        catch (const invalid_argument& ia){
+            cerr << "Error: Invalid input data (not a number)." << endl;
+            exit(E_INV_DATA);
         }
     }
 }
@@ -191,14 +209,17 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &
     LOG0("Going to read data from 'auto_gen.txt'...");
     ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
 
-    // Pokud se podařilo otevřít soubor, čti z něj vstupní data
-    if(dataFile.is_open()){
-        readData(dataFile, valueSum, powerSum, N);
-        dataFile.close();
+    try {
+        // Pokud se podařilo otevřít soubor, čti z něj vstupní data
+        if(dataFile.is_open()){
+            readData(dataFile, valueSum, powerSum, N);
+            dataFile.close();
+        }
     }
-    // Pokud se nepodařilo otevřít soubor, vyhoď vyjímku
-    else{
-        throw runtime_error("Error: Unable to open data file.");
+    // Nepodařilo se otevřít soubor s vstupními daty
+    catch(const invalid_argument& ia){
+        cerr << "Error: Unable to open data file." << endl;
+        exit(E_FILE_OPEN);
     }
 }
 
@@ -295,21 +316,9 @@ int main(int argc, char **argv){
     }
 
     // Výpočet výběrové směrodatné odchylky
-    try{
-        cout << standardDeviation() << endl;    // výpis výsledku na 'stdout'
-    }
-    // Funkci byly předány neplatné vstupní hodnoty (tj. nečíselné)
-    catch(invalid_argument& error){
-        cerr << error.what() << endl;    // Výpis chyby na 'stderr''
-        return E_INV_DATA;
-    }
-    // Nepodařilo se otevřít soubor s vstupními daty
-    catch(runtime_error& error){
-        cerr << error.what() << endl;    // Výpis chyby na 'stderr'
-        return E_FILE_OPEN;
-    }
+    cout << standardDeviation() << endl;    // výpis výsledku na 'stdout'
 
-    return OK;
+    return OK;    // Program skončil úspěšně
 }
 
 /*** Konec souboru stddev.cpp ***/

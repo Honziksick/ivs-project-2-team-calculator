@@ -37,6 +37,7 @@
 #include <fstream>
 #include <iomanip>
 #include <random>
+#include <regex>
 
 
 #ifdef DEBUG
