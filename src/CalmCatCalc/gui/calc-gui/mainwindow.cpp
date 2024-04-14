@@ -21,34 +21,57 @@
  * @brief __Definice/implementace GUI nad matematickou knihovnou__
  */
 
-/**
- * @details QT vygenerovaná část kódu
- */
 #include "mainwindow.h"
 #include <QKeyEvent>
 #include <QWidget>
 #include "./ui_mainwindow.h"
 #include "../../core/cat_calc_core.cpp"
 
+/**
+ * @brief Stav, kdy se pracuje s prázdnou proměnnou
+ */
 QString empty_state = "";
-/*string s vysledkem*/
+
+/**
+ * @brief String s výsledkem
+ */
 QString eq_str;
+
+/**
+ * @brief Definice vyjímky
+ */
+std::exception e;
+
+/******************************************************************************
+ *
+ *                      Flagy pro různé stavy
+ *
+******************************************************************************/
 int comma_rate = 0;
 int num_rate = 0;
 int gon_rate = 0;
 int err = 0;
 int eq_state;
 
-/*exception v cat_calc_core.cpp*/
-std::exception e;
 
+/******************************************************************************
+ *
+ *                      Spojení signálů s tlačitky
+ *
+******************************************************************************/
+
+/**
+ * @brief Propojení signálů s tlačítky
+ * @note
+ * -Jednotlivé numerické tlačítka jsou spojeny skrze for cyklus
+ * -Zbytek tlačítek jsem spojil manuálně, aby nebyla zhoršena srozumitelnost
+ *  toho, co se s čím spojuje
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    /** @brief Převod inputu na klávesnici do kalkulačky pro čísla */
 
     /*nastaví text v display aby zobrazoval prazdny string*/
     ui->Display->setText(empty_state);
@@ -65,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
         /*propojeni tlacitek pro cisla*/
         connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
+
     /*propojeni jednotlivych tlacitek*/
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
     connect(ui->DELETE, SIGNAL(clicked()), this, SLOT(del()));
@@ -90,6 +114,12 @@ MainWindow::~MainWindow(){
 
 }
 
+/******************************************************************************
+ *
+ *                      Funkce tlačítek
+ *
+******************************************************************************/
+
 void MainWindow::equal(){
     QString dis_val = ui->Display->text();
     /*prevedeni QString na string*/
@@ -99,7 +129,7 @@ void MainWindow::equal(){
         /*prevedeni zpatky do QString formatu*/
         QString result = QString::fromStdString(calculate(dis_val_s));      
         if(result == empty_state){
-            ui->vysledek->setText("=0");
+            ui->vysledek->setText("= 0");
         }else{
             ui->vysledek->setText("= " + result);
             eq_str = result;
