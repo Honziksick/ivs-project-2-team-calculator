@@ -31,7 +31,7 @@
 #include "../../core/cat_calc_core.cpp"
 
 
-/*todo chybná slova, DEG/RAD, odmocnina po výpočtu*/
+/*todo odmocnina po výpočtu*/
 
 QString calcVal = "";
 int comma_rate = 0;
@@ -64,10 +64,10 @@ MainWindow::MainWindow(QWidget *parent)
         QString button = "B" + QString::number(i);
         num_buttons[i] = MainWindow::findChild<QPushButton *>(button);
 
-        /*propojeni tlacitek*/
+        /*propojeni tlacitek pro cisla*/
         connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
-
+    /*propojeni jednotlivych tlacitek*/
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
     connect(ui->DELETE, SIGNAL(clicked()), this, SLOT(del()));
     connect(ui->Lza, SIGNAL(clicked()), this, SLOT(lbra()));
@@ -118,19 +118,24 @@ void MainWindow::equal(){
 }
 
 void MainWindow::del(){
-
     ui->Display->setText(calcVal);
 
     /*reset, aby se znovu mohla napsat carka*/
     comma_rate = 0;
+    /*reset, pro spravne vyuziti gon. funkci*/
     gon_rate = 0;
 }
 
 
 void MainWindow::delete_char(){
     QString text = ui->Display->text();
-    /*text.left vrati n znaku zleva == velikost qstringu - 1 znak*/
-    QString new_val = text.left(text.size() - 1);
+    QString new_val;
+    if(err == 1){
+        new_val = calcVal;
+    }else{
+        /*text.left vrati n znaku zleva == velikost qstringu - 1 znak*/
+        new_val = text.left(text.size() - 1);
+    }
 
     ui->Display->setText(new_val);
 }
@@ -145,7 +150,7 @@ void MainWindow::num(){
     QString dis_val = ui->Display->text();
 
     if(err == 1){
-        ui->Display->setText("");
+        ui->Display->setText(calcVal);
         ui->Display->setText(val_button);
         err = 0;
 
@@ -351,6 +356,13 @@ void MainWindow::cos(){
 }
 
 void MainWindow::deg_rad(){
+    /*prepne deg na rad a naopak*/
+    degRad = !degRad;
 
+    /*RAD == false (default), DEG == true*/
+    if(degRad == true){
+        /*zmeni tlacitko, aby bylo deg nebo rad*/
+        ui->Zdeg->setText("DEG");
+    }else ui->Zdeg->setText("RAD");
 }
 /*** Konec souboru mainwindow.cpp ***/
