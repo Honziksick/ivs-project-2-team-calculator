@@ -30,16 +30,13 @@
 #include "./ui_mainwindow.h"
 #include "../../core/cat_calc_core.cpp"
 
-
-/*todo odmocnina po výpočtu*/
-
 QString calcVal = "";
+QString eq_str;
 int comma_rate = 0;
-int rbra_rate = 0;
-int lbra_rate = 0;
 int num_rate = 0;
 int gon_rate = 0;
 int err = 0;
+int eq_rate;
 
 /*exception v cat_calc_core.cpp*/
 std::exception e;
@@ -101,13 +98,14 @@ void MainWindow::equal(){
         /*prevedeni zpatky do QString formatu*/
         QString result = QString::fromStdString(calculate(dis_val_s));      
         if(result == ""){
-            ui->Display->setText(calcVal);
+            ui->vysledek->setText("=0");
         }else{
-            ui->Display->setText(result);
+            ui->vysledek->setText("=" + result);
+            eq_str = result;
+            eq_rate = 1;
         }
 
         comma_rate = 0;
-        gon_rate = 0;
     } catch (std::invalid_argument& e) {
             /*vypise exception, ktery byl thrownut v knihovne*/
             ui->Display->setText(QString::fromStdString(e.what()));
@@ -119,11 +117,14 @@ void MainWindow::equal(){
 
 void MainWindow::del(){
     ui->Display->setText(calcVal);
+    ui->vysledek->setText(calcVal);
 
     /*reset, aby se znovu mohla napsat carka*/
     comma_rate = 0;
     /*reset, pro spravne vyuziti gon. funkci*/
     gon_rate = 0;
+    /*reset pro vypocet noveho prikladu*/
+    eq_rate = 0;
 }
 
 
@@ -148,6 +149,7 @@ void MainWindow::num(){
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
+    QString new_val;
 
     if(err == 1){
         ui->Display->setText(calcVal);
@@ -160,16 +162,22 @@ void MainWindow::num(){
             ui->Display->setText(val_button);
         }else{
             /*pokud uz se jedno cislo napsalo, zacne psat dalsi za sebe*/
-            QString new_val = dis_val + val_button;
+            new_val = dis_val + val_button;
             ui->Display->setText(new_val);
         }
+    }
+
+    /*pokud se vypsal vysledek, nove napsane cislo prepise vysledek a vypocet*/
+    if(eq_rate == 1){
+        ui->Display->setText(val_button);
+        ui->vysledek->setText(calcVal);
+
+        eq_rate = 0;
     }
 }
 
 void MainWindow::lbra(){
     QPushButton *button = (QPushButton *)sender();
-
-    lbra_rate++;
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
@@ -184,8 +192,6 @@ void MainWindow::lbra(){
 
 void MainWindow::rbra(){
     QPushButton *button = (QPushButton *)sender();
-
-    rbra_rate++;
 
     QString val_button = button->text();
     QString dis_val = ui->Display->text();
@@ -225,8 +231,12 @@ void MainWindow::plus(){
     if(dis_val == ""){
         new_val = "0" + val_button;
     }
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
     ui->Display->setText(new_val);
-
+    comma_rate = 0;
+    eq_rate = 0;
 }
 
 void MainWindow::minus(){
@@ -239,7 +249,12 @@ void MainWindow::minus(){
     if(dis_val == ""){
         new_val = "0" + val_button;
     }
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
     ui->Display->setText(new_val);
+    comma_rate = 0;
+    eq_rate = 0;
 }
 
 void MainWindow::multiply(){
@@ -250,8 +265,12 @@ void MainWindow::multiply(){
     if(dis_val == ""){
         new_val = "0" + val_button;
     }
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
     ui->Display->setText(new_val);
-
+    comma_rate = 0;
+    eq_rate = 0;
 }
 
 void MainWindow::div(){
@@ -262,7 +281,12 @@ void MainWindow::div(){
     if(dis_val == ""){
         new_val = "0" + val_button;
     }
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
     ui->Display->setText(new_val);
+    comma_rate = 0;
+    eq_rate = 0;
 }
 
 void MainWindow::root(){
@@ -279,6 +303,10 @@ void MainWindow::sqr(){
     QString new_val = dis_val + val_button;
 
     ui->Display->setText(new_val);
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
+    eq_rate = 0;
 }
 
 void MainWindow::fact(){
@@ -287,6 +315,10 @@ void MainWindow::fact(){
     QString new_val = dis_val + val_button;
 
     ui->Display->setText(new_val);
+    if(eq_rate == 1){
+        new_val = eq_str + val_button;
+    }
+    eq_rate = 0;
 }
 
 void MainWindow::sin(){
