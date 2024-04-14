@@ -84,9 +84,9 @@
  * @brief Definice konstant pro generátor náhodných čísel
  */
 #define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
-#define AUTO_GEN_NUM  60000      /**< Počet náhodně generovaných čísel */
-#define AUTO_GEN_MIN  0         /**< Nejmenší možná vygenerovaná hodnota */
-#define AUTO_GEN_MAX  2000         /**< Největší možná vygenerovaná hodnota */
+#define AUTO_GEN_NUM  100000      /**< Počet náhodně generovaných čísel */
+#define AUTO_GEN_MIN -10000         /**< Nejmenší možná vygenerovaná hodnota */
+#define AUTO_GEN_MAX  10000         /**< Největší možná vygenerovaná hodnota */
 #define PRECISION 4       /**< Přesnost desetinné části vygenerovaných čísel */
 
 
