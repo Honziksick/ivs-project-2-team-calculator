@@ -30,7 +30,7 @@
  */
 
 // Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
-#define DEBUG
+//#define DEBUG
 
 #include "../CalmCatCalc/core/cat_calc_core.h"
 #include "stddev.h"
@@ -132,11 +132,11 @@ void generateNumbers(){
     random_device rd;
     mt19937 gen(rd());
 
-    // Definice rozsah, z jakého se mají generovat náhodná čísla
+    // Definice rozsahu, z jakého se mají generovat náhodná čísla
     uniform_real_distribution<> dis(AUTO_GEN_MIN, AUTO_GEN_MAX);
 
     // Proměnná pro zobrazení stavu generování náhodných čísel
-    int progressBar = AUTO_GEN_NUM / 10;   // Počet kroků pro 10% pokroku
+    int progressBar = AUTO_GEN_NUM / 10;    // Jeden krok pro 10% pokroku
     
     cout << "Launching Auto-Gen, generating "
          << AUTO_GEN_NUM << " random numbers: " << endl;
@@ -171,13 +171,13 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
     // Cyklus k načtení vstupních dat z datového proudu 
     while(dataStream >> valueX){
         try {
-            // Pokud je načtená hodnota číslem (navíc speciální ošetření nulu)
+            // Pokud je načtená hodnota číslem (+ navíc speciální ošetření nulu)
             if(stod(valueX) || regex_match(valueX, regex("-?0*\\.?0*"))){
 
                 // Přičtení hodnoty X k řetězci součtu hodnot X
                 valueSum = calculate(O_BR + valueSum + C_BR + 
-                                        ADD + 
-                                        O_BR + valueX + C_BR );
+                                     ADD + 
+                                     O_BR + valueX + C_BR);
 
                 // Přičtení hodnoty X^2 k řetězci součtu druhých mocnin X
                 powerSum = calculate(powerSum + ADD + (valueX + POW));
@@ -196,7 +196,7 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
             }
         }
         // Funkci byly předány neplatné vstupní hodnoty (tj. nečíselné)
-        catch (const invalid_argument& ia){
+        catch (const invalid_argument &ia){
             cerr << "Error: Invalid input data (not a number)." << endl;
             exit(E_INV_DATA);
         }
@@ -217,7 +217,7 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &
         }
     }
     // Nepodařilo se otevřít soubor s vstupními daty
-    catch(const invalid_argument& ia){
+    catch(const runtime_error &re){
         cerr << "Error: Unable to open data file." << endl;
         exit(E_FILE_OPEN);
     }
@@ -234,7 +234,7 @@ void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N){
 string standardDeviation(){
     string valueSum = "0.0";        // Součet hodnot X ze vstupu
     string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
-    unsigned long N = 0;            // Sočet načtených hodnot
+    unsigned long N = 0;            // Součet načtených hodnot
 
     // Čti datový proud hodnot ze 'stdin' a zjisti, zda obsahuje alespoň 2 čísla
     readDataFromStdin(valueSum, powerSum, N);
@@ -249,9 +249,9 @@ string standardDeviation(){
         N = 0;
 
         // Došlo by k dělení nulou -> vygeneruj náhodná čísla na vstup
-        generateNumbers();     
+        generateNumbers();
 
-        // Čtení vygenerovanychhodnot z 'auto_gen.txt'
+        // Čtení vygenerovaných hodnot z 'auto_gen.txt'
         readDataFromAutoGenFile(valueSum, powerSum, N);
     }
 
@@ -278,7 +278,6 @@ string standardDeviation(){
                                C_BR) +
                             C_BR) +
                          C_BR);
-
     string radicandVal = calculate(radicandExp);
 
     // Výpočet výběrové směrodatné odchylky
@@ -292,6 +291,8 @@ string standardDeviation(){
     LOG("          meanExp = %s", meanExp.c_str());
     LOG("          meanVal = %-15s", meanVal.c_str());
     LOG("       meanPowVal = %-15s\n", meanPowVal.c_str());
+    LOG("      fractionExp = %s", fractionExp.c_str());
+    LOG("      fractionVal = %-15s\n", fractionVal.c_str());
     LOG("      radicandExp = %s", radicandExp.c_str());
     LOG("      radicandVal = %-15s\n", radicandVal.c_str());
     LOG("           RESULT = %-15s\n", standardDeviation.c_str());
