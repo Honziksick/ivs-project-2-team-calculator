@@ -39,27 +39,39 @@
 #include <random>
 
 
+#ifdef DEBUG
 /**
  *
  * @brief Makra pro logování programu v režimu ladění na `stderr`.
  *
  * @details Tato makra vypisují zprávu na standardní chybový výstup (`stderr`).
  *          Zpráva obsahuje název souboru, číslo řádku a název funkce, kde bylo
- *          makro `LOG0` nebo `LOG` zavoláno, spolu se zprávou, kterou jste
- *          poskytli.
+ *          makro `LOG0` zavoláno, spolu se zprávou, kterou jste poskytli.
  *
- * __Makro `LOG0()`:__
- * @param s Formátovací řetězec pro zprávu.
+ * @param s Řetězec pro zprávu ve formátovacích specifikátorů.
  *
- * __Makro `LOG()`:__
- * @param s Formátovací řetězec pro zprávu. Může obsahovat libovolný počet
- *          formátovacích specifikátorů, které jsou nahrazeny dalšími argumenty
- *          makra.
+ * @note Pro vypnutí logování je třeba zakomentovat makro `DEBUG`.
+ *
+ */
+#define LOG0(s) fprintf(stderr, "%s:%-3u:%-20s" s "\n", __FILE__, __LINE__, __func__)
+
+/**
+ *
+ * @brief Makra pro logování programu v režimu ladění na `stderr`.
+ *
+ * @details Tato makra vypisují zprávu na standardní chybový výstup (`stderr`).
+ *          Zpráva obsahuje název souboru, číslo řádku a název funkce, kde bylo
+ *          makro `LOG` zavoláno, spolu se zprávou, kterou jste poskytli.
+ *
+ * @param s Formátovací řetězec pro zprávu. `LOG()` může kromě výstupního
+ *          řetězce obsahovat také libovolný počet formátovacích specifikátorů,
+ *          které jsou nahrazeny dalšími argumenty makra.
  * @param ... Další argumenty makra. Tyto argumenty jsou vloženy do
  *            formátovacího řetězce `s`.
+ *
+ * @note Pro vypnutí logování je třeba zakomentovat makro `DEBUG`.
+ *
  */
-#ifdef DEBUG
-#define LOG0(s) fprintf(stderr, "%s:%-3u:%-20s" s "\n", __FILE__, __LINE__, __func__)
 #define LOG(s, ...) fprintf(stderr, "%s:%-3u:%-20s" s "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 #else
 #define LOG0(s) do {} while (0)
@@ -71,22 +83,22 @@
  * @brief Definice konstant pro generátor náhodných čísel
  */
 #define FILE_PATH "auto_gen.txt"  /**< Název generovaného souboru s náhodným daty */
-#define AUTO_GEN_NUM  100000      /**< Počet náhodně generovaných čísel */
-#define AUTO_GEN_MIN -10000       /**< Nejmenší možná vygenerovaná hodnota */
-#define AUTO_GEN_MAX  10000       /**< Největší možná vygenerovaná hodnota */
-#define PRECISION 10       /**< Přesnost desetinné části vygenerovaných čísel */
+#define AUTO_GEN_NUM  60000      /**< Počet náhodně generovaných čísel */
+#define AUTO_GEN_MIN  0         /**< Nejmenší možná vygenerovaná hodnota */
+#define AUTO_GEN_MAX  2000         /**< Největší možná vygenerovaná hodnota */
+#define PRECISION 4       /**< Přesnost desetinné části vygenerovaných čísel */
 
 
 /**
  * @brief Definice konstant (stringů) matematických operací pro funkci
  *        `calculate()`
  */
-#define ADD_OP " + "    /**< Operátor sčítání v podobě `string` */
-#define SUB_OP " - "    /**< Operátor odčítání v podobě `string` */
-#define MUL_OP " * "    /**< Operátor násobení v podobě `string` */
-#define DIV_OP " / "    /**< Operátor dělení v podobě `string`  */
+#define ADD_OP "+"      /**< Operátor sčítání v podobě `string` */
+#define SUB_OP "-"      /**< Operátor odčítání v podobě `string` */
+#define MUL_OP "*"      /**< Operátor násobení v podobě `string` */
+#define DIV_OP "/"      /**< Operátor dělení v podobě `string`  */
 #define POW_OP  "^2"    /**< Operátor umocnění na druhou v podobě `string` */
-#define ROOT_OP "#2"    /**< Operátor druhé odmocniny v podobě `string` */
+#define ROOT_OP "2#"    /**< Operátor druhé odmocniny v podobě `string` */
 
 
 /**
@@ -192,7 +204,7 @@ void generateNumbers();
  *
  * @exception invalid_argument Pokud načtená hodnota není číslo
  */
-void readData(istream& dataStream, string &valueSum, string &powerSum, int &N);
+void readData(istream& dataStream, string &valueSum, string &powerSum, unsigned long &N);
 
 
 /**
@@ -210,7 +222,7 @@ void readData(istream& dataStream, string &valueSum, string &powerSum, int &N);
  *
  * @see readData()
  */
-void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N);
+void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N);
 
 
 /**
@@ -228,7 +240,7 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N);
  *
  * @see readData()
  */
-void readDataFromStdin(string &valueSum, string &powerSum, int &N);
+void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N);
 
 
 /**
