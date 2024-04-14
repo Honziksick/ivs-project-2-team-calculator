@@ -30,7 +30,7 @@
  */
 
 // Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
-//#define DEBUG
+#define DEBUG
 
 #include "../CalmCatCalc/core/cat_calc_core.h"
 #include "stddev.h"
@@ -45,9 +45,9 @@ using namespace MathSymbols;        // třídy s matematickými symboly
 
 // Deklarace použitých funkcí z knihovny`stddev.h`
 void generateNumbers();
-void readData(istream& dataStream, string &valueSum, string &powerSum, int &N);
-void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N);
-void readDataFromStdin(string &valueSum, string &powerSum, int &N);
+void readData(istream& dataStream, string &valueSum, string &powerSum, unsigned long &N);
+void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N);
+void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N);
 string standardDeviation();
 
 
@@ -117,7 +117,7 @@ void help() {
 
 /*  ~~~ Funkce pro generování náhodných čísel do souboru 'auto_gen.txt' ~~~   */
 void generateNumbers(){
-    LOG0("  Generating random numbers...");
+    LOG0("    Generating random numbers...");
 
     ofstream file;            // Vytvoření objektu pro zápis do souboru
     file.open(FILE_PATH);	  // Otevření soubor pro generované hodnoty pro zápis
@@ -135,11 +135,9 @@ void generateNumbers(){
     cout << "Launching Auto-Gen, generating random numbers: " << endl;
 
     // Generujeme tolik čísel, kolik udává konstanta 'AUTO_GEN_NUM'
-    for(int i = 0; i < AUTO_GEN_NUM; i++){
+    for(unsigned long i = 0; i < AUTO_GEN_NUM; i++){
         // Generování náhodného čísla
         double autoGenNum = dis(gen);
-
-        LOG("    Generated: %f", autoGenNum);
 
         // Zápis náhodného čísla do souboru s přesností určenou 'PRECISION'
         file << fixed << setprecision(PRECISION) << autoGenNum << endl;
@@ -158,7 +156,7 @@ void generateNumbers(){
 
 
 /*            ~~~ Funkce pro načítání čísel z datového proudu ~~~             */
-void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
+void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned long &N){
     LOG0("  Reading input data...");
 
     string valueX;      // Načtená hodnota ze vstupu (stdin nebo souboru)
@@ -169,16 +167,16 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
         if(stod(valueX)){
 
             // Konkatenuje hodnotu X k řetězci součtu hodnot X
-            valueSum = valueSum + ADD + valueX;
+            valueSum = calculate(valueSum + ADD + valueX);
 
             // Konkatenuje hodnotu X^2 k řetězci součtu druhých mocnin X
-            powerSum = powerSum + ADD + (valueX + POW);
+            powerSum = calculate(powerSum + ADD + (valueX + POW));
 
             N++;    // Inkrementuje počítadlo načtených hodnot (stringově)
 
             /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
-            LOG("    Read: valueX = %-15s", valueX.c_str());
-            LOG("      State: N = %d", N);
+            LOG("    Read: valueX = %-10s    N = %-6ld    valueSum = %-21s    powerSum = %-21s", 
+                valueX.c_str(), N, valueSum.c_str(), powerSum.c_str());
         }
         // Pokud načtená hodnota není číslo, vyhodí výjimku
         else{
@@ -189,7 +187,7 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, int &N){
 
 
 /* ~~~ Funkce pro načítání čísel ze vygenerovaného souboru `auto_gen.txt` ~~~ */
-void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
+void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N){
     LOG0("Going to read data from 'auto_gen.txt'...");
     ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
 
@@ -205,7 +203,7 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, int &N){
 }
 
 /*     ~~~ Funkce pro načítání čísel ze standardního vstupu (`stdin`) ~~~     */
-void readDataFromStdin(string &valueSum, string &powerSum, int &N){
+void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N){
     LOG0("Reading data from 'STDIN'...");
     readData(cin, valueSum, powerSum, N);  // čteme ze 'stdin'
 }
@@ -213,11 +211,9 @@ void readDataFromStdin(string &valueSum, string &powerSum, int &N){
 
 /*           ~~~ Funkce na výpočet výběrové směrodatné odchylky ~~~           */
 string standardDeviation(){
-    string valueSum = O_BRACKET_SYM;    // Součet hodnot X ze vstupu
-    valueSum = valueSum + "0.0";   
-    string powerSum = O_BRACKET_SYM;    // Součet hodnot mocnin X^2 ze vstupu
-    powerSum = powerSum + "0.0";
-    int N = 0;                          // Sočet načtených hodnot
+    string valueSum = "0.0";        // Součet hodnot X ze vstupu
+    string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
+    unsigned long N = 0;            // Sočet načtených hodnot
 
     // Čti datový proud hodnot ze 'stdin' a zjisti, zda obsahuje alespoň 2 čísla
     readDataFromStdin(valueSum, powerSum, N);
@@ -227,9 +223,7 @@ string standardDeviation(){
         LOG0("  Less than 2 numbers passed to STDIN.");
 
         // Úklid prostředí pro vygenerovaná data
-        valueSum = O_BRACKET_SYM;
         valueSum = valueSum + "0.0";   
-        powerSum = O_BRACKET_SYM;
         powerSum = powerSum + "0.0";
         N = 0;
 
@@ -240,50 +234,46 @@ string standardDeviation(){
         readDataFromAutoGenFile(valueSum, powerSum, N);
     }
 
-    // Uzavření řetězců součtu hodnot a druhých mocnin hodnot
-    valueSum = valueSum + C_BRACKET_SYM;
-    powerSum = powerSum + C_BRACKET_SYM;
+    // Výpočet aritmetického průměru načtených hodnot - mat. výraz a výpočet
+    string meanExp = O_BR + valueSum + DIV + to_string(N) + C_BR;
+    string meanVal = calculate(meanExp);
+    string meanPowVal = calculate(meanVal + POW);
 
-    // Výpočet aritmetického průměru načtených hodnot 
-    string mean = valueSum + DIV + to_string(N);
+    // Výpočet podílu "1/(N-1)" - matematický výraz a výpočet
+    string fractionExp = "1" + DIV +                   
+                         (O_BR + to_string(N) + SUB + "1" + C_BR);
+    string fractionVal = calculate(fractionExp);
 
-    /* LOGOVÁNÍ STAVU PŘED VÝPOČTEM RADIKANDU */
-    LOG0("Prepared mathematical expressions:");
-    LOG("  State: valueSum = %-15s,", valueSum.c_str());
-    LOG("         powerSum = %-15s,", powerSum.c_str());
-    LOG("             mean = %-15s,", mean.c_str());
-    LOG("          N (int) = %d", N);
-    LOG("       N (string) = %s", to_string(N).c_str());
-
-    // Konkatenace matematického výazu pro výpočet radikandu ("pod odmocninou")
-    string radicand = (O_BR +
-                        (O_BR +
-                          (O_BR + "1" + DIV +
-                            (O_BR +
-                              to_string(N) + SUB + "1" + C_BR) +
+    // Výpočet radikandu ("pod odmocninou") - matematický výraz a výpočet
+    string radicandExp = (O_BR +
+                             (O_BR + fractionVal + C_BR) + MUL +
+                           (O_BR +
+                             (O_BR + powerSum + C_BR) +
+                             SUB +
+                               to_string(N) +
+                               MUL + 
+                               (O_BR + 
+                                 meanPowVal +
+                               C_BR) +
                             C_BR) +
-                           C_BR) +
-                        MUL +
-                        (O_BR + powerSum + SUB +
-                          (O_BR + to_string(N) + MUL +
-                            (O_BR +
-                              (O_BR + mean + C_BR) +
-                              POW +
-                            C_BR) +
-                          C_BR) +
-                        C_BR) +
-                      C_BR);
-    
-    /* LOGOVÁNÍ PŘIPRAVENÉHO RADIKANDU */
-    LOG0("Calculating radicand:");
-    LOG("  Radicand: %s", radicand.c_str());
+                         C_BR);
+
+    string radicandVal = calculate(radicandExp);
 
     // Výpočet výběrové směrodatné odchylky
-    string standardDeviation = calculate(ROOT + radicand);
+    string standardDeviation = calculate(ROOT + radicandVal);
 
-    /* LOGOVÁNÍ VÝSLEDKU */
-    LOG0("Calculating standard deviation:");
-    LOG("  Result: %s", standardDeviation.c_str());
+    /* LOGOVÁNÍ VÝPOČTU VÝBĚROVÉ SMĚRODATNÉ ODCHLKY */
+    LOG0("Prepared mathematical expressions:");
+    LOG("  State: valueSum = %-15s", valueSum.c_str());
+    LOG("         powerSum = %-15s", powerSum.c_str());
+    LOG("                N = %ld\n", N);
+    LOG("          meanExp = %s", meanExp.c_str());
+    LOG("          meanVal = %-15s", meanVal.c_str());
+    LOG("       meanPowVal = %-15s\n", meanPowVal.c_str());
+    LOG("      radicandExp = %s", radicandExp.c_str());
+    LOG("      radicandVal = %-15s\n", radicandVal.c_str());
+    LOG("           RESULT = %-15s\n", standardDeviation.c_str());
 
     return standardDeviation;
 }
