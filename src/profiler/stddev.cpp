@@ -32,7 +32,7 @@
 // Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
 //#define DEBUG
 
-#include "../CalmCatCalc/core/cat_calc_core.h"
+#include "cat_calc_core.h"
 #include "stddev.h"
 #include <iostream>
 #include <string>
