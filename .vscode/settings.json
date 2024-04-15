@@ -4,5 +4,6 @@
             "name": "Calm CatCalc Core",
             "pattern": "**/build/**/*core*"
         },
-    ]
+    ],
+    "makefile.makefilePath": "src/Makefile"
 }
