@@ -1,3 +1,21 @@
+#
+# Název projektu: 	Calm CatCalc
+#
+# Soubor: 			CMakeLists
+# Datum: 			20.03.2024
+# Poslední změna: 	20.03.2024
+#
+# Tým:		Calm CatCalc Coders
+#
+# Autoři: 	Farkašovský Lukáš    <xfarkal00>
+#         	Hýža Pavel           <xhyzapa00>
+#         	Kalina Jan           <xkalinj00>
+#         	Krejčí David         <xkrejcd00>
+#
+# Popis: 	Tento soubor obsahuje Makefile pro GUI nad matematickou knihovnou
+#
+
+
 cmake_minimum_required(VERSION 3.5)
 
 project(cat_calc_gui VERSION 0.1 LANGUAGES CXX)
