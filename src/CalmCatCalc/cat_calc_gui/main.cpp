@@ -17,7 +17,7 @@
 
 /**
  * @file main.cpp
- * @author Lukáš Farkašovský /<xfarkal00>
+ * @author Lukáš Farkašovský \<xfarkal00>
  * @brief __Soubor pro otevření okna s UI__
  */
 
