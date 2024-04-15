@@ -80,3 +80,4 @@ dkms.conf
 /info/raw/*
 *.doc
 *.docx
+**/virtual_machine
