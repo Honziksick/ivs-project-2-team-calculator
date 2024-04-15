@@ -47,7 +47,7 @@
             "name": "(gdb) core tests for debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/src/build/tests/cat_calc_core_test_debug",
+            "program": "${workspaceFolder}/src/build/test/cat_calc_core_test_debug",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
