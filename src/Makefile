@@ -33,6 +33,9 @@ EXECUTABLE = cat_calc_core
 PROFILER = stddev
 STDDEV = ./$(BUILD_DIR)/$(PROFILER)
 
+# Název ZIP archivu pro odevzdání projektu
+PACK_NAME = xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip
+
 
 ###                                       ###
 #  Přepínače pro spouštění příkazu $(MAKE)  #
@@ -65,7 +68,6 @@ DOC_OUT_DIR = ../doc
 # Adresář pro generování profilovacích dat
 PROFILE_OUT_DIR = ../profiling
 
-
 ###                                                                       ###
 #  Definice cest k různým složkám obsahující zdrojové soubory ke kompilaci  #
 ###                                                                       ###
@@ -89,6 +91,13 @@ BUILD_DIR = ./build
 TEST_BUILD_DIR = $(BUILD_DIR)/tests
 COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(BUILD_DIR)/profiling
+PACK_DIR = ../pack
+
+# Dočasné složky při balení projektu
+TEMP_DIRS = PACK_REPO_DIR PACK_DOC_DIR PACK_INSTALL_DIR
+PACK_REPO_DIR = $(PACK_DIR)/repo
+PACK_DOC_DIR = $(PACK_DIR)/doc
+PACK_INSTALL_DIR = $(PACK_DIR)/install
 
 
 ###                                   ###
@@ -127,10 +136,10 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 		build-profile run-first-profile run-another-profile
 
 # Příkaz 'all' kompiluje hlavní projekt (TO-DO také profiler)
-all: build-profile build-core
+all: build-core build-profile
 
 # Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
-clean: clean-build clean-doc clean-profile
+clean: clean-build clean-doc clean-profile clean-pack
 
 # Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
 test: run-test build-test-libs run-tests 
@@ -163,6 +172,30 @@ profile:
 	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
+# Příkaz 'pack' vytvoří ZIP archiv s projektem pro odevzdání
+pack:
+	mkdir -p $(PACK_DIR)
+
+	rsync -av --progress ../.git $(PACK_REPO_DIR)/
+	rsync -av --progress ../.github $(PACK_REPO_DIR)/
+	rsync -av --progress ../.vscode $(PACK_REPO_DIR)/
+	rsync -av --progress ../doc $(PACK_REPO_DIR)/
+	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
+	rsync -av --progress ../plan $(PACK_REPO_DIR)/
+	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
+	rsync -av --progress ../src/ $(PACK_REPO_DIR)/ --exclude build
+	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
+	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
+	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
+	rsync -av --progress ../README.md $(PACK_REPO_DIR)/
+
+	$(MAKE) doc
+	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
+	@$(MAKE) $(SILENTOPT) clean-doc
+
+	cd $(PACK_DIR) && zip -r ../$(PACK_NAME) ./
+	rm -rf $(PACK_DIR)
+
 
 ################################################################################
 #                                                                              #
@@ -190,6 +223,9 @@ clean-coverage:
 clean-profile:
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
+
+clean-pack:
+	rm -rf $(PACK_NAME)
 
 
 ################################################################################
