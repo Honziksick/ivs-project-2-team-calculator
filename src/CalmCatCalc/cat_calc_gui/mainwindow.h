@@ -32,7 +32,7 @@
 #include <QWidget>
 #include <QLineEdit>
 /*přidání matematické knihovny*/
-#include "../core/cat_calc_core.h"
+#include "core/cat_calc_core.h"
 
 /**
  * @brief Definice proměnné ""

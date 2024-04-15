@@ -24,8 +24,8 @@
 #include "mainwindow.h"
 #include <QKeyEvent>
 #include <QWidget>
-#include "./ui_mainwindow.h"
-#include "../core/cat_calc_core.cpp"
+#include "ui_mainwindow.h"
+#include "core/cat_calc_core.cpp"
 
 //stav s prázdnou proměnnou
 QString empty_state = "";
