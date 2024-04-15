@@ -32,14 +32,6 @@ TEST(Calculate, BasicExpressions){
     string expectedResult= "4";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
-    expression = "";
-    expectedResult= "";
-    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
-    
-    expression = "     ";
-    expectedResult= "";
-    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
-
     expression = "2!!";
     expectedResult= "2";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
@@ -101,6 +93,9 @@ TEST(Calculate, Errors){
 
     expression = "89+9-";
     EXPECT_ANY_THROW(calculate(expression));
+
+    expression = "1 2";
+    EXPECT_ANY_THROW(calculate(expression));
 }
 
 TEST(Calculate, NoErrors){
@@ -116,6 +111,22 @@ TEST(Calculate, NoErrors){
     EXPECT_NO_THROW(calculate(expression));
     expression = "3!!";
     EXPECT_NO_THROW(calculate(expression));
+
+    expression = "";
+    string expectedResult= "0";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+    
+    expression = "     ";
+    expectedResult= "0";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "()((";
+    expectedResult= "0";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = ")";
+    expectedResult= "0";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
 }
 

@@ -303,10 +303,8 @@ string doubleToString(double x){
     if(dotIdx != string::npos){
         size_t notZeroIdx = result.find_last_not_of('0');
         if(notZeroIdx <= dotIdx){
-            //cout << "CHOP" << endl;
             result.erase(dotIdx);
         }else if(notZeroIdx < result.size()-1){
-            //cout << "Chop" << endl;
             result.erase(notZeroIdx+1);
         }
     }
@@ -417,7 +415,6 @@ string evaluateOperation(char op, vector<string> *stack){
     double xd;
     size_t z;
     int exp;
-    cout << "Operation " << op << endl;
     switch(op){
         case '+':
             if(stack->size() < 2){
@@ -547,25 +544,23 @@ string evaluate(vector<string> postfixExpression){
                 stack.push_back(token);
             }
         }
-        cout << "Stack: " << endl;
-        for(string s : stack){
-            cout << s << endl;
-        }
         postfixExpression = stack;
     }
     return postfixExpression.front();
 }
 
 string calculate(string expression){
-    bool onlyWhite = true;
+    bool noNum = true;
     for(char c : expression){
-        if(!isspace(c)){
-            onlyWhite = false;
+        if(isdigit(c)){
+            noNum = false;
+            break;
         }
     }
-    if(onlyWhite == true){
-        return "";
+    if(noNum == true){
+        return "0";
     }
+
     size_t idx = expression.find("sin");
     while (idx != string::npos) {
         expression.replace(idx, 3, "s");
