@@ -59,10 +59,11 @@
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -85,7 +86,7 @@ QPushButton::pressed {
     <item row="3" column="2" colspan="3">
      <widget class="QLineEdit" name="vysledek">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -108,17 +109,37 @@ QPushButton::pressed {
       <property name="styleSheet">
        <string notr="true">QLineEdit{
 
-        /*barva pozadi tmava a text bily*/
+        /*barva pozadi tmavá a text bílý*/
         background-color: rgb(23, 21, 46);
         color: white;
 
-        /*uprava ohraniceni*/
+        /*úprava ohraničení*/
         border: none;
         border-radius: 5px;
+
+		padding-left: 5px;
 }</string>
+      </property>
+      <property name="maxLength">
+       <number>32776</number>
+      </property>
+      <property name="frame">
+       <bool>false</bool>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <property name="dragEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+      <property name="cursorMoveStyle">
+       <enum>Qt::LogicalMoveStyle</enum>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -148,10 +169,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -196,20 +218,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -250,10 +273,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -311,15 +335,15 @@ QPushButton::pressed {
       <property name="styleSheet">
        <string notr="true">QLineEdit{
 
-        /*barva pozadi tmava a text bily*/
+        /*barva pozadi tmavá a text bílý*/
         background-color: rgb(23, 21, 46);
         color: white;
 
-        /*uprava ohraniceni*/
+        /*úprava ohraničení*/
         border: none;
         border-radius: 5px;
 
-        padding-right: 10px;
+		padding-left: 5px;
 }</string>
       </property>
       <property name="inputMethodHints">
@@ -362,10 +386,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -416,20 +441,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -468,20 +494,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -521,10 +548,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -570,12 +598,13 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 		
 		/*zarovnání hvězdičky na střed*/
 		padding-top: 15px;
 }
 
-/*pro všechny tlačítka a terminály pro čísla
+/*pro všechny tlačítka čísel
 * kdyz se přejede myší, zesvětlí dané tlačítko
 */
 QPushButton::hover {
@@ -621,20 +650,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -674,10 +704,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -723,10 +754,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -781,10 +813,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -830,10 +863,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -879,10 +913,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -928,10 +963,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -976,20 +1012,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1028,20 +1065,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1080,20 +1118,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1133,10 +1172,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -1149,7 +1189,7 @@ QPushButton::pressed {
 }</string>
       </property>
       <property name="text">
-       <string>–</string>
+       <string>-</string>
       </property>
       <property name="shortcut">
        <string>-</string>
@@ -1181,20 +1221,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1233,20 +1274,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1286,10 +1328,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -1335,10 +1378,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -1384,10 +1428,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 
@@ -1432,20 +1477,21 @@ QPushButton::pressed {
 
         background-color: rgb(75, 75, 110);
 
-        /*odstraneni ohraniceni a zakulaceni hran*/
+        /*odstranění ohraničení a zakulacení hran*/
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se pčejede myší, zesvětlí se dané tlačítko
 **/
 QPushButton::hover {
 
         background-color: rgb(65, 65, 100);
 }
 
-/*pri zmacknuti tlacitka, se zmeni barva*/
+/*při zmáčknutí tlačítka, se změní barva*/
 QPushButton::pressed {
 
         background-color: rgb(55, 55, 90);
@@ -1485,10 +1531,11 @@ QPushButton::pressed {
         background-color: rgb(60, 60, 110);
         border: none;
         border-radius: 5px;
+		color: white;
 }
 
-/*pro vsechny tlacitka a terminalu pro cisla
-* kdyz se prejede mysi, zesvetli dane talictko
+/*pro všechny tlačítka čísel
+* když se přejede myší, zesvětlí se tlačítko
 **/
 QPushButton::hover {
 

@@ -69,11 +69,11 @@ MainWindow::MainWindow(QWidget *parent)
         QString button = "B" + QString::number(i);
         num_buttons[i] = MainWindow::findChild<QPushButton *>(button);
 
-        //propojeni tlacitek pro cisla
+        //propojení tlačíek pro čísla
         connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
 
-    //propojeni jednotlivych tlacitek
+    //propojení jednotlivých tlačítek
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
     connect(ui->DELETE, SIGNAL(clicked()), this, SLOT(del()));
     connect(ui->Lza, SIGNAL(clicked()), this, SLOT(lbra()));
@@ -106,11 +106,11 @@ MainWindow::~MainWindow(){
 
 void MainWindow::equal(){
     QString dis_val = ui->Display->text();
-    //prevedeni QString na string
+    //převedení QString na string
     std::string dis_val_s = dis_val.toStdString();
 
     try{
-        //prevedeni zpatky do QString formatu
+        //převedení zpátky do QString formátu
         QString result = QString::fromStdString(calculate(dis_val_s));
         if(result == empty_state){
             ui->vysledek->setText("= 0");
@@ -123,7 +123,7 @@ void MainWindow::equal(){
 
         comma_rate = 0;
     }catch (std::invalid_argument& e){
-        //vypise exception, ktery byl thrownut v knihovne
+        //vypíše exception, který byl thrownut v knihovně
         ui->Display->setText(QString::fromStdString(e.what()));
 
         err = 1;
@@ -135,11 +135,11 @@ void MainWindow::del(){
     ui->Display->setText(empty_state);
     ui->vysledek->setText(empty_state);
 
-    //reset, aby se znovu mohla napsat carka
+    //reset, aby se znovu mohla napsat čárka
     comma_rate = 0;
-    //reset, pro spravne vyuziti gon. funkci
+    //reset, pro správné využití gon. funkci
     gon_rate = 0;
-    //reset pro vypocet noveho prikladu
+    //reset pro výpočet nového příkladu
     eq_state = 0;
 }
 
@@ -150,10 +150,16 @@ void MainWindow::delete_char(){
     if(err == 1){
         new_val = empty_state;
     }
-    else{
-        //text.left vrati n znaku zleva == velikost qstringu - 1 znak
-        new_val = text.left(text.size() - 1);
-    }
+    else {
+        if(text.endsWith("n") || text.endsWith("s")){
+            //zaručí, že tan, cos a sin se smaže celé
+            new_val = text.left(text.size() - 3);
+            }
+        else{
+            //text.left vrátí n znaku zleva == velikost qstringu - 1 znak
+            new_val = text.left(text.size() - 1);
+            }
+        }
 
     ui->Display->setText(new_val);
 }
@@ -173,18 +179,18 @@ void MainWindow::num(){
 
     }
     else{
-        //pokud neni nic napsano, napise jedno cislo
+        //pokud není nic napsáno, napíše jedno číslo
         if(dis_val == empty_state){
             ui->Display->setText(val_button);
         }
         else{
-            //pokud uz se jedno cislo napsalo, zacne psat dalsi za sebe
+            //pokud už se jedno číslo napsalo, začne psát další za sebe
             new_val = dis_val + val_button;
             ui->Display->setText(new_val);
         }
     }
 
-    //pokud se vypsal vysledek, nove napsane cislo prepise vysledek a vypocet
+    //pokud se vypsal výsledek, nově napsané číslo přepíše výsledek a výpočet
     if(eq_state == 1){
         ui->Display->setText(val_button);
         ui->vysledek->setText(empty_state);
@@ -224,7 +230,7 @@ void MainWindow::rbra(){
 }
 
 void MainWindow::comma(){
-    //zaruci, ze se nepouzije vicekrat
+    //zaručí, že se nepoužije vícekrát
     comma_rate++;
 
     if(comma_rate == 1){
@@ -232,7 +238,7 @@ void MainWindow::comma(){
         QString dis_val = ui->Display->text();
         QString new_val = dis_val + val_button;
 
-        //pokud neni nastavena hodnota, tak se da 0 pred carku
+        //pokud není nastavena hodnota, tak se dá 0 pčed čárku
         if(dis_val == empty_state){
             new_val = "0" + val_button;
         }
@@ -405,12 +411,12 @@ void MainWindow::cos(){
 }
 
 void MainWindow::deg_rad(){
-    //prepne deg na rad a naopak
+    //přepne deg na rad a naopak
     degRad = !degRad;
 
     //RAD == false (default), DEG == true
     if(degRad == true){
-        //zmeni tlacitko, aby bylo deg nebo rad
+        //změní tlačítko, aby bylo deg nebo rad
         ui->Zdeg->setText("DEG");
     }
     else ui->Zdeg->setText("RAD");
