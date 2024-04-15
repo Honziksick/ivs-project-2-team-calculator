@@ -2,14 +2,35 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) stddev",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/src/build/stddev", // Nahraďte <název vaší aplikace> skutečným názvem vaší aplikace
-            "args": ["<", "${workspaceFolder}/src/tests/simple.txt"], // Předání obsahu souboru jako argumentu
+            "program": "${workspaceFolder}/src/build/stddev", 
+            "args": ["<", "${workspaceFolder}/src/tests/simple.txt"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
-            "environment": [], // Proměnné prostředí pro vaši aplikaci
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": false
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "build-profile",
+        },
+        {
+            "name": "(gdb) cat_calc_core_tests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/build/cat_calc_core_test",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
@@ -20,6 +41,28 @@
                 }
             ],
             "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "build-test",
+        },
+        {
+            "name": "(gdb) core tests for debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/build/tests/cat_calc_core_test_debug",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "build-test-debug",
         }
     ]
 }
