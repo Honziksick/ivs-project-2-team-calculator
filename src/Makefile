@@ -142,7 +142,7 @@ all: build-core build-profile
 clean: clean-build clean-doc clean-profile clean-pack
 
 # Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
-test: run-test build-test-libs run-tests 
+test: run-test build-test-libs run-test 
 
 # Příkaz 'doc' vygeneruje dokumentaci k projektu
 doc:
@@ -249,7 +249,7 @@ $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-# Příkaz 'run-tests' spustí testy matematické knihovny 'CatCalc Core'
+# Příkaz 'run-test' spustí testy matematické knihovny 'CatCalc Core'
 run-test: $(BUILD_DIR)/$(EXECUTABLE)_test
 	./$(BUILD_DIR)/$(EXECUTABLE)_test
 
@@ -261,6 +261,9 @@ build-test-libs: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
                  $(BUILD_DIR)/$(EXECUTABLE).o \
                  $(TEST_BUILD_DIR)/gtest_main.a
 
+# Příkaz 'build-test-libs' sestaví knihovny Google Test a Google Mock
+build-test-debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug
+
 # Stavba testu matematické knihovny 'CatCalc Core'
 $(BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
                               $(BUILD_DIR)/$(EXECUTABLE).o \
@@ -270,6 +273,21 @@ $(BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
 	mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
+
+# Stavba debuggovací varianty testů s funkcí main
+$(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o \
+                                            $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o
+	mkdir -p $(TEST_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
+
+$(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o: $(TEST_DIR)/$(EXECUTABLE)_tests_for_debug.cpp
+	mkdir -p $(TEST_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
+
+$(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o: $(CORE_DIR)/$(EXECUTABLE).cpp
+	mkdir -p $(TEST_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
+
 
 # Stavba objektových souborů Google Test knihoven
 $(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc
