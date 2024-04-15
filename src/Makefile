@@ -1,20 +1,21 @@
-#
-# Název projektu:   Calm CatCalc
-#
-# Soubor:           Makefile
-# Autor:            Jan Kalina <xkalinj00>ma
-# Datum:            20.03.2024
-# Poslední změna:   07.04.2024
-#
-# Tým:      Calm CatCalc Coders
-# Členové:  Farkašovský Lukáš    <xfarkal00>
-#           Hýža Pavel           <xhyzapa00>
-#           Kalina Jan           <xkalinj00>
-#           Krejčí David         <xkrejcd00>
-#
-# Popis:    Tento soubor obsahuje Makefile pro projekt Calm CatCalc.
-#
-
+################################################################################
+#                                                                              #
+# Název projektu:   Calm CatCalc                                               #
+#                                                                              #
+# Soubor:           Makefile                                                   #
+# Autor:            Jan Kalina <xkalinj00>                                     #
+# Datum:            20.03.2024                                                 #
+# Poslední změna:   07.04.2024                                                 #
+#                                                                              #
+# Tým:      Calm CatCalc Coders                                                #
+# Členové:  Farkašovský Lukáš    <xfarkal00>                                   #
+#           Hýža Pavel           <xhyzapa00>                                   #
+#           Kalina Jan           <xkalinj00>                                   #
+#           Krejčí David         <xkrejcd00>                                   #
+#                                                                              #
+# Popis:    Tento soubor obsahuje Makefile pro projekt Calm CatCalc.           #
+#                                                                              #
+################################################################################
 
 ################################################################################
 #                                                                              #
@@ -78,6 +79,7 @@ GMOCK_DIR = ./tests/googletest-src/googlemock
 
 # Cesta ke zdrojovým souborům matematické knihovny "Calm CatCalc Core" a testů
 CORE_DIR = CalmCatCalc/core
+GUI_DIR = CalmCatCalc/cat_calc_gui
 TEST_DIR = tests
 PROFILE_DIR = profiler
 
@@ -91,6 +93,7 @@ BUILD_DIR = ./build
 TEST_BUILD_DIR = $(BUILD_DIR)/test
 COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(BUILD_DIR)/profile
+GUI_BUILD_DIR = $(BUILD_DIR)/gui
 PACK_DIR = ../pack
 
 # Dočasné složky při balení projektu
@@ -114,7 +117,7 @@ DEBUG = -g
 PROFILE = -pg
 COVERAGE = -fprofile-arcs -ftest-coverage
 
-# Flagy pro překlad matematické knihovny a testů
+# Flagy pro překlad různých částí projektu
 CXXFLAGS_STD = $(STANDARD) -O2 $(WARNING) 
 CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
 CXXFLAGS_COV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE)
@@ -128,21 +131,21 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 ################################################################################
 
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy brány jako soubory
-.PHONY: all clean test doc coverage profile \
-        clean-build clean-core clean-doc clean-coverage clean-profile \
-        build-core \
-        run-test build-test build-test-libs \
-        build-coverage build-test-coverage run-test-coverage process-coverage \
+.PHONY: all install build clean doc help pack test profile coverage \
+        clean-build clean-core clean-coverage clean-doc clean-pack clean-profile \
+        update-dep install-dep upgrade-dep add-to-path \
+        build-core build-gui \
+        build-test build-test-libs build-test-debug run-test \
         build-profile run-first-profile run-next-profile \
-        gui \
-        help
+        build-coverage build-test-coverage process-coverage \
+        pack-repo pack-doc pack-install
 
-### all: ## Kompiluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
-all: build-core build-profile
+### all: ## Instaluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
+all: install build add-to-path
 
 ### help: ## Vypíše nápovědu k použití Makefile
 help:
-	@grep -E '###.*:.*?## .*$$' $(MAKEFILE_LIST) |  \
+	@grep -E '###.*:.*?## .*$$' $(MAKEFILE_LIST) | \
 	grep -v "grep -E '###.*:.*?## .*$$'" | \
 	sort | \
 	awk 'BEGIN {FS = ":.*?## "}; \
@@ -183,6 +186,14 @@ profile:
 	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
+### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
+build-gui:
+	mkdir -p $(GUI_BUILD_DIR)
+	cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
+	cd $(GUI_BUILD_DIR) && cmake . && make
+	chmod 0700  /run/user/1000/
+	cd build && ln -snf gui/calc CalmCatCalc
+
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
 	$(MAKE) clean-pack
@@ -195,10 +206,50 @@ pack:
 	cd $(PACK_DIR) && zip -r ../$(PACK_NAME) ./
 	rm -rf $(PACK_DIR)
 
+################################################################################
+#                                                                              #
+#                  CÍLE PRO INSTALACI A AKTUALIZACI ZÁVISLOSTÍ                 #
+#                                                                              #
+################################################################################
+
+### build: ## Sestaví "Calm CatCalc" s GUI a program "stddev" pro profilování
+build: build-gui build-profile
+
+### install: ## Aktualizuje seznam balíčků, instaluje a aktualizuje závislosti
+install: update-dep install-dep upgrade-dep
+
+### install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
+install-dep:
+	sudo apt-get install -y qtbase5-dev
+	sudo apt-get install -y qt6-base-dev
+	sudo apt-get install -y doxygen
+	sudo apt-get install -y binutils
+	sudo apt-get install -y lcov
+	sudo apt-get install -y libcairo2-dev
+	sudo apt-get install -y python3-pip
+	sudo apt-get install -y graphviz
+	sudo apt-get install -y rsync
+	sudo apt-get install -y zip
+	sudo pip3 install gprof2dot
+
+### update-dep: ## Aktualizuje seznam dostupných balíčků
+update-dep:
+	sudo apt-get update -y
+
+### upgrade-dep: ## Aktualizuje závislosti potřebné pro kompilaci projektu
+upgrade-dep:
+	sudo apt-get upgrade -y
+	sudo pip3 install --upgrade gprof2dot
+
+### add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
+add-to-path: $(GUI_BUILD_DIR)/calc
+	if [ $< -nt /usr/local/bin/catcalc ]; then \
+		sudo cp $< /usr/local/bin/catcalc; \
+	fi
 
 ################################################################################
 #                                                                              #
-#                        KONKRETIZOVANÉ PŘÍKAZY 'CLEAN'                        #
+#                        SPECIALIZOVANÉ PŘÍKAZY 'CLEAN'                        #
 #                                                                              #
 ################################################################################
 
