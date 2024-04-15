@@ -88,9 +88,9 @@ PROFILE_DIR = profiler
 
 # Hlavní adresář pro zkompilovaný projekt a jeho podadresář pro Gtest knihovny
 BUILD_DIR = ./build
-TEST_BUILD_DIR = $(BUILD_DIR)/tests
+TEST_BUILD_DIR = $(BUILD_DIR)/test
 COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
-PROFILE_BUILD_DIR = $(BUILD_DIR)/profiling
+PROFILE_BUILD_DIR = $(BUILD_DIR)/profile
 PACK_DIR = ../pack
 
 # Dočasné složky při balení projektu
@@ -130,29 +130,40 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy brány jako soubory
 .PHONY: all clean test doc coverage profile \
         clean-build clean-core clean-doc clean-coverage clean-profile \
-		build-core \
-		run-test build-test build-test-libs \
-		build-coverage build-test-coverage run-test-coverage process-coverage \
-		build-profile run-first-profile run-another-profile
+        build-core \
+        run-test build-test build-test-libs \
+        build-coverage build-test-coverage run-test-coverage process-coverage \
+        build-profile run-first-profile run-next-profile \
+        gui \
+        help
 
-# Příkaz 'all' kompiluje hlavní projekt (TO-DO také profiler)
+### all: ## Kompiluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
 all: build-core build-profile
 
-# Příkaz 'clean' odstraní všechny soubory vytvořené během kompilace
+### help: ## Vypíše nápovědu k použití Makefile
+help:
+	@grep -E '###.*:.*?## .*$$' $(MAKEFILE_LIST) |  \
+	grep -v "grep -E '###.*:.*?## .*$$'" | \
+	sort | \
+	awk 'BEGIN {FS = ":.*?## "}; \
+	{gsub(/### /, "", $$1); \
+	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+### clean: ## Odstraní všechny soubory vytvořené během kompilace
 clean: clean-build clean-doc clean-profile clean-pack
 
-# Příkaz 'test' sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
+### test: ## Sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
 test: run-test build-test-libs run-test 
 
-# Příkaz 'doc' vygeneruje dokumentaci k projektu
+### doc: ## Vygeneruje dokumentaci k projektu
 doc:
 	$(MAKE) $(SILENTOPT) clean-doc
 	doxygen Doxyfile
 
-# Příkaz 'coverage' vytvoří a zpracuje data o pokrytí kódu testy
+### coverage: ## Vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage build-test-coverage run-test-coverage process-coverage
 
-# Příkaz 'profile' sestaví a spustí profiling matematické knihovny
+### profile: ## Sestaví a spustí profiling matematické knihovny
 profile:
 	$(MAKE) build-profile
 
@@ -161,7 +172,7 @@ profile:
 	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
 
 	$(MAKE) run-first-profile
-	$(MAKE) run-another-profile
+	$(MAKE) run-next-profile
 
 	gprof $(STDDEV) gmon.sum | tee gprof-report.txt | gprof2dot -s | dot -Gdpi=500 -Tpng -o gprof-report.png
 	
@@ -172,26 +183,14 @@ profile:
 	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
-# Příkaz 'pack' vytvoří ZIP archiv s projektem pro odevzdání
+### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
+	$(MAKE) clean-pack
 	mkdir -p $(PACK_DIR)
 
-	rsync -av --progress ../.git $(PACK_REPO_DIR)/
-	rsync -av --progress ../.github $(PACK_REPO_DIR)/
-	rsync -av --progress ../.vscode $(PACK_REPO_DIR)/
-	rsync -av --progress ../doc $(PACK_REPO_DIR)/
-	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
-	rsync -av --progress ../plan $(PACK_REPO_DIR)/
-	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
-	rsync -av --progress ../src/ $(PACK_REPO_DIR)/ --exclude build
-	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
-	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
-	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
-	rsync -av --progress ../README.md $(PACK_REPO_DIR)/
-
-	$(MAKE) doc
-	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
-	@$(MAKE) $(SILENTOPT) clean-doc
+	$(MAKE) pack-repo
+	$(MAKE) pack-doc
+	$(MAKE) pack-install
 
 	cd $(PACK_DIR) && zip -r ../$(PACK_NAME) ./
 	rm -rf $(PACK_DIR)
@@ -203,29 +202,30 @@ pack:
 #                                                                              #
 ################################################################################
 
-# Příkaz 'clean-build' odstraní všechny soubory z adresáře 'build'
+### clean-build: ## Odstraní všechny soubory z adresáře 'build'
 clean-build:
 	rm -rf $(BUILD_DIR)
 
-# Příkaz 'clean-core' odstraní objektový soubor matematické knihovny 'CatCalc Core'
+### clean-core: ## Odstraní objektový soubor matematické knihovny "CatCalc Core"
 clean-core:
-	@rm -f $(BUILD_DIR)/$(EXECUTABLE).o
+	rm -f $(BUILD_DIR)/$(EXECUTABLE).o
 
-# Příkaz 'clean-doc' odstraní všechny soubory z adresáře 'doc' (kromě /images)
+### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě /images)
 clean-doc:
 	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/images*' -delete
 
-# Příkaz 'clean-coverage' odstraní všechny soubory vytvořené během pokrytí kódu
+### clean-coverage: ## Odstraní všechny soubory vytvořené během pokrytí kódu
 clean-coverage:
-	@rm -rf $(COVERAGE_BUILD_DIR)
+	rm -rf $(COVERAGE_BUILD_DIR)
 
-# Příkaz 'clean-profile' odstraní všechny soubory vytvořené během profilování
+### clean-profile: ## Odstraní všechny soubory vytvořené během profilování
 clean-profile:
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
 
+### clean-pack: ## Odstraní ZIP archiv s projektem pro odevzdání
 clean-pack:
-	rm -rf $(PACK_NAME)
+	rm -f $(PACK_NAME)
 
 
 ################################################################################
@@ -234,10 +234,10 @@ clean-pack:
 #                                                                              #
 ################################################################################
 
-# Příkaz 'build-core' sestaví matematickou knihovnu 'CatCalc Core'
+### build-core: ## Sestaví matematickou knihovnu "CatCalc Core"
 build-core: $(BUILD_DIR)/$(EXECUTABLE).o
 
-# Stavba objekotvého souboru matematické knihovny 'CatCalc Core'
+# Stavba objekotvého souboru matematické knihovny "CatCalc Core"
 $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) -c $< -o $@
@@ -249,26 +249,32 @@ $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-# Příkaz 'run-test' spustí testy matematické knihovny 'CatCalc Core'
+### run-test: ## Spustí testy matematické knihovny "CatCalc Core"
 run-test: $(BUILD_DIR)/$(EXECUTABLE)_test
 	./$(BUILD_DIR)/$(EXECUTABLE)_test
 
-# Příkaz 'build-test' sestaví testy matematické knihovny 'CatCalc Core'
+### build-test: ## Sestaví testy matematické knihovny "CatCalc Core"
 build-test: $(BUILD_DIR)/$(EXECUTABLE)_test
 
-# Příkaz 'build-test-libs' sestaví knihovny Google Test a Google Mock
+### build-test-libs: ## Sestaví knihovny Google Test a Google Mock
 build-test-libs: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
-                 $(BUILD_DIR)/$(EXECUTABLE).o \
-                 $(TEST_BUILD_DIR)/gtest_main.a
+                 $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o \
+                 $(TEST_BUILD_DIR)/gtest_main.a \
+				 $(TEST_BUILD_DIR)/gtest.a
 
-# Příkaz 'build-test-libs' sestaví knihovny Google Test a Google Mock
+### build-test-debug: ## Sestaví program s funkcí 'main()' pro debuggování knihovny
 build-test-debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug
 
-# Stavba testu matematické knihovny 'CatCalc Core'
+# Stavba testu matematické knihovny "CatCalc Core"
 $(BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
-                              $(BUILD_DIR)/$(EXECUTABLE).o \
-                              $(TEST_BUILD_DIR)/gtest_main.a
+                              $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o \
+                              $(TEST_BUILD_DIR)/gtest_main.a \
+							  $(TEST_BUILD_DIR)/gtest.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
+
+$(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o: $(CORE_DIR)/$(EXECUTABLE).cpp
+	mkdir -p $(TEST_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 	
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
 	mkdir -p $(TEST_BUILD_DIR)
@@ -283,11 +289,6 @@ $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o: $(TEST_DIR)/$(EXECUTABLE)_tests_for_debug.cpp
 	mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
-
-$(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(TEST_BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
-
 
 # Stavba objektových souborů Google Test knihoven
 $(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc
@@ -313,19 +314,18 @@ $(TEST_BUILD_DIR)/gtest_main.a: $(TEST_BUILD_DIR)/gtest-all.o \
 #                                                                              #
 ################################################################################
 
-# Příkaz 'build-coverage' sestaví knihovnu a testy s přepínači pro pokrytím kódu
+### build-coverage: ## Sestaví knihovnu a testy s přepínači pro pokrytím kódu
 build-coverage: $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o \
                 $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage
 
-# Příkaz 'build-test-coverage' sestaví testy s přepínači pro pokrytím kódu
+### build-test-coverage: ## Sestaví testy s přepínači pro pokrytím kódu
 build-test-coverage: build-test-libs $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage
 
-# Příkaz 'run-test-coverage' spustí testy s pokrytím kódu
+### run-test-coverage: ## Spustí testy s pokrytím kódu
 run-test-coverage:
 	./$(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage 2>/dev/null || true
 
-# Příkaz 'process-coverage' zpracuje data o pokrytí kódu testy a vygeneruje
-# pokrytí kódu ve formátu HTML
+### process-coverage: ## Zpracuje data o pokrytí kódu a vygeneruje HTML výstup
 process-coverage:
 	lcov --quiet --directory $(COVERAGE_BUILD_DIR) --capture \
 	--output-file $(COVERAGE_BUILD_DIR)/coverage.info
@@ -366,10 +366,10 @@ $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-# Příkaz 'build-profile' sestaví profiler pro výpočet směrodatné odchylky
+### build-profile: ## Sestaví profiler pro výpočet směrodatné odchylky
 build-profile: $(BUILD_DIR)/$(PROFILER)
 
-# Příkaz 'run-first-profile' spustí první běh profilování matematické knihovny
+### run-first-profile: ## Spustí první běh profilování matematické knihovny
 run-first-profile:
 	if [ "$(FILE)" = "-1" ]; then \
 		echo -1 > ./$(BUILD_DIR)/temp.txt; \
@@ -379,9 +379,9 @@ run-first-profile:
 	fi; \
 	mv gmon.out gmon.sum
 
-# Příkaz 'run-another-profile' spustí další běhy profilování matematické knihovny
+### run-next-profile: ## Spustí další běhy profilování matematické knihovny
 # Počet běhů lze nastavit pomocí proměnné 'PROF_LOOP' v hlavičce Makefile
-run-another-profile:
+run-next-profile:
 	itr=1 ; while [ $$itr -le $(PROF_LOOP) ]; do \
 		if [ "$(FILE)" = "-1" ]; then \
 			$(STDDEV) < $(AUTO_GEN_DATA_FILE); \
@@ -394,12 +394,12 @@ run-another-profile:
 		fi; \
 	done
 
-# Stavba objektového souboru programu 'stddev' pro výpočet směrodatné odchylky
+# Stavba objektového souboru programu "stddev" pro výpočet směrodatné odchylky
 $(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
 	mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
-# Stavba binárky programu 'stddev' pro výpočet směrodatné odchylky
+# Stavba binárky programu "stddev" pro výpočet směrodatné odchylky
 $(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
                           $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) $^ -o $@
@@ -408,3 +408,35 @@ $(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
 $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 	mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
+
+
+################################################################################
+#                                                                              #
+#                  ZABALENÍ PROJEKTU PRO ODEVZDÁNÍ do '.ZIP'                   #
+#                                                                              #
+################################################################################
+
+### pack-repo: ## Zkopíruje požadované složky repozitáře do složky pro odevzdání
+pack-repo:
+	rsync -av --progress ../.git $(PACK_REPO_DIR)/
+	rsync -av --progress ../.github $(PACK_REPO_DIR)/
+	rsync -av --progress ../.vscode $(PACK_REPO_DIR)/
+	rsync -av --progress ../doc $(PACK_REPO_DIR)/
+	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
+	rsync -av --progress ../plan $(PACK_REPO_DIR)/
+	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
+	rsync -av --progress ../src/ $(PACK_REPO_DIR)/ --exclude build
+	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
+	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
+	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
+	rsync -av --progress ../README.md $(PACK_REPO_DIR)/
+
+### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
+pack-doc:
+	$(MAKE) doc
+	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
+	@$(MAKE) $(SILENTOPT) clean-doc
+
+### pack-install: ## Zkopíruje instalátor do složky pro odevzdání
+pack-install:
+	@echo "NULL"
