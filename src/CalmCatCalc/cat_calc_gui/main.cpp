@@ -17,7 +17,7 @@
 
 /**
  * @file main.cpp
- * @author Lukáš Farkašovský \<xfarkal00>
+ * @author Lukáš Farkašovský /<xfarkal00>
  * @brief __Soubor pro otevření okna s UI__
  */
 
@@ -28,9 +28,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+    QIcon paw("paw.png");
 
     //změna ikony
-    a.setWindowIcon(QIcon("paw.png"));
+    a.setWindowIcon(paw);
     //změna názvu aplikace
     w.setWindowTitle("Calm CatCalc");
     w.show();
