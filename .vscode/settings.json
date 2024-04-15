@@ -5,5 +5,5 @@
             "pattern": "**/build/**/*core*"
         },
     ],
-    "makefile.makefilePath": "src/Makefile"
+    "makefile.makefilePath": "\"${workspaceFolder}/src/Makefile\""
 }
