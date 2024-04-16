@@ -32,7 +32,7 @@
 #include <QWidget>
 #include <QLineEdit>
 /*přidání matematické knihovny*/
-#include "core/cat_calc_core.h"
+#include "cat_calc_core.h"
 
 /**
  * @brief Definice proměnné ""
@@ -52,7 +52,7 @@ extern QString eq_str;
  * @details
  * Proměnná slouží k uložení vyhozeného exceptionu z matematické knihovny.
  * Využívá se ve funkci pro vyhodnocení výrazu. Zachycenou vyjímku zpracuje a
- *  vypíše ji jako ERROR message v terminále.
+ * vypíše ji jako ERROR message v terminále.
  */
 extern std::exception e;
 
@@ -70,8 +70,8 @@ extern int comma_rate;
  * @brief Proměnná pro uložení počtu výskytů goniometrických funkcí
  * @details
  * Používá se při práci s gonio. funkcemi. Při prvním použití zabalí
- *  celou hodnotu do závorek. Pokud byly použity počítací funkce jako '+ - / *'
- *  již neobaluje, ale chová se jako normální tlačítko.
+ * celou hodnotu do závorek. Pokud byly použity počítací funkce jako "+ - / *"
+ * již neobaluje, ale chová se jako normální tlačítko.
  * @note
  * Po vyhodnocení výrazu s funkcí eval() se nastaví zpátky na 0.
  */
@@ -90,7 +90,7 @@ extern int err;
  * @brief Proměnná ukládající, pokud došlo k výpočtu
  * @details
  * Pracuje s oběma terminály. Když se vypsal výsledek a chceme s ním dále počítat
- *  tak se nastaví proměnná na 1 a funkce s výpočty pak pracují již s výsledkem.
+ * tak se nastaví proměnná na 1 a funkce s výpočty pak pracují již s výsledkem.
  */
 extern int eq_state;
 
@@ -113,7 +113,7 @@ QT_END_NAMESPACE
  *
  * @details
  * Q_OBJECT důležíté makro pro třídy, které využívají singály, sloty
- *  a dynamické vlastnosti
+ * a dynamické vlastnosti
  */
 class MainWindow : public QMainWindow{
     Q_OBJECT
@@ -125,9 +125,6 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    /**
-     * @brief Deklarace funkcí spojených se signály
-     */
 private slots:
 
     /**
@@ -159,7 +156,7 @@ private slots:
      * @details
      * Aby nedošlo k vypsání vicekrát čárky, jsou nastaveny flagy
      * Tyto flagy jsou změněny při zmáčnuktí spojujících tlačítek
-     *  +  / * a také po vypsání výsledku pomocí =
+     * "+ - / *" a také po vypsání výsledku pomocí =.
      * Při prázdném stavu se nastaví výraz na "0."
      */
     void comma();
@@ -187,7 +184,7 @@ private slots:
     void multiply();
 
     /**
-     * @brief Signál vypsání
+     * @brief Signál vypsání -
      */
     void minus();
 
@@ -204,8 +201,8 @@ private slots:
     /**
      * @brief Signál vypsání #
      * @warning
-     * Musí být napsán vždy ve formátu n#x, kde n značí stupeň odmocniny
-     *  a x značí výraz, který je odmocněn
+     * Musí být napsán vždy ve formátu "n#x", kde n značí stupeň odmocniny
+     * a x značí výraz, který je odmocněn
      */
     void sqr();
 
@@ -219,7 +216,7 @@ private slots:
      * @details
      * Při prázdném stavu se bere, že se počítá goniometrický výraz s 0
      * Pokud je jakýkoliv goniometrický výraz použit ve stejném výpočtu
-     *  bere se, že chceme již použit daný výraz na jiné číslo
+     * bere se, že chceme již použit daný výraz na jiné číslo
      */
     void sin();
 
@@ -228,7 +225,7 @@ private slots:
      * @details
      * Při prázdném stavu se bere, že se počítá goniometrický výraz s 0
      * Pokud je jakýkoliv goniometrický výraz použit ve stejném výpočtu
-     *  bere se, že chceme již použit daný výraz na jiné číslo
+     * bere se, že chceme již použit daný výraz na jiné číslo
      */
     void cos();
 
@@ -237,7 +234,7 @@ private slots:
      * @details
      * Při prázdném stavu se bere, že se počítá goniometrický výraz s 0
      * Pokud je jakýkoliv goniometrický výraz použit ve stejném výpočtu
-     *  bere se, že chceme již použit daný výraz na jiné číslo
+     * bere se, že chceme již použit daný výraz na jiné číslo
      */
     void tan();
 

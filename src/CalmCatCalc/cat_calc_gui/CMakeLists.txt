@@ -1,9 +1,9 @@
 #
 # Název projektu: 	Calm CatCalc
 #
-# Soubor: 			CMakeLists
-# Datum: 			20.03.2024
-# Poslední změna: 	20.03.2024
+# Soubor: 			CMakeLists.txt
+# Datum: 			15.04.2024
+# Poslední změna: 		16.04.2024
 #
 # Tým:		Calm CatCalc Coders
 #
@@ -15,6 +15,9 @@
 # Popis: 	Tento soubor obsahuje Makefile pro GUI nad matematickou knihovnou
 #
 
+#
+# Autor: 	Farkašovský Lukáš    <xfarkal00>
+#
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -30,12 +33,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-)
+set(SRC_DIR "../../CalmCatCalc/cat_calc_gui/")
+set(CORE_DIR "../../CalmCatCalc/core/")
+aux_source_directory("${SRC_DIR}" PROJECT_SOURCES)
+aux_source_directory("${CORE_DIR}" PROJECT_SOURCES)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../**" "${CORE_DIR}")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(cat_calc_gui
