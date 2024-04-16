@@ -147,7 +147,7 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy brány jako soubory
 .PHONY: all install build clean doc help pack test profile coverage \
         clean-build clean-core clean-coverage clean-doc clean-pack clean-profile \
-        update-dep install-dep upgrade-dep add-to-path \
+        update-dep install-dep upgrade-dep add-to-path set-env-var \
         build-core build-gui \
         build-test build-test-libs build-test-debug run-core-test run-stddev-test \
         build-profile run-first-profile run-next-profile prep-stddev-test \
@@ -213,13 +213,12 @@ profile:
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
 ### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
-build-gui:
+build-gui: set-env-var
 	@mkdir -p $(GUI_BUILD_DIR)
 	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
 	sudo chmod 0700  /run/user/1000/
-	cd build && ln -snf gui/cat_calc_gui CalmCatCalc
-	$(MAKE) $(SILENTOPT) set-env-var
+	cd build && sudo ln -snf gui/cat_calc_gui CalmCatCalc
 
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
@@ -246,13 +245,14 @@ build: build-gui build-profile
 install: update-dep install-dep upgrade-dep
 
 ### install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
-install-dep: install-gui-dep install-doc-dep install-dev-dep install-prof-dep install-pack-dep
+install-dep: install-gui-dep install-doc-dep install-dev-dep install-pack-dep
 
 ### install-gui-dep: ## Nainstaluje závislosti potřebné pro GUI kalkulačky
 install-gui-dep:
 	sudo apt-get install -y qtbase5-dev
 	sudo apt-get install -y qt6-base-dev
 	sudo apt-get install -y qt6-wayland
+	sudo apt-get install -y qtwayland5
 
 ### install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
 install-doc-dep:
@@ -286,6 +286,7 @@ update-dep:
 upgrade-dep:
 	sudo apt-get upgrade -y qtbase5-dev
 	sudo apt-get upgrade -y qt6-base-dev
+	sudo apt-get upgrade -y qtwayland5
 	sudo apt-get upgrade -y qt6-wayland
 	sudo apt-get upgrade -y doxygen
 	sudo apt-get upgrade -y binutils
@@ -306,9 +307,13 @@ add-to-path: $(GUI_BUILD_DIR)/cat_calc_gui
 
 ### set-env-var: ## Nastaví proměnnou prostředí QT_QPA_PLATFORM=wayland, pokud ještě není nastavena
 set-env-var:
-	if ! grep -q "export QT_QPA_PLATFORM=wayland" ~/.bashrc; then \
-		echo 'export QT_QPA_PLATFORM=wayland' >> ~/.bashrc && . ~/.bashrc; \
-	fi
+	@{ \
+	if ! awk '/export QT_QPA_PLATFORM=wayland/ {found=1} END {exit !found}' ~/.profile; then \
+		echo "" >> ~/.profile; \
+		echo "export QT_QPA_PLATFORM=wayland" >> ~/.profile; \
+		. ~/.profile; \
+	fi; \
+	} 
 
 ################################################################################
 #                                                                              #
