@@ -5,5 +5,9 @@
             "pattern": "**/build/**/*core*"
         },
     ],
-    "makefile.makefilePath": "\"${workspaceFolder}/src/Makefile\""
+    "makefile.makefilePath": "\"${workspaceFolder}/src/Makefile\"",
+    "files.associations": {
+        "iostream": "cpp",
+        "stdexcept": "cpp"
+    }
 }

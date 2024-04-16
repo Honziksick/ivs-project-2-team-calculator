@@ -331,7 +331,11 @@ string doubleToString(double x){
             result = tmp;
             return result;
         }
-        result[inc] = result[inc]+1;
+        if(result[inc] == '.'){
+            result.erase(inc);
+        }else{
+            result[inc] = result[inc]+1;
+        }
     }
     return result;
 }
@@ -415,6 +419,13 @@ string evaluateOperation(char op, vector<string> *stack){
     double xd;
     size_t z;
     int exp;
+
+    cout << "stack:" << endl;
+    for(string s : *stack){
+        cout << s << " , ";
+    }
+    cout << endl;
+
     switch(op){
         case '+':
             if(stack->size() < 2){
@@ -535,32 +546,44 @@ string evaluate(vector<string> postfixExpression){
     while(postfixExpression.size() > 1){
         vector<string> stack;
         bool flag = false;
+        size_t idx = 0;
         for(string token : postfixExpression){
             if(token.length() == 1 && isOperator(token[0]) && flag == false){
                 string result = evaluateOperation(token[0], &stack);
                 stack.push_back(result);
                 flag = true;
+            }else if(idx == postfixExpression.size()-1 && flag == false){
+                throw invalid_argument("Syntax error");
             }else{
                 stack.push_back(token);
             }
+            idx++;
         }
         postfixExpression = stack;
     }
     return postfixExpression.front();
 }
 
-string calculate(string expression){
-    bool noNum = true;
+string removeMultSpaces(string expression){
+    string result;
+    bool prevIsSpace = false;
+
     for(char c : expression){
-        if(isdigit(c)){
-            noNum = false;
-            break;
+        if(c == ' '){
+            if(!prevIsSpace){
+                result.push_back(c);
+            }
+            prevIsSpace = true;
+        }else{
+            result.push_back(c);
+            prevIsSpace = false;
         }
     }
-    if(noNum == true){
-        return "0";
-    }
+    return result;
+}
 
+string formatInput(string expression){
+    expression = removeMultSpaces(expression);
     size_t idx = expression.find("sin");
     while (idx != string::npos) {
         expression.replace(idx, 3, "s");
@@ -576,6 +599,82 @@ string calculate(string expression){
         expression.replace(idx, 3, "t");
         idx = expression.find("tan");
     }
+
+
+    idx = 0;
+    while(true){
+        idx = expression.find('#',idx);
+        if(idx == string::npos){
+            break;
+        }
+        if(idx == 0){
+            expression.insert(0,1,'2');
+            idx = idx+2;
+            continue;
+        }
+        size_t idx2 = idx-1;
+        char c = expression[idx2];
+        if(idx2 == 0 &&  c == ' '){
+            expression.replace(0,1,"2");
+            idx++;
+            continue;
+        }
+        if(c == ' '){
+            idx2--;
+            c = expression[idx2];
+        }
+        if(isdigit(c) || c == ')'){
+            idx++;
+            continue;
+        }
+        expression.insert(idx2+1,1,'2');
+        idx = idx+2;
+    }
+    
+    idx = 0;
+    while(true){
+        idx = expression.find('^',idx);
+        if(idx == string::npos){
+            break;
+        }
+        if(idx == expression.size()-1){
+            expression.append("2");
+            break;
+        }
+        size_t idx2 = idx+1;
+        char c = expression[idx2];
+        if(idx2 == expression.size()-1 &&  c == ' '){
+            expression.replace(expression.size()-1,1,"2");
+            break;
+        }
+        if(c == ' '){
+            idx2++;
+            c = expression[idx2];
+        }
+        if(isdigit(c) || c == '('){
+            idx++;
+            continue;
+        }
+        expression.insert(idx2,1,'2');
+        idx = idx+2;
+    }
+
+    return expression;
+}
+
+string calculate(string expression){
+    bool noNum = true;
+    for(char c : expression){
+        if(isdigit(c)){
+            noNum = false;
+            break;
+        }
+    }
+    if(noNum == true){
+        return "0";
+    }
+
+    expression = formatInput(expression);
     vector<string> tokens = parse(expression);
     tokens = postfix(tokens);
     return evaluate(tokens);

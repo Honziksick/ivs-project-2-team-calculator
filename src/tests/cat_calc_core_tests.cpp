@@ -40,6 +40,26 @@ TEST(Calculate, BasicExpressions){
     expectedResult= "720";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
+    expression = "#4";
+    expectedResult= "2";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "(1+4)*#16";
+    expectedResult= "20";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "5+#81/2";
+    expectedResult= "9.5";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "2*3^+1";
+    expectedResult= "19";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    expression = "2*1+3^(2+1)+2";
+    expectedResult= "31";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
     expression = "4 - (-8)";
     expectedResult= "12";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
