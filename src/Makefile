@@ -33,6 +33,9 @@ EXECUTABLE = cat_calc_core
 # Název a spouštění programu pro profilování
 PROFILER = stddev
 STDDEV = ./$(BUILD_DIR)/$(PROFILER)
+STDDEV_TEST = stddev_tests.sh
+STDDEV_TEST_PACK = stddev_test_files.tar.gz
+ADV=no
 
 # Název ZIP archivu pro odevzdání projektu
 PACK_NAME = xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip
@@ -135,8 +138,8 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
         clean-build clean-core clean-coverage clean-doc clean-pack clean-profile \
         update-dep install-dep upgrade-dep add-to-path \
         build-core build-gui \
-        build-test build-test-libs build-test-debug run-test \
-        build-profile run-first-profile run-next-profile \
+        build-test build-test-libs build-test-debug run-core-test run-stddev-test \
+        build-profile run-first-profile run-next-profile prep-stddev-test \
         build-coverage build-test-coverage process-coverage \
         pack-repo pack-doc pack-install
 
@@ -156,7 +159,7 @@ help:
 clean: clean-build clean-doc clean-profile clean-pack
 
 ### test: ## Sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
-test: run-test build-test-libs run-test 
+test: build-test-libs run-core-test 
 
 ### doc: ## Vygeneruje dokumentaci k projektu
 doc:
@@ -168,6 +171,7 @@ coverage: build-coverage build-test-coverage run-test-coverage process-coverage
 
 ### profile: ## Sestaví a spustí profiling matematické knihovny
 profile:
+	$(MAKE) $(SILENTOPT) install-prof-dep
 	$(MAKE) build-profile
 
 	$(MAKE) clean-profile
@@ -191,8 +195,8 @@ build-gui:
 	mkdir -p $(GUI_BUILD_DIR)
 	cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
-	chmod 0700  /run/user/1000/
-	cd build && ln -snf gui/calc CalmCatCalc
+	sudo chmod 0700  /run/user/1000/
+	cd build && ln -snf gui/cat_calc_gui CalmCatCalc
 
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
@@ -219,18 +223,34 @@ build: build-gui build-profile
 install: update-dep install-dep upgrade-dep
 
 ### install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
-install-dep:
+install-dep: install-gui-dep install-doc-dep install-dev-dep install-prof-dep install-pack-dep
+
+### install-gui-dep: ## Nainstaluje závislosti potřebné pro GUI kalkulačky
+install-gui-dep:
 	sudo apt-get install -y qtbase5-dev
 	sudo apt-get install -y qt6-base-dev
+
+### install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
+install-doc-dep:
 	sudo apt-get install -y doxygen
+
+### install-dev-dep: ## Nainstaluje závislosti potřebné pro vývoj a testování
+install-dev-dep: install-prof-dep
 	sudo apt-get install -y binutils
 	sudo apt-get install -y lcov
+
+### install-prof-dep: ## Nainstaluje závislosti potřebné pro profilování
+install-prof-dep:
 	sudo apt-get install -y libcairo2-dev
 	sudo apt-get install -y python3-pip
 	sudo apt-get install -y graphviz
+	sudo apt-get install -y tar
+	sudo pip3 install gprof2dot
+
+### install-pack-dep: ## Nainstaluje závislosti potřebné pro balení projektu
+install-pack-dep:
 	sudo apt-get install -y rsync
 	sudo apt-get install -y zip
-	sudo pip3 install gprof2dot
 
 ### update-dep: ## Aktualizuje seznam dostupných balíčků
 update-dep:
@@ -242,7 +262,7 @@ upgrade-dep:
 	sudo pip3 install --upgrade gprof2dot
 
 ### add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
-add-to-path: $(GUI_BUILD_DIR)/calc
+add-to-path: $(GUI_BUILD_DIR)/cat_calc_gui
 	if [ $< -nt /usr/local/bin/catcalc ]; then \
 		sudo cp $< /usr/local/bin/catcalc; \
 	fi
@@ -276,7 +296,7 @@ clean-profile:
 
 ### clean-pack: ## Odstraní ZIP archiv s projektem pro odevzdání
 clean-pack:
-	rm -f $(PACK_NAME)
+	rm -f ../$(PACK_NAME)
 
 
 ################################################################################
@@ -300,8 +320,8 @@ $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-### run-test: ## Spustí testy matematické knihovny "CatCalc Core"
-run-test: $(BUILD_DIR)/$(EXECUTABLE)_test
+### run-core-test: ## Spustí testy matematické knihovny "CatCalc Core"
+run-core-test: $(BUILD_DIR)/$(EXECUTABLE)_test
 	./$(BUILD_DIR)/$(EXECUTABLE)_test
 
 ### build-test: ## Sestaví testy matematické knihovny "CatCalc Core"
@@ -444,6 +464,19 @@ run-next-profile:
 			itr=`expr $$itr + 1`; \
 		fi; \
 	done
+
+### run-stddev-test: ## Spustí testy programu pro výpočet směrodatné odchylky
+run-stddev-test: build-profile prep-stddev-test
+	mkdir -p $(TEST_BUILD_DIR)
+	cp tests/$(STDDEV_TEST) $(TEST_BUILD_DIR)/
+	chmod a+x $(TEST_BUILD_DIR)/$(STDDEV_TEST)
+	$(TEST_BUILD_DIR)/$(STDDEV_TEST) $(ADV)
+
+### prep-stddev-test: ## Připraví testovací data pro program pro výpočet směrodatné odchylky
+prep-stddev-test:
+	mkdir -p $(TEST_BUILD_DIR)
+	cp tests/$(STDDEV_TEST_PACK) $(TEST_BUILD_DIR)/
+	tar -xzf $(TEST_BUILD_DIR)/$(STDDEV_TEST_PACK) -C $(TEST_BUILD_DIR)/
 
 # Stavba objektového souboru programu "stddev" pro výpočet směrodatné odchylky
 $(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
