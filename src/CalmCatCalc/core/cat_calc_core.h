@@ -171,13 +171,13 @@ double normalizeAngle(double ang);
 /**
  * @brief Výpočet odmocniny zadaného čísla na zadaný základ.
  *
- * @param[in] root Základ odmocniny.
+ * @param[in] exp Základ odmocniny.
  * @param[in] num Číslo, které má být odmocněno.
  * @return Odmocnina zadaného čísla.
  * @exception MathError Pro odmocninu ze záporného čísla se sudým základem.
  * @exception MathError Pro odmocninu se záporným základem.
 */
-double root(int root, double num);
+double root(int exp, double num);
 
 /**
  * @brief Výpočet mocniny zadaného čísla o zadaném exponentu.
