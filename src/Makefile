@@ -218,7 +218,8 @@ build-gui:
 	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
 	sudo chmod 0700  /run/user/1000/
-	@cd build && ln -snf gui/cat_calc_gui CalmCatCalc
+	cd build && ln -snf gui/cat_calc_gui CalmCatCalc
+	$(MAKE) $(SILENTOPT) set-env-var
 
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
@@ -251,6 +252,7 @@ install-dep: install-gui-dep install-doc-dep install-dev-dep install-prof-dep in
 install-gui-dep:
 	sudo apt-get install -y qtbase5-dev
 	sudo apt-get install -y qt6-base-dev
+	sudo apt-get install -y qt6-wayland
 
 ### install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
 install-doc-dep:
@@ -260,6 +262,8 @@ install-doc-dep:
 install-dev-dep: install-prof-dep
 	sudo apt-get install -y binutils
 	sudo apt-get install -y lcov
+	sudo apt-get install -y less
+	sudo apt-get install -y cmake
 
 ### install-prof-dep: ## Nainstaluje závislosti potřebné pro profilování
 install-prof-dep:
@@ -280,13 +284,30 @@ update-dep:
 
 ### upgrade-dep: ## Aktualizuje závislosti potřebné pro kompilaci projektu
 upgrade-dep:
-	sudo apt-get upgrade -y
+	sudo apt-get upgrade -y qtbase5-dev
+	sudo apt-get upgrade -y qt6-base-dev
+	sudo apt-get upgrade -y qt6-wayland
+	sudo apt-get upgrade -y doxygen
+	sudo apt-get upgrade -y binutils
+	sudo apt-get upgrade -y lcov
+	sudo apt-get upgrade -y less
+	sudo apt-get upgrade -y cmake
+	sudo apt-get upgrade -y libcairo2-dev
+	sudo apt-get upgrade -y python3-pip
+	sudo apt-get upgrade -y graphviz
+	sudo apt-get upgrade -y tar
+	sudo apt-get upgrade -y rsync
+	sudo apt-get upgrade -y zip
 	sudo pip3 install --upgrade gprof2dot
 
 ### add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
 add-to-path: $(GUI_BUILD_DIR)/cat_calc_gui
-	if [ $< -nt /usr/local/bin/catcalc ]; then \
-		sudo cp $< /usr/local/bin/catcalc; \
+	sudo cp $< /usr/local/bin/catcalc
+
+### set-env-var: ## Nastaví proměnnou prostředí QT_QPA_PLATFORM=wayland, pokud ještě není nastavena
+set-env-var:
+	if ! grep -q "export QT_QPA_PLATFORM=wayland" ~/.bashrc; then \
+		echo 'export QT_QPA_PLATFORM=wayland' >> ~/.bashrc && . ~/.bashrc; \
 	fi
 
 ################################################################################
