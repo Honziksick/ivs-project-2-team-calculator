@@ -35,7 +35,6 @@ PROFILER = stddev
 STDDEV = ./$(BUILD_DIR)/$(PROFILER)
 STDDEV_TEST = stddev_tests.sh
 STDDEV_TEST_PACK = stddev_test_files.tar.gz
-ADV=no
 
 # Název ZIP archivu pro odevzdání projektu
 PACK_NAME = xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip
@@ -53,13 +52,25 @@ $(VERBOSE)SILENTOPT = -s
 #  Proměnné týkající se profilování  #
 ###                                ###
 
-# Pokud je proměnná 'FILE' nastavena na '-1',
-# tak pro profilování budou vygenerována náhodná data
-FILE ?= -1
+# Očekávaný název automaticky generovaného vstupního souboru
 AUTO_GEN_DATA_FILE = auto_gen.txt
 
-# Počet dalších běhů profilování => celkem (1 + PROF_LOOP) běhů
-PROF_LOOP = 10
+# Počet dalších běhů profilování => celkem (1 + PROF) běhů
+PROF = 10
+
+
+###                                ###
+#  Nastavitelné proměnné prostředí   #
+###                                ###
+
+### FILE: ## Název souboru s daty pro profilování (pokud není nastaveno, použije se náhodná data)
+FILE ?= -1
+
+### PROF: ## Určuje počet dalších běhů profilování => celkem (1 + PROF) běhů
+PROF = 10
+
+### ADV: ## Pokud je nastavena na 'yes', spustí se pokročilé testy programu "stddev"
+ADV=no
 
 
 ###                                 ###
@@ -148,12 +159,23 @@ all: install build add-to-path
 
 ### help: ## Vypíše nápovědu k použití Makefile
 help:
-	@grep -E '###.*:.*?## .*$$' $(MAKEFILE_LIST) | \
+	@{ \
+	echo "Proměnné:"; \
+	grep -E '### [A-Z\_]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	grep -v "grep -E '###.*:.*?## .*$$'" | \
-	sort | \
+	sort -f | \
 	awk 'BEGIN {FS = ":.*?## "}; \
 	{gsub(/### /, "", $$1); \
-	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
+	echo ""; \
+	echo "Příkazy:"; \
+	grep -E '### [a-z\-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	grep -v "grep -E '###.*:.*?## .*$$'" | \
+	sort -f | \
+	awk 'BEGIN {FS = ":.*?## "}; \
+	{gsub(/### /, "", $$1); \
+	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
+	} | less -R
 
 ### clean: ## Odstraní všechny soubory vytvořené během kompilace
 clean: clean-build clean-doc clean-profile clean-pack
@@ -174,33 +196,33 @@ profile:
 	$(MAKE) $(SILENTOPT) install-prof-dep
 	$(MAKE) build-profile
 
-	$(MAKE) clean-profile
+	$(MAKE)  $(SILENTOPT) clean-profile
 	rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
 	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
 
-	$(MAKE) run-first-profile
-	$(MAKE) run-next-profile
+	$(MAKE) $(SILENTOPT) run-first-profile
+	$(MAKE) $(SILENTOPT) run-next-profile
 
 	gprof $(STDDEV) gmon.sum | tee gprof-report.txt | gprof2dot -s | dot -Gdpi=500 -Tpng -o gprof-report.png
 	
-	mv gmon.out ./$(PROFILE_BUILD_DIR)/
-	mv gmon.sum ./$(PROFILE_BUILD_DIR)/
-	mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
+	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
+	@mv gmon.sum ./$(PROFILE_BUILD_DIR)/
+	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
 
 	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
 ### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
 build-gui:
-	mkdir -p $(GUI_BUILD_DIR)
-	cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
+	@mkdir -p $(GUI_BUILD_DIR)
+	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
 	sudo chmod 0700  /run/user/1000/
-	cd build && ln -snf gui/cat_calc_gui CalmCatCalc
+	@cd build && ln -snf gui/cat_calc_gui CalmCatCalc
 
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
-	$(MAKE) clean-pack
+	$(MAKE) $(SILENTOPT) clean-pack
 	mkdir -p $(PACK_DIR)
 
 	$(MAKE) pack-repo
@@ -310,7 +332,7 @@ build-core: $(BUILD_DIR)/$(EXECUTABLE).o
 
 # Stavba objekotvého souboru matematické knihovny "CatCalc Core"
 $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) -c $< -o $@
 
 
@@ -344,30 +366,30 @@ $(BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
 
 $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 	
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 
 # Stavba debuggovací varianty testů s funkcí main
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o \
                                             $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
 
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o: $(TEST_DIR)/$(EXECUTABLE)_tests_for_debug.cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 
 # Stavba objektových souborů Google Test knihoven
 $(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 $(TEST_BUILD_DIR)/gtest_main.o: $(GTEST_DIR)/src/*.cc
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
 
 # Stavba se statických knihovne pro Google Test
@@ -401,13 +423,13 @@ process-coverage:
 	lcov --quiet --directory $(COVERAGE_BUILD_DIR) --capture \
 	--output-file $(COVERAGE_BUILD_DIR)/coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/coverage.info '/usr/*' \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/coverage.info '/usr/*' \
 	--output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
 	'*/googletest-src/*' --output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
 	'*/profiler/*' --output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
 	genhtml $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
@@ -418,16 +440,16 @@ $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage:  \
                         $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage.o \
                         $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o \
                         $(TEST_BUILD_DIR)/gtest_main.a
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) $^ -o $@
 
 $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) -c $< -o $@
 
 # Stavba matematické knihovny s přepínači pro pokrytí kódu
 $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) -c $< -o $@
 
 
@@ -451,9 +473,9 @@ run-first-profile:
 	mv gmon.out gmon.sum
 
 ### run-next-profile: ## Spustí další běhy profilování matematické knihovny
-# Počet běhů lze nastavit pomocí proměnné 'PROF_LOOP' v hlavičce Makefile
+# Počet běhů lze nastavit pomocí proměnné 'PROF' v hlavičce Makefile
 run-next-profile:
-	itr=1 ; while [ $$itr -le $(PROF_LOOP) ]; do \
+	itr=1 ; while [ $$itr -le $(PROF) ]; do \
 		if [ "$(FILE)" = "-1" ]; then \
 			$(STDDEV) < $(AUTO_GEN_DATA_FILE); \
 			gprof -s $(STDDEV) gmon.out gmon.sum; \
@@ -466,21 +488,26 @@ run-next-profile:
 	done
 
 ### run-stddev-test: ## Spustí testy programu pro výpočet směrodatné odchylky
-run-stddev-test: build-profile prep-stddev-test
-	mkdir -p $(TEST_BUILD_DIR)
-	cp tests/$(STDDEV_TEST) $(TEST_BUILD_DIR)/
-	chmod a+x $(TEST_BUILD_DIR)/$(STDDEV_TEST)
+run-stddev-test: build-profile
+	@mkdir -p $(PROFILE_BUILD_DIR)
+	$(MAKE) $(SILENTOPT) prep-stddev-test
 	$(TEST_BUILD_DIR)/$(STDDEV_TEST) $(ADV)
+	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
 
 ### prep-stddev-test: ## Připraví testovací data pro program pro výpočet směrodatné odchylky
 prep-stddev-test:
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	cp tests/$(STDDEV_TEST_PACK) $(TEST_BUILD_DIR)/
 	tar -xzf $(TEST_BUILD_DIR)/$(STDDEV_TEST_PACK) -C $(TEST_BUILD_DIR)/
+	@cp tests/$(STDDEV_TEST) $(TEST_BUILD_DIR)/
+
+	if [ ! -x $(TEST_BUILD_DIR)/$(STDDEV_TEST) ]; then \
+		sudo chmod a+x $(TEST_BUILD_DIR)/$(STDDEV_TEST); \
+	fi
 
 # Stavba objektového souboru programu "stddev" pro výpočet směrodatné odchylky
 $(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
-	mkdir -p $(PROFILE_BUILD_DIR)
+	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
 # Stavba binárky programu "stddev" pro výpočet směrodatné odchylky
@@ -490,7 +517,7 @@ $(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
 
 # Stavba matematické knihovny s přepínači pro profilování pomocí gprof
 $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(PROFILE_BUILD_DIR)
+	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
 
@@ -509,7 +536,7 @@ pack-repo:
 	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
 	rsync -av --progress ../plan $(PACK_REPO_DIR)/
 	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
-	rsync -av --progress ../src/ $(PACK_REPO_DIR)/ --exclude build
+	rsync -av --progress ../src $(PACK_REPO_DIR)/ --exclude build
 	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
 	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
 	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
@@ -517,7 +544,7 @@ pack-repo:
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
 pack-doc:
-	$(MAKE) doc
+	$(MAKE) $(SILENTOPT) doc
 	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
 	@$(MAKE) $(SILENTOPT) clean-doc
 
