@@ -41,11 +41,6 @@
 #include <random>
 #include <regex>
 
-/* Workaround: Pro chybu v operaci sčítání z matematického knihovny,
-               která způsobuje odseknutí desetinné části a přidání lomítka,
-               které je následně chybně interpretováno jako dělení */
-#include <algorithm>
-
 using namespace std;                // standardní knihovna C++
 using namespace MathSymbols;        // třídy s matematickými symboly
 
@@ -183,11 +178,6 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
                 powerSum = calculate(powerSum + ADD + (valueX + POW));
 
                 N++;    // Inkrementuje počítadlo načtených hodnot
-
-                /*  ~~~ WORKARNOUD - START ~~~  */
-                valueSum.erase(remove(valueSum.begin(), valueSum.end(), '/'), valueSum.end());
-                powerSum.erase(remove(powerSum.begin(), powerSum.end(), '/'), powerSum.end());
-                /*  ~~~ WORKARNOUD - END ~~~  */
 
                 /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
                 LOG("    Read: valueX = %-10s    N = %-6ld    "
