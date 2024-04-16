@@ -4,7 +4,7 @@
  *
  * Soubor:          cat_calc_core.h
  * Datum:           19.03.2024
- * Poslední změna:  27.03.2024
+ * Poslední změna:  16.04.2024
  *
  * Tým:     Calm CatCalc Coders
  *
@@ -27,7 +27,9 @@
 
 using namespace std;
 
-bool degRad = false;
+// Globální proměnná určující, jestli jsou hodnoty zadány ve stupních nebo radiánech
+// FALSE = stupně, TRUE = radiány
+bool degRad = true;
 
 double absVal(double num){
     if(num >= 0){
@@ -36,9 +38,14 @@ double absVal(double num){
     return -num;
 }
 
+/**
+ * @details Funkce vypočítá faktoriál zadaného čísla.
+ * Pokud je výsledek větší než maximum size_t, tak vyhodí výjimku.
+*/
 size_t factorial(size_t num){
     size_t result = 1;
     while(num > 1){
+        // Kontrola přetečení
         if(__SIZE_MAX__ / result < num){
             throw overflow_error("Overflow");
         }
@@ -48,16 +55,32 @@ size_t factorial(size_t num){
     return result;
 }
 
-double root(int root, double num){
-
-    if(num < 0 && root%2 == 0){
+/**
+ * @details Funkce vypočítá odmocninu zadaného čísla binárním vyhledáváním.
+*/
+double root(int exp, double num){
+    // Kontrola vstupních hodnot pro záporný základ
+    if(num < 0 && exp%2 == 0){
         throw invalid_argument("Math error");
     }
+    // Kontrola vstupních hodnot pro záporný exponent
+    if(exp < 0){
+        if(num == 0){
+            throw invalid_argument("Math error");
+        }else{
+            // Pokud je základ záporný, tak se funkce zavolá s opačným exponentem
+            double result = 1/root(-exp, num);
+            return result;
+        }
+    }
+
+    // Pro 0,1,-1 je výsledek roven základu
     if(num == 0 || num == 1 || num == -1){
         return num;
     }
 
-    double minVal, maxVal;
+    double minVal, maxVal; // Minimální a maximální hodnota pro binární vyhledávání
+    // Rozdělení výsledku na interval
     if(num > 0 && num < 1){
         minVal = num;
         maxVal = 1; 
@@ -73,10 +96,15 @@ double root(int root, double num){
     }
 
     int numOfCycles = 0;
-    double estimate = (minVal + maxVal)/2;
-    while((absVal(absVal(power(root,estimate)) - absVal(num)) > CALC_PRECISION) && (numOfCycles < MAX_CYCLES)){
-        if(power(root,estimate) > num){
+    double estimate = (minVal + maxVal)/2; // Odhad výsledku
+    // Binární vyhledávání
+    // Ukončí se, pokud je rozdíl mezi odhadem a skutečným výsledkem menší než přesnost
+    // Nebo pokud je počet cyklů větší než maximální počet cyklů
+    while((absVal(absVal(power(exp,estimate)) - absVal(num)) > CALC_PRECISION) && (numOfCycles < MAX_CYCLES)){
+        // Pokud je výsledek moc velký, tak se sníží horní mez
+        if(power(exp,estimate) > num){
             maxVal = estimate;
+        // Pokud je výsledek moc malý, tak se zvýší dolní mez
         }else{
             minVal = estimate;
         }
@@ -86,16 +114,22 @@ double root(int root, double num){
     return estimate;
 }
 
+/**
+ * @details Funkce vypočítá mocninu zadaného čísla.
+*/
 double power(int exp, double num){
+    // Kontrola vstupních hodnot pro záporný exponent
     if(exp < 0){
         if(num == 0){
             throw invalid_argument("Math error");
         }else{
+            // Pokud je exponent záporný, tak se funkce zavolá s opačným exponentem
             double result = 1/power(-exp, num);
             return result;
         }
     }else{
         double result = 1;
+        // Výpočet mocniny
         for(int i = 0; i < exp; i++){
             result = result * num;
         }
@@ -107,10 +141,12 @@ double power(int exp, double num){
  * @details Převede úhel do radiánů, pokud potřeba a upraví jej na rozmezí 0 - 2PI
 */
 double normalizeAngle(double ang){
+    // Pokud je úhel ve stupních, tak se převede na radiány
     if(degRad == false){
         ang = ang *(PI/180);
     }
 
+    // Úprava úhlu na interval 0 - 2PI
     while(ang < 0){
         ang = ang + 2*PI;
     }
@@ -120,12 +156,16 @@ double normalizeAngle(double ang){
     return ang;
 }
 
+/**
+ * @details Funkce vypočítá sinus zadaného úhlu taylorovým polynomem.
+*/
 double csin(double ang){
     ang = normalizeAngle(ang);
     
     double result = 0;
     double term = ang;
     int i = 1;
+    // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
     while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
         result += term;
         term = -term * ang * ang / ((2 * i) * (2 * i + 1));
@@ -133,13 +173,16 @@ double csin(double ang){
     }
     return result;
 }
-
+/**
+ * @details Funkce vypočítá kosinus zadaného úhlu taylorovým polynomem.
+*/
 double ccos(double ang){
     ang = normalizeAngle(ang);
 
     double result = 0;
     double term = 1;
     int i = 1;
+    // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
     while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
         result += term;
         term = -term * ang * ang / ((2 * i - 1) * (2 * i));
@@ -159,6 +202,9 @@ double ctan(double ang){
     return result;
 }
 
+/**
+ * @details Funkce zkontroluje, zda je znak operátor.
+*/
 bool isOperator(char c){
     if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
         c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~')
@@ -170,28 +216,39 @@ bool isOperator(char c){
     }
 }
 
+
 vector<string> parse(string expression){
     vector<string> result;
     string token = "";
     // true, pokud poslední token byl operand nebo "("
     bool lastOp = true;
     
+    // Cyklus procházející všechny znaky ve vstupním řetězci
     for(char c : expression){
+        // Pokud je znak mezera, tak se token přidá do výsledku
         if(isspace(c)){
             if(token.length() > 0){
                 result.push_back(token);
                 token.clear();
             }
-        }else if(isOperator(c) || c == '(' || c == ')'){
+        }
+        // Pokud je znak operátor nebo závorka
+        else if(isOperator(c) || c == '(' || c == ')'){
+            // Pokud token není prázdný, tak se přidá do výsledku
             if(token.length() > 0){
                 result.push_back(token);
                 token.clear();
             }
+            // Pokud před '-' byl operátor nebo '(', tak se změní na unární mínus
             if(c == '-' && lastOp){
                 result.push_back("~");
-            }else if(c == '+' && lastOp){
-                //Unární + nic nemění, může se zahodit
-            }else{
+            }
+            //Unární + nic nemění, může se zahodit
+            else if(c == '+' && lastOp){
+                continue;
+            }
+            // Jinak se operátor přidá do výsledku
+            else{
                 result.push_back(string(1,c));
             }
             if(c == ')'){
@@ -199,12 +256,14 @@ vector<string> parse(string expression){
             }else{
                 lastOp = true;
             }
-        }else{
+        }
+        // Pokud je načtený znak číslice, tak se přidá do tokenu
+        else{
             token.append(string(1,c));
             lastOp = false;
         }
     }
-
+    // Pokud je ještě nějaký token, tak se přidá do výsledku
     if(token.length() > 0){
         result.push_back(token);
     }
@@ -212,6 +271,10 @@ vector<string> parse(string expression){
     return result;
 }
 
+/**
+ * @details Funkce vrací prioritu operace pro převádění na postfixový tvar.
+ * Větší priorita znamená, že se operace provede dříve.
+*/
 int priority(string op){
     if(op == "(" || op == ")"){
         return 0;
@@ -228,6 +291,10 @@ int priority(string op){
     }
 }
 
+/**
+ * @details Funkce vrací asociativitu operace pro převádění na postfixový tvar.
+ * Při stejné prioritě se nejdřívem provede operace s asociativitou zprava.
+*/
 bool associativity(string op){
     if(op == "+" || op == "-" || op == "*" || op == "/" || op == "(" || op == ")"){
         return true; // Left
@@ -236,20 +303,30 @@ bool associativity(string op){
     }
 }
 
+/**
+ * @details Funkce převede infixový výraz na postfixový,
+ * který je vhodný pro vyhodnocení počítačem.
+*/
 vector<string> postfix(vector<string> parsedExpression){
     vector<string> postfixExpression;
     vector<string> stack;
 
+    // Cyklus procházející všechny tokeny v infixovém výrazu
     for(string token : parsedExpression){
-
+        // Pokud je token číslo, tak se přidá do výsledku
         if(isdigit(token[0])){
             postfixExpression.push_back(token);
 
-        }else if(token == "("){
+        }
+        // Otevřená závorka se přidá do zásobníku
+        else if(token == "("){
             stack.push_back(token);
 
-        }else if(token == ")"){
+        }
+        // Uravření závorky znamená, že se provedou všechny operace mezi závorkami
+        else if(token == ")"){
             while(stack.back() != "("){
+                // Pokud se nenašel začátek závorky, tak se vyhodí výjimka
                 if(stack.size() == 0){
                     throw invalid_argument("Parenthesis mismatch");
                 }else{
@@ -257,16 +334,27 @@ vector<string> postfix(vector<string> parsedExpression){
                     stack.pop_back();
                 }
             }
+            // Otevřená závorka se odstraní ze zásobníku
             stack.pop_back();
 
-        }else{
+        }
+        // Pokud je token operátor
+        else{
+            // Pokud je zásobník prázdný, tak se operátor přidá do zásobníku
             if(stack.size() == 0){
                 stack.push_back(token);
-            }else if(priority(token) > priority(stack.back()) ||
+            }
+            // Pokud je priorita operátoru větší než priorita operátoru na vrcholu zásobníku
+            // nebo je stejná priorita a operátor je pravou asociativitou
+            // přidá se operátor do zásobníku
+            else if(priority(token) > priority(stack.back()) ||
                     (priority(token) == priority(stack.back()) && associativity(token) == false))
             {
                 stack.push_back(token);
-            }else{
+            }
+            // Jinak se provedou operace ze zásobníku s větší prioritou
+            // nebo stejnou prioritou a levou asociativitou
+            else{
                 while(priority(token) < priority(stack.back()) ||
                     (priority(token) == priority(stack.back()) && associativity(token) == true))
                 {
@@ -276,10 +364,12 @@ vector<string> postfix(vector<string> parsedExpression){
                         break;
                     }
                 }
+                // Nakonec se načtený operátor přidá do zásobníku
                 stack.push_back(token);
             }
         }
     }
+    // Všechny zbývající operátory ze zásobníku se přidají do výsledku
     while(stack.size() > 0){
         postfixExpression.push_back(stack.back());
         stack.pop_back();
@@ -288,6 +378,9 @@ vector<string> postfix(vector<string> parsedExpression){
     return postfixExpression;
 }
 
+/**
+ * @details Funkce převede double na string se zaokrouhlením
+*/
 string doubleToString(double x){
     size_t numLen = 0;
     size_t i = 10;
@@ -340,15 +433,18 @@ string doubleToString(double x){
     return result;
 }
 
-
-
-
+/**
+ * @details Funkce vyhodnotí součet dvou stringů.
+*/
 string evalAdd(string num1, string num2){
+    // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
         return doubleToString(x+y);
-    }else{
+    }
+    // Jinak se provede operace s long long
+    else{
         long long x = stoll(num1);
         long long y = stoll(num2);
         return to_string(x+y);
@@ -356,11 +452,14 @@ string evalAdd(string num1, string num2){
 }
 
 string evalSub(string num1, string num2){
+    // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
         return doubleToString(x-y);
-    }else{
+    }
+    // Jinak se provede operace s long long
+    else{
         long long x = stoll(num1);
         long long y = stoll(num2);
         return to_string(x-y);
@@ -368,11 +467,14 @@ string evalSub(string num1, string num2){
 }
 
 string evalMul(string num1, string num2){
+    // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
         return doubleToString(x*y);
-    }else{
+    }
+    // Jinak se provede operace s long long
+    else{
         long long x = stoll(num1);
         long long y = stoll(num2);
         return to_string(x*y);
@@ -383,13 +485,17 @@ string evalDiv(string num1, string num2){
     if(num2 == "0"){
         throw invalid_argument("Math error");
     }
+    // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
         return doubleToString(x/y);
-    }else{
+    }
+    // Jinak se operandy převedou na long long
+    else{
         long long x = stoll(num1);
         long long y = stoll(num2);
+        // Pokud by výsledek byl desetinné číslo, tak se provede operace s double
         if(x%y > 0){
             double x = stod(num1);
             double y = stod(num2);
@@ -400,32 +506,30 @@ string evalDiv(string num1, string num2){
 }
 
 string evalNeg(string num1){
+    // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos){
         double x = stod(num1);
         return doubleToString(-x);
-    }else{
+    
+    }
+    // Jinak se provede operace s long long
+    else{
         long long x = stoll(num1);
         return to_string(-x);
     }
 }
 
-
-
-
-
 string evaluateOperation(char op, vector<string> *stack){
+    // Proměnné pro ukládání operandů různých typů
     string xs;
     string ys;
     double xd;
     size_t z;
     int exp;
 
-    cout << "stack:" << endl;
-    for(string s : *stack){
-        cout << s << " , ";
-    }
-    cout << endl;
-
+    // Výpočet operace podle zadaného operátoru
+    // Pokud operace vyžaduje 2 operandy, které nejsou na zásobníku, tak se vyhodí výjimka
+    // Operandy se odeberou ze zásobníku a výsledek se přidá zpět na zásobník
     switch(op){
         case '+':
             if(stack->size() < 2){
@@ -464,9 +568,6 @@ string evaluateOperation(char op, vector<string> *stack){
             stack->pop_back();
             return evalDiv(ys,xs);
         case '~':
-            if(stack->size() < 1){
-                throw invalid_argument("Syntax error");
-            }
             xs = stack->back();
             stack->pop_back();
             return evalNeg(xs);
@@ -474,6 +575,7 @@ string evaluateOperation(char op, vector<string> *stack){
             if(stack->size() < 2){
                 throw invalid_argument("Syntax error");
             }
+            // Kontrola jestli je exponent celé číslo
             for(char c : stack->back()){
                 if(c == '.'){
                     throw invalid_argument("Math error");
@@ -491,6 +593,7 @@ string evaluateOperation(char op, vector<string> *stack){
             }
             xd = stod(stack->back());
             stack->pop_back();
+            // Kontrola jestli je exponent celé číslo
             for(char c : stack->back()){
                 if(c == '.'){
                     throw invalid_argument("Math error");
@@ -500,6 +603,7 @@ string evaluateOperation(char op, vector<string> *stack){
             stack->pop_back();
             return doubleToString(root(exp,xd));
         case '!':
+            // Kontrola jestli se dá vypočítat faktoriál
             if(stack->size() < 1){
                 throw invalid_argument("Syntax error");
             }
@@ -515,66 +619,75 @@ string evaluateOperation(char op, vector<string> *stack){
             stack->pop_back();
             return to_string(factorial(z));
         case 's':
-            if(stack->size() < 1){
-                throw invalid_argument("Syntax error");
-            }
             xd = stod(stack->back());
             stack->pop_back();
             return doubleToString(csin(xd));
         case 'c':
-            if(stack->size() < 1){
-                throw invalid_argument("Syntax error");
-            }
             xd = stod(stack->back());
             stack->pop_back();
             return doubleToString(ccos(xd));
         case 't':
-            if(stack->size() < 1){
-                throw invalid_argument("Syntax error");
-            }
             xd = stod(stack->back());
             stack->pop_back();
             return doubleToString(ctan(xd));
-        
+        // Pokud by byl načtený neznámý operátor, tak se vyhodí výjimka
+        // Nikdy by se nemělo provést, ale bez default se program nepřeloží
         default :
             throw invalid_argument("Syntax error");
     }
 }
 
+/**
+ * @details Funkce vyhodnotí postfixový výraz.
+*/
 string evaluate(vector<string> postfixExpression){
-
+    // Cyklus, který vyhodnocuje výraz, dokud není výsledek
     while(postfixExpression.size() > 1){
         vector<string> stack;
-        bool flag = false;
+        bool flag = false; // true, pokud byla provedena operace
         size_t idx = 0;
+
+        // Cyklus procházející všechny tokeny
         for(string token : postfixExpression){
+            // Pokud je token operátor, tak se provede operace
             if(token.length() == 1 && isOperator(token[0]) && flag == false){
                 string result = evaluateOperation(token[0], &stack);
                 stack.push_back(result);
                 flag = true;
-            }else if(idx == postfixExpression.size()-1 && flag == false){
+            }
+            // Pokud je více čísel na zásobníku, ale operátor na zásobníku není
+            // tak se vyhodí výjimka
+            else if(idx == postfixExpression.size()-1 && flag == false){
                 throw invalid_argument("Syntax error");
-            }else{
+            }
+            // Jinak se token přidá na zásobník
+            else{
                 stack.push_back(token);
             }
             idx++;
         }
+        // Výraz po operaci se uloží zpět na vstup
         postfixExpression = stack;
     }
     return postfixExpression.front();
 }
 
+/**
+ * @details Funkce odstraní přebytečné mezery.
+ * Nechá pouze jednu mezeru za sebou.
+*/
 string removeMultSpaces(string expression){
     string result;
     bool prevIsSpace = false;
-
-    for(char c : expression){
+    for(char c : expression){ // Cyklus procházející všechny znaky ve vstupním řetězci
         if(c == ' '){
+            // Pokud je předchozí znak mezera, tak se nevloží další mezera
             if(!prevIsSpace){
                 result.push_back(c);
             }
             prevIsSpace = true;
         }else{
+            // Pokud znak není mezera, tak se vloží do výsledku
             result.push_back(c);
             prevIsSpace = false;
         }
@@ -582,8 +695,45 @@ string removeMultSpaces(string expression){
     return result;
 }
 
+/**
+ * @details Funkce zkontroluje, zda jsou závorky správně uzavřené.
+ * Pokud ne, tak doplní závorky na konec výrazu.
+*/
+string pairParenthesis(string expression){
+    int cnt = 0;
+    // Počítá kolik závorek je otevřených oproti uzavřeným.
+    for(char c : expression){
+        if(c == '('){
+            cnt++;
+        }
+        if(c == ')'){
+            cnt--;
+        }
+        // Pokud je více závorek uzavřených než otevřených, tak vyhodí výjimku.
+        if(cnt < 0){
+            throw invalid_argument("Parenthesis mismatch");
+        }
+    }
+    // Přidává závorky na konec výrazu, dokud není počet otevřených a uzavřených závorek stejný.
+    while(cnt > 0){
+        expression.append(")");
+        cnt--;
+    }
+    return expression;
+}
+
+/**
+ * @details Funkce odstraní přebytečné mezery,
+ * uzavře závorky, zkrátí označení funkcí
+ * a přidá implicitní mocninu a odmocninu 2.
+*/
 string formatInput(string expression){
+    // Odstranění přebytečných mezer
     expression = removeMultSpaces(expression);
+    // Uzavření závorek
+    expression = pairParenthesis(expression);
+    
+    // Zkrácení goniometrických funkcí
     size_t idx = expression.find("sin");
     while (idx != string::npos) {
         expression.replace(idx, 3, "s");
@@ -600,69 +750,90 @@ string formatInput(string expression){
         idx = expression.find("tan");
     }
 
-
+    // Implicitní odmocnina 2
     idx = 0;
-    while(true){
+    while(true){ // Cyklus hledající všechny výskyty odmocniny
         idx = expression.find('#',idx);
+        // Pokud nenajde další výskyt odmocniny, cyklus se ukončí
         if(idx == string::npos){
             break;
         }
+        // Pokud je odmocnina na začátku výrazu, tak se přidá 2
         if(idx == 0){
             expression.insert(0,1,'2');
             idx = idx+2;
             continue;
         }
-        size_t idx2 = idx-1;
+
+        size_t idx2 = idx-1; // Index před odmocninou
         char c = expression[idx2];
+        // Pokud je před odmocninou mezera na začátku výrazu, tak se nahradí 2
         if(idx2 == 0 &&  c == ' '){
             expression.replace(0,1,"2");
             idx++;
             continue;
         }
+        // Pokud je před odmocninou mezera, tak se posune index
         if(c == ' '){
             idx2--;
             c = expression[idx2];
         }
+        // Pokud není před odmocninou číslo nebo závorka, tak se přidá 2
         if(isdigit(c) || c == ')'){
+            // Pusuneme první index
             idx++;
             continue;
         }
         expression.insert(idx2+1,1,'2');
+        // Pusuneme první index
         idx = idx+2;
     }
     
+    // Implicitní mocnina 2
     idx = 0;
-    while(true){
+    while(true){ // Cyklus hledající všechny výskyty mocniny
         idx = expression.find('^',idx);
+        // Pokud nenajde další výskyt mocniny, cyklus se ukončí
         if(idx == string::npos){
             break;
         }
+        // Pokud je mocnina na konci výrazu, tak se přidá 2
         if(idx == expression.size()-1){
             expression.append("2");
             break;
         }
-        size_t idx2 = idx+1;
+
+        size_t idx2 = idx+1; // Index za mocninou
+        // Pokud je za mocninou mezera na konci výrazu, tak se nahradí 2
         char c = expression[idx2];
         if(idx2 == expression.size()-1 &&  c == ' '){
             expression.replace(expression.size()-1,1,"2");
             break;
         }
+        // Pokud je za mocninou mezera, tak se posune index
         if(c == ' '){
             idx2++;
             c = expression[idx2];
         }
-        if(isdigit(c) || c == '('){
+        // Pokud není za mocninou číslo nebo závorka, tak se přidá 2
+        if(isdigit(c) || c == '(' || c == '+' || c == '-'){
+            // Pusuneme první index
             idx++;
             continue;
         }
         expression.insert(idx2,1,'2');
+        // Pusuneme první index
         idx = idx+2;
     }
-
     return expression;
 }
 
+/**
+ * @details Funkce vyhodnotí zadaný výraz.
+ * Pokud výraz neobsahuje žádné číslo, tak vrátí 0.
+*/
 string calculate(string expression){
+    // Kontrola, zda je výraz prázdný
     bool noNum = true;
     for(char c : expression){
         if(isdigit(c)){
@@ -670,13 +841,18 @@ string calculate(string expression){
             break;
         }
     }
+    // Pokud výraz neobsahuje žádné číslo, tak se vrátí 0
     if(noNum == true){
         return "0";
     }
 
+    // Naformátuje se výraz
     expression = formatInput(expression);
+    // Převede se výraz na tokeny
     vector<string> tokens = parse(expression);
+    // Převede se výraz na postfixový tvar
     tokens = postfix(tokens);
+    // Vyhodnotí se výraz
     return evaluate(tokens);
 }
 

@@ -4,7 +4,7 @@
  *
  * Soubor:          cat_calc_core.h
  * Datum:           19.03.2024
- * Poslední změna:  27.03.2024
+ * Poslední změna:  16.04.2024
  *
  * Tým:     Calm CatCalc Coders
  *
@@ -111,7 +111,7 @@ vector<string> parse(string expression);
  *
  * @param[in] parsedExpression Vektor s tokeny výrazu v infixovém tvaru.
  * @return Vektor s tokeny výrazu v postfixovém tvaru.
- * @exception ParenthesesMismatch Pro nesedící páry závorek.
+ * @exception invalid_argument("Parenthesis mismatch") Pro nesedící páry závorek.
 */
 vector<string> postfix(vector<string> parsedExpression);
 
@@ -120,7 +120,7 @@ vector<string> postfix(vector<string> parsedExpression);
  *
  * @param[in] postfixExpression Vektor s tokeny výrazu v postfixovém tvaru.
  * @return Výsledek výrazu v podobě řetězce.
- * @exception MathError Pro neplatné matematické operace jako dělení 0.
+ * @exception invalid_argument("Math error") Pro neplatné matematické operace jako dělení 0.
 */
 string evaluate(vector<string> postfixExpression);
 
@@ -273,6 +273,30 @@ bool associativity(string op);
  * @brief Převod double na string.
 */
 string doubleToString(double x);
+
+/**
+ * @brief Formátování vstupního výrazu.
+ * 
+ * @param[in] expression Vstupní výraz jako string.
+ * @return Vrací upravený výraz, jako string.
+*/
+string formatInput(string expression);
+
+/**
+ * @brief Přidává chybějící závorky.
+ * 
+ * @param[in] expression Vstupní výraz jako string.
+ * @return Vrací upravený výraz, jako string.
+*/
+string pairParenthesis(string expression);
+
+/**
+ * @brief Odstraní přebytečné mezery ve výrazu.
+ * 
+ * @param[in] expression Vstupní výraz jako string.
+ * @return Vrací upravený výraz, jako string.
+*/
+string removeMultSpaces(string expression);
 
 
 #endif // CAT_CALC_CORE_H_
