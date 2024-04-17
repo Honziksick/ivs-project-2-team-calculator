@@ -92,9 +92,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
     connect(ui->Zdel_ch, SIGNAL(clicked()), this, SLOT(delete_char()));
 
-    for(int i = 0; i < 9; ++i){
-        setTabOrder(num_buttons[i], num_buttons[i+1]);
-    }
     setTabOrder(ui->DELETE, ui->Zdel_ch);
     setTabOrder(ui->Zdel_ch, ui->Lza);
     setTabOrder(ui->Lza, ui->Pza);
@@ -112,6 +109,12 @@ MainWindow::MainWindow(QWidget *parent)
     setTabOrder(ui->Zcarka, ui->Zrovna);
     setTabOrder(ui->Zrovna, ui->Zplus);
     setTabOrder(ui->Zplus, num_buttons[0]);
+    for(int i = 0; i < 9; i++){
+        setTabOrder(num_buttons[i], num_buttons[i+1]);
+    }
+    setTabOrder(num_buttons[9], ui->Display);
+    setTabOrder(ui->Display, ui->vysledek);
+    setTabOrder(ui->vysledek, ui->DELETE);
 }
 
 MainWindow::~MainWindow(){
