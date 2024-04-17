@@ -144,8 +144,7 @@ void MainWindow::equal(){
             eq_str = result;
             eq_state = 1;
         }
-
-        comma_rate = 0;
+        
     }catch (std::invalid_argument& e){
         //vypíše exception, který byl thrownut v knihovně
         ui->Display->setText(QString::fromStdString(e.what()));
@@ -234,7 +233,13 @@ void MainWindow::lbra(){
     }
     else{
         QString new_val = dis_val + val_button;
+        
+        if(eq_state == 1){
+            new_val = eq_str + val_button;
+        }
+
         ui->Display->setText(new_val);
+        eq_state = 0;
     }
 }
 
@@ -249,7 +254,12 @@ void MainWindow::rbra(){
     }
     else{
         QString new_val = dis_val + val_button;
+
+        if(eq_state == 1){
+            new_val = eq_str + val_button;
+        }
         ui->Display->setText(new_val);
+        eq_state = 0;
     }
 }
 
@@ -266,7 +276,11 @@ void MainWindow::comma(){
         if(dis_val == empty_state){
             new_val = "0" + val_button;
         }
+        if(eq_state == 1 && comma_rate != 1){
+            new_val = eq_str + val_button;
+        }
         ui->Display->setText(new_val);
+        eq_state =0;
     }
 }
 
@@ -367,10 +381,10 @@ void MainWindow::fact(){
     QString dis_val = ui->Display->text();
     QString new_val = dis_val + val_button;
 
-    ui->Display->setText(new_val);
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+    ui->Display->setText(new_val);
     eq_state = 0;
 }
 
