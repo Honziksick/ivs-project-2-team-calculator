@@ -555,18 +555,66 @@ $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 
 ### pack-repo: ## Zkopíruje požadované složky repozitáře do složky pro odevzdání
 pack-repo:
-	rsync -av --progress ../.git $(PACK_REPO_DIR)/
-	rsync -av --progress ../.github $(PACK_REPO_DIR)/
-	rsync -av --progress ../.vscode $(PACK_REPO_DIR)/
-	rsync -av --progress ../doc $(PACK_REPO_DIR)/
-	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
-	rsync -av --progress ../plan $(PACK_REPO_DIR)/
-	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
-	rsync -av --progress ../src $(PACK_REPO_DIR)/ --exclude build
-	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
-	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
-	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
-	rsync -av --progress ../README.md $(PACK_REPO_DIR)/
+	if [ -d "../.git" ]; then \
+		rsync -av --progress ../.git $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.git does not exist"; \
+	fi
+	if [ -d "../.github" ]; then \
+		rsync -av --progress ../.github $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.github does not exist"; \
+	fi
+	if [ -d "../.vscode" ]; then \
+		rsync -av --progress ../.vscode $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.vscode does not exist"; \
+	fi
+	if [ -d "../doc" ]; then \
+		rsync -av --progress ../doc $(PACK_REPO_DIR)/; \
+	else \
+		echo "../doc does not exist"; \
+	fi
+	if [ -d "../mockup" ]; then \
+		rsync -av --progress ../mockup $(PACK_REPO_DIR)/; \
+	else \
+		echo "../mockup does not exist"; \
+	fi
+	if [ -d "../plan" ]; then \
+		rsync -av --progress ../plan $(PACK_REPO_DIR)/; \
+	else \
+		echo "../plan does not exist"; \
+	fi
+	if [ -d "../profiling" ]; then \
+		rsync -av --progress ../profiling $(PACK_REPO_DIR)/; \
+	else \
+		echo "../profiling does not exist"; \
+	fi
+	if [ -d "../src" ]; then \
+		rsync -av --progress ../src $(PACK_REPO_DIR)/ --exclude build; \
+	else \
+		echo "../src does not exist"; \
+	fi
+	if [ -f "../.editorconfig" ]; then \
+		rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.editorconfig does not exist"; \
+	fi
+	if [ -f "../.gitignore" ]; then \
+		rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.gitignore does not exist"; \
+	fi
+	if [ -f "../LICENSE" ]; then \
+		rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/; \
+	else \
+		echo "../LICENSE does not exist"; \
+	fi
+	if [ -f "../README.md" ]; then \
+		rsync -av --progress ../README.md $(PACK_REPO_DIR)/; \
+	else \
+		echo "../README.md does not exist"; \
+	fi
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
 pack-doc:
