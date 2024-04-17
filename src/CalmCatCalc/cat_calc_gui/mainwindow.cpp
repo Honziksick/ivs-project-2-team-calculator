@@ -72,8 +72,6 @@ MainWindow::MainWindow(QWidget *parent)
         //propojení tlačíek pro čísla
         connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
-
-    //propojení jednotlivých tlačítek
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
     connect(ui->DELETE, SIGNAL(clicked()), this, SLOT(del()));
     connect(ui->Lza, SIGNAL(clicked()), this, SLOT(lbra()));
@@ -92,29 +90,32 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
     connect(ui->Zdel_ch, SIGNAL(clicked()), this, SLOT(delete_char()));
 
-    setTabOrder(ui->DELETE, ui->Zdel_ch);
-    setTabOrder(ui->Zdel_ch, ui->Lza);
-    setTabOrder(ui->Lza, ui->Pza);
-    setTabOrder(ui->Pza, ui->Zmoc);
-    setTabOrder(ui->Zmoc, ui->Zodmo);
-    setTabOrder(ui->Zodmo, ui->Zfact);
-    setTabOrder(ui->Zfact, ui->Zdeg);
-    setTabOrder(ui->Zdeg, ui->Zdeleno);
-    setTabOrder(ui->Zdeleno, ui->Zsin);
-    setTabOrder(ui->Zsin, ui->Zkrat);
-    setTabOrder(ui->Zkrat, ui->Zcos);
-    setTabOrder(ui->Zcos, ui->Zminus);
-    setTabOrder(ui->Zminus, ui->Ztan);
-    setTabOrder(ui->Ztan, ui->Zcarka);
-    setTabOrder(ui->Zcarka, ui->Zrovna);
-    setTabOrder(ui->Zrovna, ui->Zplus);
-    setTabOrder(ui->Zplus, num_buttons[0]);
-    for(int i = 0; i < 9; i++){
-        setTabOrder(num_buttons[i], num_buttons[i+1]);
+/*****************************************************************************
+ *
+ *                      Zrušení zkratky tab pro všechny widgety
+ *
+******************************************************************************/
+
+    //získáme widget centralwidget, který obsahuje tlačítka
+    QObjectList buttons = ui->centralwidget->children();
+    //for cyklus, který projede počtem, kolik je dětí ve widgetu
+    for(QObject *obj : buttons){
+        //mění datový typ, pokud selže, přeskočí dané tlačítko
+        if(QPushButton *button = qobject_cast<QPushButton*>(obj)){
+            //pokud začíná na "Z" mění ho na NoFocus
+            if(button->objectName().startsWith("Z")){
+                button->setFocusPolicy(Qt::NoFocus);
+            }
+        }
     }
-    setTabOrder(num_buttons[9], ui->Display);
-    setTabOrder(ui->Display, ui->vysledek);
-    setTabOrder(ui->vysledek, ui->DELETE);
+    for(int i = 0; i <= 9; i++){
+        num_buttons[i]->setFocusPolicy(Qt::NoFocus);
+    }
+    ui->Lza->setFocusPolicy(Qt::NoFocus);
+    ui->Pza->setFocusPolicy(Qt::NoFocus);
+    ui->DELETE->setFocusPolicy(Qt::NoFocus);
+    ui->Display->setFocusPolicy(Qt::NoFocus);
+    ui->vysledek->setFocusPolicy(Qt::NoFocus);
 }
 
 MainWindow::~MainWindow(){
@@ -138,6 +139,7 @@ void MainWindow::equal(){
         QString result = QString::fromStdString(calculate(dis_val_s));
         if(result == empty_state){
             ui->vysledek->setText("= 0");
+            eq_state = 1;
         }
         else{
             ui->vysledek->setText("= " + result);
@@ -272,12 +274,9 @@ void MainWindow::comma(){
         QString dis_val = ui->Display->text();
         QString new_val = dis_val + val_button;
 
-        //pokud není nastavena hodnota, tak se dá 0 pčed čárku
-        if(dis_val == empty_state){
+        //pokud není nastavena hodnota nebo bylo pressnuto =, tak se dá 0 pčed čárku
+        if(dis_val == empty_state || eq_state == 1){
             new_val = "0" + val_button;
-        }
-        if(eq_state == 1 && comma_rate != 1){
-            new_val = eq_str + val_button;
         }
         ui->Display->setText(new_val);
         eq_state =0;
