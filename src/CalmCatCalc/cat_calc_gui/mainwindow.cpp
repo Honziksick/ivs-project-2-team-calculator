@@ -388,6 +388,14 @@ void MainWindow::sin(){
     }
 
     ui->Display->setText(new_val);
+
+    if(eq_state == 1){
+        ui->Display->setText(val_button + "(" + eq_str + ")");
+        ui->vysledek->setText(empty_state);
+
+        eq_state = 0;
+    }
+
     gon_rate++;
 }
 
@@ -408,6 +416,14 @@ void MainWindow::tan(){
     }
 
     ui->Display->setText(new_val);
+
+    if(eq_state == 1){
+        ui->Display->setText(val_button + "(" + eq_str + ")");
+        ui->vysledek->setText(empty_state);
+
+        eq_state = 0;
+    }
+    
     gon_rate++;
 }
 
@@ -428,6 +444,14 @@ void MainWindow::cos(){
     }
 
     ui->Display->setText(new_val);
+
+    if(eq_state == 1){
+        ui->Display->setText(val_button + "(" + eq_str + ")");
+        ui->vysledek->setText(empty_state);
+
+        eq_state = 0;
+    }
+
     gon_rate++;
 }
 
