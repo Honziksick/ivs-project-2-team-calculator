@@ -216,6 +216,7 @@ profile:
 build-gui: set-env-var
 	@mkdir -p $(GUI_BUILD_DIR)
 	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
+	@cp $(GUI_DIR)/paw.png $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
 	sudo chmod 0700  /run/user/1000/
 	cd build && sudo ln -snf gui/cat_calc_gui CalmCatCalc
