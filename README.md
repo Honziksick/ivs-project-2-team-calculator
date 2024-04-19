@@ -1,10 +1,10 @@
 <h1>2. projekt IVS - Týmový projekt: Kalkulačka</h1>
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![C/C++ CI](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml/badge.svg?branch=main)](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml)
+[![C/C++ CI](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml/badge.svg)](https://github.com/Honziksick/ivs-project-2-team-calculator/actions/workflows/c-cpp_ci_build_and_test.yml)
 [![codecov](https://codecov.io/gh/Honziksick/ivs-project-2-team-calculator/graph/badge.svg?token=TYLF21ENO2)](https://codecov.io/gh/Honziksick/ivs-project-2-team-calculator)
 
-## O projektu: Calm CatCalc 😺
+## O projektu: Calm CatCalc <img src="doc/images/cat_calc_logo_svg.svg" alt="Calm CatCalc Logo" width="18">
 Podrobné informace o projektu jsou k nahlédnutí ve složce `info/` ve formátu Markdown či ve formátu PDF. Tato složka obsahuje mimo jiné zadání projektu, plán projektu a tipy & triky k tvorbě projektu od vůdce týmu.
 
 ## Autoři
@@ -25,8 +25,10 @@ Ubuntu 64bit
 
 Projekt je distribuován s otevřenými zdrojovými texty pod licencí `GNU GPL v.3`
 
-<br>
+<p align="center">
+  <img src="doc/images/cat_calc_logo_svg.svg" alt="Calm CatCalc Logo" width="180">
+</p>
 
 ---
 
-*Datum poslední úpravy: 26. 3. 2024, 18:14*
+*Datum poslední úpravy: 18. 4. 2024, 14:26*
