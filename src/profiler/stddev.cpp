@@ -48,6 +48,7 @@
 
 using namespace std;                // standardní knihovna C++
 using namespace MathSymbols;        // třídy s matematickými symboly
+using namespace catMath;            // funkce matematické knihovny
 
 // Deklarace použitých funkcí z knihovny`stddev.h`
 void generateNumbers();
