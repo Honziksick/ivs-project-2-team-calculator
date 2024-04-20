@@ -39,7 +39,6 @@
 #include <random>
 #include <regex>
 
-
 #ifdef DEBUG
 /**
  *

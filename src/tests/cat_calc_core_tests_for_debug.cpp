@@ -4,6 +4,7 @@
 #include <string>
 
 using namespace std;
+using namespace catMath;
 
 /** Testovaná přesnost kalkulačky na 14 desetinných míst */
 #define TESTED_PRECISION 0.00000000000001
@@ -37,6 +38,21 @@ int main() {
         cout << calculate(expression) << endl;
 
         expression = "3!!";
+        cout << calculate(expression) << endl;
+
+        expression = "#4";
+        cout << calculate(expression) << endl;
+
+        expression = "(1+4)*#16";
+        cout << calculate(expression) << endl;
+
+        expression = "5+#81/2";
+        cout << calculate(expression) << endl;
+
+        expression = "3^+1";
+        cout << calculate(expression) << endl;
+
+        expression = "2*1+3^(2+1)+2";
         cout << calculate(expression) << endl;
 
         expression = "4 - (-8)";

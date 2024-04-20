@@ -41,8 +41,10 @@
 #include <random>
 #include <regex>
 
-using namespace std;                // standardní knihovna C++
+using namespace std;                // funkce standardní knihovny C++
+using namespace catMath;            // funkce matematické knihovny 'cat_calc_core'
 using namespace MathSymbols;        // třídy s matematickými symboly
+
 
 // Deklarace použitých funkcí z knihovny`stddev.h`
 void generateNumbers();

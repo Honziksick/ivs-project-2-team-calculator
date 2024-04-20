@@ -5,7 +5,7 @@
 # Soubor:           Makefile                                                   #
 # Autor:            Jan Kalina <xkalinj00>                                     #
 # Datum:            20.03.2024                                                 #
-# Poslední změna:   07.04.2024                                                 #
+# Poslední změna:   20.04.2024                                                 #
 #                                                                              #
 # Tým:      Calm CatCalc Coders                                                #
 # Členové:  Farkašovský Lukáš    <xfarkal00>                                   #
@@ -187,6 +187,8 @@ test: build-test-libs run-core-test
 doc:
 	$(MAKE) $(SILENTOPT) clean-doc
 	doxygen Doxyfile
+	cd $(DOC_OUT_DIR)/html && grep -v 'target="_self">resources\|target="_self">doc' files.html > temp.html && mv temp.html files.html
+	
 
 ### coverage: ## Vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage build-test-coverage run-test-coverage process-coverage
@@ -329,9 +331,9 @@ clean-build:
 clean-core:
 	rm -f $(BUILD_DIR)/$(EXECUTABLE).o
 
-### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě /images)
+### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě ./resources/)
 clean-doc:
-	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/images*' -delete
+	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/resources*' -delete
 
 ### clean-coverage: ## Odstraní všechny soubory vytvořené během pokrytí kódu
 clean-coverage:
