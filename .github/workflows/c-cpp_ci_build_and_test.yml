@@ -307,7 +307,7 @@ jobs:
     - name: Run 'stddev' program tests
       run: |
         cd src
-        make run-stddev-test
+        make run-stddev-test ADV=yes
         if [ $? -ne 0 ]; then
           echo "::error::Some "stddev" program tests failed."
           false
