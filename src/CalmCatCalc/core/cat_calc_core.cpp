@@ -34,7 +34,7 @@ bool degRad = true;
 namespace catMath{
 
 double absVal(double num){
-    if(num >= 0){
+    if(num >= 0.0){
         return num;
     }
     return -num;
@@ -131,8 +131,10 @@ double power(int exp, double num){
         // Výpočet mocniny
         for(int i = 0; i < exp; i++){
             // Kontrola přetečení
-            if(numeric_limits<double>::max() / absVal(result) < absVal(num)){
-                throw overflow_error("Overflow");
+            if(absVal(result) != 0){
+                if(numeric_limits<double>::max() / absVal(result) < absVal(num)){
+                    throw overflow_error("Overflow");
+                }
             }
             result = result * num;
         }

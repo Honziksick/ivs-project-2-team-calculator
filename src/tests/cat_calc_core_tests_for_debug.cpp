@@ -4,6 +4,7 @@
 #include <string>
 
 using namespace std;
+using namespace catMath;
 
 /** Testovaná přesnost kalkulačky na 14 desetinných míst */
 #define TESTED_PRECISION 0.00000000000001
