@@ -372,7 +372,7 @@ vector<string> postfix(vector<string> parsedExpression){
 
 string doubleToString(double x){
     size_t numLen = 0;
-    size_t i = 10;
+    double i = 10;
     while(x/i > 1){
         numLen++;
         i = i*10;
