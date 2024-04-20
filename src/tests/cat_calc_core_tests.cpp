@@ -39,6 +39,17 @@ TEST(Calculate, BasicExpressions){
     expectedResult= "3";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
+    // Zaokrouhlení při násobení
+    expression = "99.999999999999999*10000000";
+    expectedResult= "1000000000";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
+    // Základní dělení
+    expression = "(2090493964.1320033)+(592518.79299660004)";
+    expectedResult= "2091086482";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+    
+
     // Dělení záporných desetinných čísel a práce se znaménky
     expression = "-5.5/-5.5*-1-1.5";
     expectedResult= "-2.5";
@@ -89,13 +100,18 @@ TEST(Calculate, BasicExpressions){
     expectedResult= "25";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
+    // Implicitní mocnina
+    expression = "5^*3";
+    expectedResult= "75";
+    EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
+
     // Implicitní mocnina se závorkou a dalšími operacemi
     expression = "(2*3^) +1";
     expectedResult= "19";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
     // Mocnina se závorkou a dalšími operacemi
-    expression = "2*1+3^(2+1)+2";
+    expression = "2*1+3^ (2+1)+2";
     expectedResult= "31";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 

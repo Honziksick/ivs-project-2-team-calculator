@@ -38,10 +38,6 @@ double absVal(double num){
     return -num;
 }
 
-/**
- * @details Funkce vypočítá faktoriál zadaného čísla.
- * Pokud je výsledek větší než maximum size_t, tak vyhodí výjimku.
-*/
 size_t factorial(size_t num){
     size_t result = 1;
     while(num > 1){
@@ -55,9 +51,6 @@ size_t factorial(size_t num){
     return result;
 }
 
-/**
- * @details Funkce vypočítá odmocninu zadaného čísla binárním vyhledáváním.
-*/
 double root(int exp, double num){
     // Kontrola vstupních hodnot pro záporný základ
     if(num < 0 && exp%2 == 0){
@@ -67,7 +60,8 @@ double root(int exp, double num){
     if(exp < 0){
         if(num == 0){
             throw invalid_argument("Math error");
-        }else{
+        }
+        else{
             // Pokud je základ záporný, tak se funkce zavolá s opačným exponentem
             double result = 1/root(-exp, num);
             return result;
@@ -84,13 +78,16 @@ double root(int exp, double num){
     if(num > 0 && num < 1){
         minVal = num;
         maxVal = 1; 
-    }else if(num > -1 && num < 0){
+    }
+    else if(num > -1 && num < 0){
         minVal = -1;
         maxVal = num;
-    }else if(num > 1){
+    }
+    else if(num > 1){
         minVal = 1;
         maxVal = num;
-    }else{
+    }
+    else{
         minVal = num;
         maxVal = -1;
     }
@@ -105,7 +102,8 @@ double root(int exp, double num){
         if(power(exp,estimate) > num){
             maxVal = estimate;
         // Pokud je výsledek moc malý, tak se zvýší dolní mez
-        }else{
+        }
+        else{
             minVal = estimate;
         }
         estimate = (minVal + maxVal)/2;
@@ -114,20 +112,19 @@ double root(int exp, double num){
     return estimate;
 }
 
-/**
- * @details Funkce vypočítá mocninu zadaného čísla.
-*/
 double power(int exp, double num){
     // Kontrola vstupních hodnot pro záporný exponent
     if(exp < 0){
         if(num == 0){
             throw invalid_argument("Math error");
-        }else{
+        }
+        else{
             // Pokud je exponent záporný, tak se funkce zavolá s opačným exponentem
             double result = 1/power(-exp, num);
             return result;
         }
-    }else{
+    }
+    else{
         double result = 1;
         // Výpočet mocniny
         for(int i = 0; i < exp; i++){
@@ -137,9 +134,6 @@ double power(int exp, double num){
     }
 }
 
-/**
- * @details Převede úhel do radiánů, pokud potřeba a upraví jej na rozmezí 0 - 2PI
-*/
 double normalizeAngle(double ang){
     // Pokud je úhel ve stupních, tak se převede na radiány
     if(degRad == false){
@@ -156,34 +150,29 @@ double normalizeAngle(double ang){
     return ang;
 }
 
-/**
- * @details Funkce vypočítá sinus zadaného úhlu taylorovým polynomem.
-*/
 double csin(double ang){
     ang = normalizeAngle(ang);
     
     double result = 0;
     double term = ang;
-    int i = 1;
+    int i = 1;  //Počet cyklů
     // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
-    while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
+    while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i) * (2 * i + 1));
         i++;
     }
     return result;
 }
-/**
- * @details Funkce vypočítá kosinus zadaného úhlu taylorovým polynomem.
-*/
+
 double ccos(double ang){
     ang = normalizeAngle(ang);
 
     double result = 0;
     double term = 1;
-    int i = 1;
+    int i = 1;  //Počet cyklů
     // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
-    while (absVal(term) >= CALC_PRECISION && i < MAX_CYCLES) {
+    while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i - 1) * (2 * i));
         i++;
@@ -202,9 +191,6 @@ double ctan(double ang){
     return result;
 }
 
-/**
- * @details Funkce zkontroluje, zda je znak operátor.
-*/
 bool isOperator(char c){
     if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
         c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~')
@@ -215,7 +201,6 @@ bool isOperator(char c){
         return false;
     }
 }
-
 
 vector<string> parse(string expression){
     vector<string> result;
@@ -253,7 +238,8 @@ vector<string> parse(string expression){
             }
             if(c == ')'){
                 lastOp = false;
-            }else{
+            }
+            else{
                 lastOp = true;
             }
         }
@@ -271,42 +257,36 @@ vector<string> parse(string expression){
     return result;
 }
 
-/**
- * @details Funkce vrací prioritu operace pro převádění na postfixový tvar.
- * Větší priorita znamená, že se operace provede dříve.
-*/
 int priority(string op){
     if(op == "(" || op == ")"){
         return 0;
-    }else if(op == "+" || op == "-"){
+    }
+    else if(op == "+" || op == "-"){
         return 1;
-    }else if(op == "*" || op == "/"){
+    }
+    else if(op == "*" || op == "/"){
         return 2;
-    }else if(op == "~"){
+    }
+    else if(op == "~"){
         return 5;
-    }else if(op == "s" || op == "c" || op == "t"){
+    }
+    else if(op == "s" || op == "c" || op == "t"){
         return 4;
-    }else{
+    }
+    else{
         return 3;
     }
 }
 
-/**
- * @details Funkce vrací asociativitu operace pro převádění na postfixový tvar.
- * Při stejné prioritě se nejdřívem provede operace s asociativitou zprava.
-*/
 bool associativity(string op){
     if(op == "+" || op == "-" || op == "*" || op == "/" || op == "(" || op == ")"){
         return true; // Left
-    }else{
+    }
+    else{
         return false; // Right
     }
 }
 
-/**
- * @details Funkce převede infixový výraz na postfixový,
- * který je vhodný pro vyhodnocení počítačem.
-*/
 vector<string> postfix(vector<string> parsedExpression){
     vector<string> postfixExpression;
     vector<string> stack;
@@ -328,8 +308,10 @@ vector<string> postfix(vector<string> parsedExpression){
             while(stack.back() != "("){
                 // Pokud se nenašel začátek závorky, tak se vyhodí výjimka
                 if(stack.size() == 0){
+                    // Nemělo by se nikdy stát, protože se kontroluje při formatování
                     throw invalid_argument("Parenthesis mismatch");
-                }else{
+                }
+                else{
                     postfixExpression.push_back(stack.back());
                     stack.pop_back();
                 }
@@ -347,16 +329,16 @@ vector<string> postfix(vector<string> parsedExpression){
             // Pokud je priorita operátoru větší než priorita operátoru na vrcholu zásobníku
             // nebo je stejná priorita a operátor je pravou asociativitou
             // přidá se operátor do zásobníku
-            else if(priority(token) > priority(stack.back()) ||
-                    (priority(token) == priority(stack.back()) && associativity(token) == false))
+            else if( (priority(token) > priority(stack.back())) ||
+                (priority(token) == priority(stack.back()) && associativity(token) == false) )
             {
                 stack.push_back(token);
             }
             // Jinak se provedou operace ze zásobníku s větší prioritou
             // nebo stejnou prioritou a levou asociativitou
             else{
-                while(priority(token) < priority(stack.back()) ||
-                    (priority(token) == priority(stack.back()) && associativity(token) == true))
+                while( (priority(token) < priority(stack.back())) ||
+                    (priority(token)==priority(stack.back()) && associativity(token)==true) )
                 {
                     postfixExpression.push_back(stack.back());
                     stack.pop_back();
@@ -378,9 +360,6 @@ vector<string> postfix(vector<string> parsedExpression){
     return postfixExpression;
 }
 
-/**
- * @details Funkce převede double na string se zaokrouhlením
-*/
 string doubleToString(double x){
     size_t numLen = 0;
     size_t i = 10;
@@ -397,7 +376,8 @@ string doubleToString(double x){
         size_t notZeroIdx = result.find_last_not_of('0');
         if(notZeroIdx <= dotIdx){
             result.erase(dotIdx);
-        }else if(notZeroIdx < result.size()-1){
+        }
+        else if(notZeroIdx < result.size()-1){
             result.erase(notZeroIdx+1);
         }
     }
@@ -415,27 +395,16 @@ string doubleToString(double x){
             }
         }
         size_t inc = result.find_last_not_of('9');
-        if(inc == string::npos){
-            string tmp = "";
-            tmp.push_back('1');
-            for(int i = result.size(); i > 0; i--){
-                tmp.push_back('0');
-            }
-            result = tmp;
-            return result;
-        }
         if(result[inc] == '.'){
             result.erase(inc);
-        }else{
+        }
+        else{
             result[inc] = result[inc]+1;
         }
     }
     return result;
 }
 
-/**
- * @details Funkce vyhodnotí součet dvou stringů.
-*/
 string evalAdd(string num1, string num2){
     // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
@@ -637,9 +606,6 @@ string evaluateOperation(char op, vector<string> *stack){
     }
 }
 
-/**
- * @details Funkce vyhodnotí postfixový výraz.
-*/
 string evaluate(vector<string> postfixExpression){
     // Cyklus, který vyhodnocuje výraz, dokud není výsledek
     while(postfixExpression.size() > 1){
@@ -672,10 +638,6 @@ string evaluate(vector<string> postfixExpression){
     return postfixExpression.front();
 }
 
-/**
- * @details Funkce odstraní přebytečné mezery.
- * Nechá pouze jednu mezeru za sebou.
-*/
 string removeMultSpaces(string expression){
     string result;
     bool prevIsSpace = false;
@@ -695,10 +657,6 @@ string removeMultSpaces(string expression){
     return result;
 }
 
-/**
- * @details Funkce zkontroluje, zda jsou závorky správně uzavřené.
- * Pokud ne, tak doplní závorky na konec výrazu.
-*/
 string pairParenthesis(string expression){
     int cnt = 0;
     // Počítá kolik závorek je otevřených oproti uzavřeným.
@@ -722,11 +680,6 @@ string pairParenthesis(string expression){
     return expression;
 }
 
-/**
- * @details Funkce odstraní přebytečné mezery,
- * uzavře závorky, zkrátí označení funkcí
- * a přidá implicitní mocninu a odmocninu 2.
-*/
 string formatInput(string expression){
     // Odstranění přebytečných mezer
     expression = removeMultSpaces(expression);
@@ -828,10 +781,6 @@ string formatInput(string expression){
     return expression;
 }
 
-/**
- * @details Funkce vyhodnotí zadaný výraz.
- * Pokud výraz neobsahuje žádné číslo, tak vrátí 0.
-*/
 string calculate(string expression){
     // Kontrola, zda je výraz prázdný
     bool noNum = true;
