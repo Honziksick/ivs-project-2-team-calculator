@@ -70,7 +70,7 @@ using namespace std;
  *
 */
 
-
+namespace catMath{
 
 /******************************************************************************
  * Funkce pro práci s výrazy
@@ -364,7 +364,7 @@ string pairParenthesis(string expression);
  * @return Vrací upravený výraz, jako string.
 */
 string removeMultSpaces(string expression);
-
+}
 
 #endif // CAT_CALC_CORE_H_
 

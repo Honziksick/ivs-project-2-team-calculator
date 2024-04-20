@@ -7,6 +7,7 @@
 
 using namespace ::testing;
 using namespace std;
+using namespace catMath;
 
 /**
  * @brief Porovnává 2 vektory řetězců

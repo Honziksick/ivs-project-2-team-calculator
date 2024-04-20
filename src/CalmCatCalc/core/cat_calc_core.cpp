@@ -31,6 +31,8 @@ using namespace std;
 // FALSE = stupně, TRUE = radiány
 bool degRad = true;
 
+namespace catMath{
+
 double absVal(double num){
     if(num >= 0){
         return num;
@@ -805,4 +807,5 @@ string calculate(string expression){
     return evaluate(tokens);
 }
 
+} // namespace catMath
 /*** Konec souboru cat_calc_core.cpp ***/
