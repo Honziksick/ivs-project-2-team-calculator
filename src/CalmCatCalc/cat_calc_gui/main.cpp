@@ -28,11 +28,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    QIcon paw("paw.png");
 
-    //změna ikony
-    a.setWindowIcon(paw);
-    //změna názvu aplikace
     w.setWindowTitle("Calm CatCalc");
     w.show();
     return a.exec();
