@@ -33,6 +33,7 @@
 #include <QLineEdit>
 /*přidání matematické knihovny*/
 #include "cat_calc_core.h"
+using namespace catMath;
 
 /**
  * @brief Definice proměnné ""
