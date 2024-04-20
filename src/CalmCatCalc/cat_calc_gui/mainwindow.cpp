@@ -26,6 +26,7 @@
 #include <QWidget>
 #include "ui_mainwindow.h"
 #include "cat_calc_core.h"
+using namespace catMath;
 
 //stav s prázdnou proměnnou
 QString empty_state = "";
