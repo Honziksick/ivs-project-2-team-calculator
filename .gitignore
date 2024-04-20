@@ -56,7 +56,7 @@ dkms.conf
 
 # Doxygen
 /doc/*
-!/doc/images/
+!/doc/resources/
 
 # VS Code
 **/.vscode/*

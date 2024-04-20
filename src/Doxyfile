@@ -38,7 +38,7 @@ PROJECT_NAME           = Calm CatCalc
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 0.1
+PROJECT_NUMBER         = 0.9
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -51,7 +51,7 @@ PROJECT_BRIEF          = Počítání tak příjemné, že budete vrnět blahem 
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ../doc/images/logo.png
+PROJECT_LOGO           = ../doc/resources/cat_calc_logo_svg.svg
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -864,7 +864,7 @@ WARN_LOGFILE           = "../doc/doxygen_warnings.log"
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../README.md \
+INPUT                  = ../doc/resources/title_page.md \
                          . \
 
 # This tag can be used to specify the character encoding of the source files
@@ -919,7 +919,8 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = tests/googletest-src \
-                         build
+                         build \
+                         
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -936,7 +937,8 @@ EXCLUDE_SYMLINKS       = NO
 # exclude all test directories for example use the pattern */test/*
 
 EXCLUDE_PATTERNS       = */googletest-src/* \
-                         */build/*
+                         */build/* \
+                         */doc/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -973,7 +975,7 @@ EXAMPLE_RECURSIVE      = YES
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = ../doc/images
+IMAGE_PATH             = 
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1029,7 +1031,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE = ../README.md
+USE_MDFILE_AS_MAINPAGE = ../doc/resources/title_page.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
