@@ -158,7 +158,8 @@ double csin(double ang){
     double result = 0;
     double term = ang;
     int i = 1;  //Počet cyklů
-    // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
+    // Cyklicky počítá dokuď není dosažena požadována přesnost
+    // nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES)
     while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i) * (2 * i + 1));
@@ -173,7 +174,8 @@ double ccos(double ang){
     double result = 0;
     double term = 1;
     int i = 1;  //Počet cyklů
-    // Dokuď je hodnota členu větší než přesnost nebo není dosaženo maximálního počtu cyklů
+    // Cyklicky počítá dokuď není dosažena požadována přesnost
+    // nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES)
     while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i - 1) * (2 * i));
