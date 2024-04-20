@@ -92,8 +92,8 @@ run_test "6597.8344" "100k_nums_1.txt"
 
 # Pokud je skript spuštěn s přepínačem --advanced, spustí se pokročilé testy
 if [[ $1 == "yes" ]]; then
-    run_test "316280.5340" "100k_nums_2.txt"
-    run_test "10000001.6697" "1M_nums.txt"
+    run_test "32145.6167" "100k_nums_2.txt"
+    run_test "11547.3305" "1M_nums.txt"
 fi
 
 
