@@ -32,7 +32,7 @@
 // Pokud je `DEBUG` definováno, makro `LOG` bude aktivní (jinak ne)
 //#define DEBUG
 
-#include "../CalmCatCalc/core/cat_calc_core.h"
+#include "cat_calc_core.h"
 #include "stddev.h"
 #include <iostream>
 #include <string>
@@ -41,14 +41,10 @@
 #include <random>
 #include <regex>
 
-/* Workaround: Pro chybu v operaci sčítání z matematického knihovny,
-               která způsobuje odseknutí desetinné části a přidání lomítka,
-               které je následně chybně interpretováno jako dělení */
-#include <algorithm>
-
-using namespace std;                // standardní knihovna C++
+using namespace std;                // funkce standardní knihovny C++
+using namespace catMath;            // funkce matematické knihovny 'cat_calc_core'
 using namespace MathSymbols;        // třídy s matematickými symboly
-using namespace catMath;            // funkce matematické knihovny
+
 
 // Deklarace použitých funkcí z knihovny`stddev.h`
 void generateNumbers();
@@ -184,11 +180,6 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
                 powerSum = calculate(powerSum + ADD + (valueX + POW));
 
                 N++;    // Inkrementuje počítadlo načtených hodnot
-
-                /*  ~~~ WORKARNOUD - START ~~~  */
-                valueSum.erase(remove(valueSum.begin(), valueSum.end(), '/'), valueSum.end());
-                powerSum.erase(remove(powerSum.begin(), powerSum.end(), '/'), powerSum.end());
-                /*  ~~~ WORKARNOUD - END ~~~  */
 
                 /* LOGOVÁNÍ NAČÍTÁNÍ VSTUPNÍCH DAT */
                 LOG("    Read: valueX = %-10s    N = %-6ld    "

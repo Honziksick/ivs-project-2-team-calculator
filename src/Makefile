@@ -1,20 +1,21 @@
-#
-# Název projektu:   Calm CatCalc
-#
-# Soubor:           Makefile
-# Autor:            Jan Kalina <xkalinj00>ma
-# Datum:            20.03.2024
-# Poslední změna:   07.04.2024
-#
-# Tým:      Calm CatCalc Coders
-# Členové:  Farkašovský Lukáš    <xfarkal00>
-#           Hýža Pavel           <xhyzapa00>
-#           Kalina Jan           <xkalinj00>
-#           Krejčí David         <xkrejcd00>
-#
-# Popis:    Tento soubor obsahuje Makefile pro projekt Calm CatCalc.
-#
-
+################################################################################
+#                                                                              #
+# Název projektu:   Calm CatCalc                                               #
+#                                                                              #
+# Soubor:           Makefile                                                   #
+# Autor:            Jan Kalina <xkalinj00>                                     #
+# Datum:            20.03.2024                                                 #
+# Poslední změna:   20.04.2024                                                 #
+#                                                                              #
+# Tým:      Calm CatCalc Coders                                                #
+# Členové:  Farkašovský Lukáš    <xfarkal00>                                   #
+#           Hýža Pavel           <xhyzapa00>                                   #
+#           Kalina Jan           <xkalinj00>                                   #
+#           Krejčí David         <xkrejcd00>                                   #
+#                                                                              #
+# Popis:    Tento soubor obsahuje Makefile pro projekt Calm CatCalc.           #
+#                                                                              #
+################################################################################
 
 ################################################################################
 #                                                                              #
@@ -32,6 +33,8 @@ EXECUTABLE = cat_calc_core
 # Název a spouštění programu pro profilování
 PROFILER = stddev
 STDDEV = ./$(BUILD_DIR)/$(PROFILER)
+STDDEV_TEST = stddev_tests.sh
+STDDEV_TEST_PACK = stddev_test_files.tar.gz
 
 # Název ZIP archivu pro odevzdání projektu
 PACK_NAME = xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip
@@ -49,13 +52,25 @@ $(VERBOSE)SILENTOPT = -s
 #  Proměnné týkající se profilování  #
 ###                                ###
 
-# Pokud je proměnná 'FILE' nastavena na '-1',
-# tak pro profilování budou vygenerována náhodná data
-FILE ?= -1
+# Očekávaný název automaticky generovaného vstupního souboru
 AUTO_GEN_DATA_FILE = auto_gen.txt
 
-# Počet dalších běhů profilování => celkem (1 + PROF_LOOP) běhů
-PROF_LOOP = 10
+# Počet dalších běhů profilování => celkem (1 + PROF) běhů
+PROF = 10
+
+
+###                                ###
+#  Nastavitelné proměnné prostředí   #
+###                                ###
+
+### FILE: ## Název souboru s daty pro profilování (pokud není nastaveno, použije se náhodná data)
+FILE ?= -1
+
+### PROF: ## Určuje počet dalších běhů profilování => celkem (1 + PROF) běhů
+PROF = 10
+
+### ADV: ## Pokud je nastavena na 'yes', spustí se pokročilé testy programu "stddev"
+ADV=no
 
 
 ###                                 ###
@@ -78,6 +93,7 @@ GMOCK_DIR = ./tests/googletest-src/googlemock
 
 # Cesta ke zdrojovým souborům matematické knihovny "Calm CatCalc Core" a testů
 CORE_DIR = CalmCatCalc/core
+GUI_DIR = CalmCatCalc/cat_calc_gui
 TEST_DIR = tests
 PROFILE_DIR = profiler
 
@@ -91,6 +107,7 @@ BUILD_DIR = ./build
 TEST_BUILD_DIR = $(BUILD_DIR)/test
 COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(BUILD_DIR)/profile
+GUI_BUILD_DIR = $(BUILD_DIR)/gui
 PACK_DIR = ../pack
 
 # Dočasné složky při balení projektu
@@ -114,7 +131,7 @@ DEBUG = -g
 PROFILE = -pg
 COVERAGE = -fprofile-arcs -ftest-coverage
 
-# Flagy pro překlad matematické knihovny a testů
+# Flagy pro překlad různých částí projektu
 CXXFLAGS_STD = $(STANDARD) -O2 $(WARNING) 
 CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
 CXXFLAGS_COV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE)
@@ -128,64 +145,86 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 ################################################################################
 
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy brány jako soubory
-.PHONY: all clean test doc coverage profile \
-        clean-build clean-core clean-doc clean-coverage clean-profile \
-        build-core \
-        run-test build-test build-test-libs \
-        build-coverage build-test-coverage run-test-coverage process-coverage \
-        build-profile run-first-profile run-next-profile \
-        gui \
-        help
+.PHONY: all install build clean doc help pack test profile coverage \
+        clean-build clean-core clean-coverage clean-doc clean-pack clean-profile \
+        update-dep install-dep upgrade-dep add-to-path set-env-var \
+        build-core build-gui \
+        build-test build-test-libs build-test-debug run-core-test run-stddev-test \
+        build-profile run-first-profile run-next-profile prep-stddev-test \
+        build-coverage build-test-coverage process-coverage \
+        pack-repo pack-doc pack-install
 
-### all: ## Kompiluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
-all: build-core build-profile
+### all: ## Instaluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
+all: install build add-to-path
 
 ### help: ## Vypíše nápovědu k použití Makefile
 help:
-	@grep -E '###.*:.*?## .*$$' $(MAKEFILE_LIST) |  \
+	@{ \
+	echo "Proměnné:"; \
+	grep -E '### [A-Z\_]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	grep -v "grep -E '###.*:.*?## .*$$'" | \
-	sort | \
+	sort -f | \
 	awk 'BEGIN {FS = ":.*?## "}; \
 	{gsub(/### /, "", $$1); \
-	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
+	echo ""; \
+	echo "Příkazy:"; \
+	grep -E '### [a-z\-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	grep -v "grep -E '###.*:.*?## .*$$'" | \
+	sort -f | \
+	awk 'BEGIN {FS = ":.*?## "}; \
+	{gsub(/### /, "", $$1); \
+	printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'; \
+	} | less -R
 
 ### clean: ## Odstraní všechny soubory vytvořené během kompilace
 clean: clean-build clean-doc clean-profile clean-pack
 
 ### test: ## Sestaví knihovny GoogleTest a GoogleMock a spustí testy projektu
-test: run-test build-test-libs run-test 
+test: build-test-libs run-core-test 
 
 ### doc: ## Vygeneruje dokumentaci k projektu
 doc:
 	$(MAKE) $(SILENTOPT) clean-doc
 	doxygen Doxyfile
+	cd $(DOC_OUT_DIR)/html && grep -v 'target="_self">resources\|target="_self">doc' files.html > temp.html && mv temp.html files.html
+	
 
 ### coverage: ## Vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage build-test-coverage run-test-coverage process-coverage
 
 ### profile: ## Sestaví a spustí profiling matematické knihovny
 profile:
+	$(MAKE) $(SILENTOPT) install-prof-dep
 	$(MAKE) build-profile
 
-	$(MAKE) clean-profile
+	$(MAKE)  $(SILENTOPT) clean-profile
 	rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
 	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
 
-	$(MAKE) run-first-profile
-	$(MAKE) run-next-profile
+	$(MAKE) $(SILENTOPT) run-first-profile
+	$(MAKE) $(SILENTOPT) run-next-profile
 
 	gprof $(STDDEV) gmon.sum | tee gprof-report.txt | gprof2dot -s | dot -Gdpi=500 -Tpng -o gprof-report.png
 	
-	mv gmon.out ./$(PROFILE_BUILD_DIR)/
-	mv gmon.sum ./$(PROFILE_BUILD_DIR)/
-	mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
+	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
+	@mv gmon.sum ./$(PROFILE_BUILD_DIR)/
+	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
 
 	mv gprof-report.txt $(PROFILE_OUT_DIR)/
 	mv gprof-report.png $(PROFILE_OUT_DIR)/
 
+### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
+build-gui: set-env-var
+	@mkdir -p $(GUI_BUILD_DIR)
+	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
+	cd $(GUI_BUILD_DIR) && cmake . && make
+	sudo chmod 0700  /run/user/1000/
+	cd build && sudo ln -snf gui/cat_calc_gui CalmCatCalc
+
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
-	$(MAKE) clean-pack
+	$(MAKE) $(SILENTOPT) clean-pack
 	mkdir -p $(PACK_DIR)
 
 	$(MAKE) pack-repo
@@ -195,10 +234,92 @@ pack:
 	cd $(PACK_DIR) && zip -r ../$(PACK_NAME) ./
 	rm -rf $(PACK_DIR)
 
+################################################################################
+#                                                                              #
+#                  CÍLE PRO INSTALACI A AKTUALIZACI ZÁVISLOSTÍ                 #
+#                                                                              #
+################################################################################
+
+### build: ## Sestaví "Calm CatCalc" s GUI a program "stddev" pro profilování
+build: build-gui build-profile
+
+### install: ## Aktualizuje seznam balíčků, instaluje a aktualizuje závislosti
+install: update-dep install-dep upgrade-dep
+
+### install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
+install-dep: install-gui-dep install-doc-dep install-dev-dep install-pack-dep
+
+### install-gui-dep: ## Nainstaluje závislosti potřebné pro GUI kalkulačky
+install-gui-dep:
+	sudo apt-get install -y qtbase5-dev
+	sudo apt-get install -y qt6-base-dev
+	sudo apt-get install -y qt6-wayland
+	sudo apt-get install -y qtwayland5
+
+### install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
+install-doc-dep:
+	sudo apt-get install -y doxygen
+
+### install-dev-dep: ## Nainstaluje závislosti potřebné pro vývoj a testování
+install-dev-dep: install-prof-dep
+	sudo apt-get install -y binutils
+	sudo apt-get install -y lcov
+	sudo apt-get install -y less
+	sudo apt-get install -y cmake
+
+### install-prof-dep: ## Nainstaluje závislosti potřebné pro profilování
+install-prof-dep:
+	sudo apt-get install -y libcairo2-dev
+	sudo apt-get install -y python3-pip
+	sudo apt-get install -y graphviz
+	sudo apt-get install -y tar
+	sudo pip3 install gprof2dot
+
+### install-pack-dep: ## Nainstaluje závislosti potřebné pro balení projektu
+install-pack-dep:
+	sudo apt-get install -y rsync
+	sudo apt-get install -y zip
+
+### update-dep: ## Aktualizuje seznam dostupných balíčků
+update-dep:
+	sudo apt-get update -y
+
+### upgrade-dep: ## Aktualizuje závislosti potřebné pro kompilaci projektu
+upgrade-dep:
+	sudo apt-get upgrade -y qtbase5-dev
+	sudo apt-get upgrade -y qt6-base-dev
+	sudo apt-get upgrade -y qtwayland5
+	sudo apt-get upgrade -y qt6-wayland
+	sudo apt-get upgrade -y doxygen
+	sudo apt-get upgrade -y binutils
+	sudo apt-get upgrade -y lcov
+	sudo apt-get upgrade -y less
+	sudo apt-get upgrade -y cmake
+	sudo apt-get upgrade -y libcairo2-dev
+	sudo apt-get upgrade -y python3-pip
+	sudo apt-get upgrade -y graphviz
+	sudo apt-get upgrade -y tar
+	sudo apt-get upgrade -y rsync
+	sudo apt-get upgrade -y zip
+	sudo pip3 install --upgrade gprof2dot
+
+### add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
+add-to-path: $(GUI_BUILD_DIR)/cat_calc_gui
+	sudo cp $< /usr/local/bin/catcalc
+
+### set-env-var: ## Nastaví proměnnou prostředí QT_QPA_PLATFORM=wayland, pokud ještě není nastavena
+set-env-var:
+	@{ \
+	if ! awk '/export QT_QPA_PLATFORM=wayland/ {found=1} END {exit !found}' ~/.profile; then \
+		echo "" >> ~/.profile; \
+		echo "export QT_QPA_PLATFORM=wayland" >> ~/.profile; \
+		. ~/.profile; \
+	fi; \
+	} 
 
 ################################################################################
 #                                                                              #
-#                        KONKRETIZOVANÉ PŘÍKAZY 'CLEAN'                        #
+#                        SPECIALIZOVANÉ PŘÍKAZY 'CLEAN'                        #
 #                                                                              #
 ################################################################################
 
@@ -210,9 +331,9 @@ clean-build:
 clean-core:
 	rm -f $(BUILD_DIR)/$(EXECUTABLE).o
 
-### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě /images)
+### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě ./resources/)
 clean-doc:
-	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/images*' -delete
+	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/resources*' -delete
 
 ### clean-coverage: ## Odstraní všechny soubory vytvořené během pokrytí kódu
 clean-coverage:
@@ -225,7 +346,7 @@ clean-profile:
 
 ### clean-pack: ## Odstraní ZIP archiv s projektem pro odevzdání
 clean-pack:
-	rm -f $(PACK_NAME)
+	rm -f ../$(PACK_NAME)
 
 
 ################################################################################
@@ -239,7 +360,7 @@ build-core: $(BUILD_DIR)/$(EXECUTABLE).o
 
 # Stavba objekotvého souboru matematické knihovny "CatCalc Core"
 $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) -c $< -o $@
 
 
@@ -249,8 +370,8 @@ $(BUILD_DIR)/$(EXECUTABLE).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-### run-test: ## Spustí testy matematické knihovny "CatCalc Core"
-run-test: $(BUILD_DIR)/$(EXECUTABLE)_test
+### run-core-test: ## Spustí testy matematické knihovny "CatCalc Core"
+run-core-test: $(BUILD_DIR)/$(EXECUTABLE)_test
 	./$(BUILD_DIR)/$(EXECUTABLE)_test
 
 ### build-test: ## Sestaví testy matematické knihovny "CatCalc Core"
@@ -273,30 +394,30 @@ $(BUILD_DIR)/$(EXECUTABLE)_test: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
 
 $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 	
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 
 # Stavba debuggovací varianty testů s funkcí main
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug: $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o \
                                             $(TEST_BUILD_DIR)/$(EXECUTABLE)-debug.o
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) $^ -o $@
 
 $(TEST_BUILD_DIR)/$(EXECUTABLE)_test_debug.o: $(TEST_DIR)/$(EXECUTABLE)_tests_for_debug.cpp
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $< -o $@
 
 # Stavba objektových souborů Google Test knihoven
 $(TEST_BUILD_DIR)/gtest-all.o: $(GTEST_DIR)/src/*.cc
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 $(TEST_BUILD_DIR)/gtest_main.o: $(GTEST_DIR)/src/*.cc
-	mkdir -p $(TEST_BUILD_DIR)
+	@mkdir -p $(TEST_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_TEST) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
 
 # Stavba se statických knihovne pro Google Test
@@ -330,13 +451,13 @@ process-coverage:
 	lcov --quiet --directory $(COVERAGE_BUILD_DIR) --capture \
 	--output-file $(COVERAGE_BUILD_DIR)/coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/coverage.info '/usr/*' \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/coverage.info '/usr/*' \
 	--output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
 	'*/googletest-src/*' --output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
-	lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
+	@lcov --quiet --remove $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
 	'*/profiler/*' --output-file $(COVERAGE_BUILD_DIR)/filtered_coverage.info
 
 	genhtml $(COVERAGE_BUILD_DIR)/filtered_coverage.info \
@@ -347,16 +468,16 @@ $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage:  \
                         $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage.o \
                         $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o \
                         $(TEST_BUILD_DIR)/gtest_main.a
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) $^ -o $@
 
 $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)_test-coverage.o: $(TEST_DIR)/$(EXECUTABLE)_tests.cpp
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) -c $< -o $@
 
 # Stavba matematické knihovny s přepínači pro pokrytí kódu
 $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(COVERAGE_BUILD_DIR)
+	@mkdir -p $(COVERAGE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_COV) -c $< -o $@
 
 
@@ -380,9 +501,9 @@ run-first-profile:
 	mv gmon.out gmon.sum
 
 ### run-next-profile: ## Spustí další běhy profilování matematické knihovny
-# Počet běhů lze nastavit pomocí proměnné 'PROF_LOOP' v hlavičce Makefile
+# Počet běhů lze nastavit pomocí proměnné 'PROF' v hlavičce Makefile
 run-next-profile:
-	itr=1 ; while [ $$itr -le $(PROF_LOOP) ]; do \
+	itr=1 ; while [ $$itr -le $(PROF) ]; do \
 		if [ "$(FILE)" = "-1" ]; then \
 			$(STDDEV) < $(AUTO_GEN_DATA_FILE); \
 			gprof -s $(STDDEV) gmon.out gmon.sum; \
@@ -394,9 +515,27 @@ run-next-profile:
 		fi; \
 	done
 
+### run-stddev-test: ## Spustí testy programu pro výpočet směrodatné odchylky
+run-stddev-test: build-profile
+	@mkdir -p $(PROFILE_BUILD_DIR)
+	$(MAKE) $(SILENTOPT) prep-stddev-test
+	$(TEST_BUILD_DIR)/$(STDDEV_TEST) $(ADV)
+	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
+
+### prep-stddev-test: ## Připraví testovací data pro program pro výpočet směrodatné odchylky
+prep-stddev-test:
+	@mkdir -p $(TEST_BUILD_DIR)
+	cp tests/$(STDDEV_TEST_PACK) $(TEST_BUILD_DIR)/
+	tar -xzf $(TEST_BUILD_DIR)/$(STDDEV_TEST_PACK) -C $(TEST_BUILD_DIR)/
+	@cp tests/$(STDDEV_TEST) $(TEST_BUILD_DIR)/
+
+	if [ ! -x $(TEST_BUILD_DIR)/$(STDDEV_TEST) ]; then \
+		sudo chmod a+x $(TEST_BUILD_DIR)/$(STDDEV_TEST); \
+	fi
+
 # Stavba objektového souboru programu "stddev" pro výpočet směrodatné odchylky
 $(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
-	mkdir -p $(PROFILE_BUILD_DIR)
+	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
 # Stavba binárky programu "stddev" pro výpočet směrodatné odchylky
@@ -406,7 +545,7 @@ $(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
 
 # Stavba matematické knihovny s přepínači pro profilování pomocí gprof
 $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
-	mkdir -p $(PROFILE_BUILD_DIR)
+	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
 
@@ -418,22 +557,70 @@ $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 
 ### pack-repo: ## Zkopíruje požadované složky repozitáře do složky pro odevzdání
 pack-repo:
-	rsync -av --progress ../.git $(PACK_REPO_DIR)/
-	rsync -av --progress ../.github $(PACK_REPO_DIR)/
-	rsync -av --progress ../.vscode $(PACK_REPO_DIR)/
-	rsync -av --progress ../doc $(PACK_REPO_DIR)/
-	rsync -av --progress ../mockup $(PACK_REPO_DIR)/
-	rsync -av --progress ../plan $(PACK_REPO_DIR)/
-	rsync -av --progress ../profiling $(PACK_REPO_DIR)/
-	rsync -av --progress ../src/ $(PACK_REPO_DIR)/ --exclude build
-	rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/
-	rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/
-	rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/
-	rsync -av --progress ../README.md $(PACK_REPO_DIR)/
+	if [ -d "../.git" ]; then \
+		rsync -av --progress ../.git $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.git does not exist"; \
+	fi
+	if [ -d "../.github" ]; then \
+		rsync -av --progress ../.github $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.github does not exist"; \
+	fi
+	if [ -d "../.vscode" ]; then \
+		rsync -av --progress ../.vscode $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.vscode does not exist"; \
+	fi
+	if [ -d "../doc" ]; then \
+		rsync -av --progress ../doc $(PACK_REPO_DIR)/; \
+	else \
+		echo "../doc does not exist"; \
+	fi
+	if [ -d "../mockup" ]; then \
+		rsync -av --progress ../mockup $(PACK_REPO_DIR)/; \
+	else \
+		echo "../mockup does not exist"; \
+	fi
+	if [ -d "../plan" ]; then \
+		rsync -av --progress ../plan $(PACK_REPO_DIR)/; \
+	else \
+		echo "../plan does not exist"; \
+	fi
+	if [ -d "../profiling" ]; then \
+		rsync -av --progress ../profiling $(PACK_REPO_DIR)/; \
+	else \
+		echo "../profiling does not exist"; \
+	fi
+	if [ -d "../src" ]; then \
+		rsync -av --progress ../src $(PACK_REPO_DIR)/ --exclude build; \
+	else \
+		echo "../src does not exist"; \
+	fi
+	if [ -f "../.editorconfig" ]; then \
+		rsync -av --progress ../.editorconfig $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.editorconfig does not exist"; \
+	fi
+	if [ -f "../.gitignore" ]; then \
+		rsync -av --progress ../.gitignore $(PACK_REPO_DIR)/; \
+	else \
+		echo "../.gitignore does not exist"; \
+	fi
+	if [ -f "../LICENSE" ]; then \
+		rsync -av --progress ../LICENSE $(PACK_REPO_DIR)/; \
+	else \
+		echo "../LICENSE does not exist"; \
+	fi
+	if [ -f "../README.md" ]; then \
+		rsync -av --progress ../README.md $(PACK_REPO_DIR)/; \
+	else \
+		echo "../README.md does not exist"; \
+	fi
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
 pack-doc:
-	$(MAKE) doc
+	$(MAKE) $(SILENTOPT) doc
 	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
 	@$(MAKE) $(SILENTOPT) clean-doc
 

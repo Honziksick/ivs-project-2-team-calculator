@@ -6,115 +6,72 @@ on:
   pull_request:
     branches: [ '*' ]
 
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
     - name: Install dependencies - test-case 'build'
       run: |
         sudo apt-get update
         sudo apt-get install -y make g++ gcc
+
     - name: Check for Makefile - test-case 'build'
       run: |
         if [ ! -f src/Makefile ]; then
-            echo "::error::Makefile not found, skipping build."
+            echo "::error::Makefile not found, skipping job 'build'."
             false
             exit 42
         fi
 
     - name: Build by 'make'
       run: |
-        make -C src
+        if [ ! -d /run/user/1000/ ]; then
+          sudo mkdir -p /run/user/1000/
+        fi
+        cd src
+        make
         if [ $? -ne 0 ]; then
           echo "::error::Failed to build the project via 'make'."
           false
           exit 42
         fi
 
-    - name: Copy build 1
+    - name: Clean build
       run: |
-        cp -r src/build src/build1
-        if [ $? -ne 0 ]; then
-          echo "::error::Failed to copy first build into 'build1' folder."
+        cd src
+        make clean-build
+        if test -d "build"; then
+          echo "::error::Failed to clean the build via 'make clean-build'."
           false
           exit 42
         fi
-
-    - name: Clean build 1
-      run: |
-        make -C src clean-build
-        if test -d "src/build"; then
-          echo "::error::Failed to clean the first build via 'make clean-build'."
-          false
-          exit 42
-        fi
-
-    - name: Build by 'make all'
-      run: |
-        make -C src all
-        if [ $? -ne 0 ]; then
-          echo "::error::Failed to build the project via 'make all'."
-          false
-          exit 42
-        fi
-
-    - name: Copy build 2
-      run: |
-        cp -r src/build src/build2
-        if [ $? -ne 0 ]; then
-          echo "::error::Failed to copy second build into 'build2' folder."
-          false
-          exit 42
-        fi
-
-    - name: Clean build 2
-      run: |
-        make -C src clean-build
-        if test -d "src/build"; then
-          echo "::error::Failed to clean the second build via 'make clean-build'."
-          false
-          exit 42
-        fi
-
-    - name: Compare build folders and files
-      run: |
-        diff -r src/build1 src/build2
-        if [ $? -ne 0 ]; then
-          echo "::error::The two builds aren't identical."
-          false
-          exit 42
-        fi
-
-    - name: Final cleanup
-      run: |
-        rm -rf src/build1 src/build2
-
 
 
   test:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
     - name: Install dependencies - test-case 'test'
       run: |
         sudo apt-get update
         sudo apt-get install -y make g++ gcc
+
     - name: Check for Makefile - test-case 'test'
       run: |
         if [ ! -f src/Makefile ]; then
-            echo "::error::Makefile not found, skipping build."
+            echo "::error::Makefile not found, skipping job 'test'."
             false
             exit 42
         fi
 
     - name: Test of Calm CatCalc Core
       run: |
-        make -C src test | tee /dev/fd/2 | awk '
+        cd src
+        make test | tee /dev/fd/2 | awk '
           BEGIN { error = 0 }
           /^[[:space:]]*[0-9]+ FAILED TESTS/ || /\([0-9]+ ms\)/ { next }
           /FAILED/ {
@@ -122,109 +79,83 @@ jobs:
             error = 1
           }
           END { if (error) false }'
-        make -C src test
+        make test
 
     - name: Clean build
-      if: always()
       run: |
-        make -C src clean-build
-        if test -d "src/build"; then
+        cd src
+        make clean-build
+        if test -d "build"; then
           echo "::error::Failed to clean the build folder via 'make clean-build'"
           false
           exit 42
         fi
 
 
-  generate_coverage:
-
+  coverage:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Install dependencies - test-case 'generate_coverage'
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies - test-case 'coverage'
       run: |
         sudo apt-get update
         sudo apt-get install -y make g++ gcc lcov
-    - name: Check for Makefile - test-case 'generate_coverage'
+
+    - name: Check for Makefile - test-case 'coverage'
       run: |
         if [ ! -f src/Makefile ]; then
-            echo "::error::Makefile not found, skipping build."
+            echo "::error::Makefile not found, skipping job 'coverage'."
             false
             exit 42
         fi
 
-    - name: Build by 'make test'
+    - name: Build by code-coverage
       run: |
-        make -C src test || true
+        cd src
+        make coverage
         if [ $? -ne 0 ]; then
-          echo "::error::Failed to build GoogleTest library or unit tests via 'make test'."
-          false
-          exit 42
-        fi
-
-    - name: Re-build by 'make coverage
-      run: |
-        make -C src coverage
-        if [ $? -ne 0 ]; then
-          echo "::error::Failed to Re-build GoogleTest library or unit tests \
+          echo "::error::Failed to build GoogleTest library or unit tests \
           with 'coverage flags' via 'make coverage'."
           false
           exit 42
         fi
   
-    - name: Clean build 1
+    - name: Clean build
       run: |
-        make -C src clean-build
-        if test -d "src/build"; then
-          echo "::error::Failed to clean the first build via 'make clean-build'."
-          false
-          exit 42
-        fi
-
-    - name: Directly build by 'make coverage'
-      run: |
-        make -C src coverage
-        if [ $? -ne 0 ]; then
-          echo "::error::Failed to Re-build GoogleTest library or unit tests \
-          with 'coverage flags' via 'make coverage'."
-          false
-          exit 42
-        fi
-
-
-    - name: Clean build 2
-      run: |
-        make -C src clean-build
-        if test -d "src/build"; then
-          echo "::error::Failed to clean the first build via 'make clean-build'."
+        cd src
+        make clean-build
+        if test -d "build"; then
+          echo "::error::Failed to clean the build folder via 'make clean-build'"
           false
           exit 42
         fi
 
 
   codecov:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
     - name: Install dependencies - test-case 'codecov'
       run: |
         sudo apt-get update
         sudo apt-get install -y make g++ gcc lcov
+
     - name: Check for Makefile - test-case 'codecov'
       run: |
         if [ ! -f src/Makefile ]; then
-                echo "::error::Makefile not found, skipping build."
+                echo "::error::Makefile not found, skipping job 'codecov'."
                 false
                 exit 42
         fi
 
     - name: Build by 'make coverage'
       run: |
-        make -C src coverage
+        cd src
+        make coverage
         if [ $? -ne 0 ]; then
-          echo "::error::Failed to Re-build GoogleTest library or unit tests \
+          echo "::error::Failed to build GoogleTest library or unit tests \
           with 'coverage flags' via 'make coverage'."
           false
           exit 42
@@ -237,32 +168,112 @@ jobs:
           slug: Honziksick/ivs-project-2-team-calculator
 
 
-  documentation:
-
+  GUI:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies - test-case 'GUI'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make qtbase5-dev qt6-base-dev
+
+    - name: Check for Makefile - test-case 'GUI'
+      run: |
+        if [ ! -f src/Makefile ]; then
+            echo "::error::Makefile not found, skipping job 'GUI'."
+            false
+            exit 42
+        fi
+
+    - name: Build GUI
+      run: |
+        if [ ! -d /run/user/1000/ ]; then
+          sudo mkdir -p /run/user/1000/
+        fi
+        cd src
+        make build-gui
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to build the GUI via 'make build-gui'."
+          false
+          exit 42
+        fi
+
+    - name: Check the GUI build directory
+      run: |
+        cd src
+        if [ ! -d "build/gui" ]; then
+          echo "::error::GUI build directory not found."
+          false
+          exit 42
+        fi
+
+    - name: Check the "Calm CatCalc GUI" executable
+      run: |
+        cd src
+        if [ ! -f "build/gui/cat_calc_gui" ]; then
+          echo "::error::GUI executable not found."
+          false
+          exit 42
+        fi
+
+    - name: Check the "Calm CatCalc GUI" symlink
+      run: |
+        cd src
+        if [ ! -L "build/CalmCatCalc" ]; then
+          echo "::error::Symlink to GUI executable not found."
+          false
+          exit 42
+        fi
+
+    - name: Add executable to the system PATH
+      run: |
+        cd src
+        if [ "build/gui/cat_calc_gui" -nt "/usr/local/bin/catcalc" ]; then
+          sudo cp build/gui/cat_calc_gui /usr/local/bin/catcalc
+          if [ $? -ne 0 ]; then
+            echo "::error::Failed to add the executable to the system PATH."
+            false
+            exit 42
+          fi
+        fi
+
+    - name: Check the executable in the system PATH
+      run: |
+        if [ ! -f "/usr/local/bin/catcalc" ]; then
+          echo "::error::Executable not found in the system PATH."
+          false
+          exit 42
+        fi
+
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
     - name: Install dependencies - test-case 'documentation'
       run: |
         sudo apt-get update
         sudo apt-get install -y make doxygen graphviz
+
     - name: Check for Makefile - test-case 'documentation'
       run: |
         if [ ! -f src/Makefile ]; then
-            echo "::error::Makefile not found, skipping build."
+            echo "::error::Makefile not found, skipping job 'documentation'."
             false
             exit 42
         fi
 
     - name: Generate documentation
       run: |
-        make -C src doc
-        if [[ -s ./doc/doxygen_warnings.log ]]; then
-            tail -n +4 ./doc/doxygen_warnings.log > ./doc/filtered_warnings.log
-            if [[ -s ./doc/filtered_warnings.log ]]; then
+        cd src
+        make doc
+        if [[ -s ../doc/doxygen_warnings.log ]]; then
+            tail -n +4 ../doc/doxygen_warnings.log > ../doc/filtered_warnings.log
+            if [[ -s ../doc/filtered_warnings.log ]]; then
               echo "::error::Doxygen generated warnings:"
-              cat ./doc/filtered_warnings.log
+              cat ../doc/filtered_warnings.log
               false
             fi
         else 
@@ -271,4 +282,139 @@ jobs:
         fi
           
     - name: Delete documentation
-      run: make -C src clean-doc
+      run: cd src && make clean-doc
+
+
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies - test-case 'profile'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make graphviz tar libcairo2-dev python3-pip
+        sudo pip3 install gprof2dot
+
+    - name: Check for Makefile - test-case 'profile'
+      run: |
+        if [ ! -f src/Makefile ]; then
+            echo "::error::Makefile not found, skipping job 'profile'."
+            false
+            exit 42
+        fi
+
+    - name: Run 'stddev' program tests
+      run: |
+        cd src
+        make run-stddev-test
+        if [ $? -ne 0 ]; then
+          echo "::error::Some "stddev" program tests failed."
+          false
+          exit 42
+        fi
+
+    - name: Profile the project
+      run: |
+        cd src
+        make profile
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to profile the project via 'make profile'."
+          false
+          exit 42
+        fi
+
+    - name: Check the profiled project
+      run: |
+        if [ ! -f "profiling/gprof-report.txt" ]; then
+          echo "::error::Flat profile not found."
+          false
+          exit 42
+        fi
+        if [ ! -f "profiling/gprof-report.png" ]; then
+          echo "::error::Call graph not found."
+          false
+          exit 42
+        fi
+
+    - name: Delete generate profiling data
+      run: cd src && make clean-profile
+
+    - name: Check deletion of generated profiling data
+      run: |
+        if [ -f "profiling/gprof-report.txt" ]; then
+          echo "::error::Flat profile was not deleted."
+          false
+          exit 42
+        fi
+        if [ -f "profiling/gprof-report.png" ]; then
+          echo "::error::Call graph was not deleted."
+          false
+          exit 42
+        fi
+
+    - name: Clean build
+      run: |
+        cd src
+        make clean-build
+        if test -d "build"; then
+          echo "::error::Failed to clean the build folder via 'make clean-build'"
+          false
+          exit 42
+        fi
+
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies - test-case 'pack'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make doxygen graphviz rsync zip
+
+    - name: Check for Makefile - test-case 'pack'
+      run: |
+        if [ ! -f src/Makefile ]; then
+          echo "::error::Makefile not found, skipping job 'pack'."
+          false
+          exit 42
+        fi
+
+    - name: Pack the project
+      run: |
+        cd src
+        make pack
+        if [ $? -ne 0 ]; then
+          echo "::error::Failed to pack the project via 'make pack'."
+          false
+          exit 42
+        fi
+
+    - name: Check the packed project
+      run: |
+        if [ ! -f "xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip" ]; then
+          echo "::error::Packed project archive not found."
+          false
+          exit 42
+        fi
+
+    - name: Check deletion of temporary folder
+      run: |
+        if [ -d "pack" ]; then
+          echo "::error::Temporary directory was not deleted."
+          false
+          exit 42
+        fi
+
+    - name: Delete project archive
+      run: cd src && make clean-pack
+
+    - name: Check deletion of project archive
+      run: |
+        if [ -f "xkalinj00_xfarkal00_xhyzapa00_xkrejcd00.zip" ]; then
+          echo "::error::Packed project archive was not deleted."
+          false
+          exit 42
+        fi

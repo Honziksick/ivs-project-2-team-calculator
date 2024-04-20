@@ -31,14 +31,13 @@
 #define STDDEV_H_
 /** @endcond */
 
-#include "../CalmCatCalc/core/cat_calc_core.h"
+#include "cat_calc_core.h"
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <iomanip>
 #include <random>
 #include <regex>
-
 
 #ifdef DEBUG
 /**
