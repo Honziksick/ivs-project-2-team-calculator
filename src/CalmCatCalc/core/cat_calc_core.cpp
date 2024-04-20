@@ -130,6 +130,10 @@ double power(int exp, double num){
         double result = 1;
         // Výpočet mocniny
         for(int i = 0; i < exp; i++){
+            // Kontrola přetečení
+            if(numeric_limits<double>::max() / absVal(result) < absVal(num)){
+                throw overflow_error("Overflow");
+            }
             result = result * num;
         }
         return result;
@@ -444,13 +448,30 @@ string evalMul(string num1, string num2){
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
-        return doubleToString(x*y);
+        // Kontrola přetečení
+        if((x <= 1 && x >= -1) || (y <= 1 && y >= -1)){
+            return doubleToString(x*y);
+        }
+        else if(numeric_limits<double>::max() / absVal(x) < absVal(y)){
+            throw overflow_error("Overflow");
+        }
+        else{
+            return doubleToString(x*y);
+        }
     }
     // Jinak se provede operace s long long
     else{
         long long x = stoll(num1);
         long long y = stoll(num2);
-        return to_string(x*y);
+        if((x <= 1 && x >= -1) || (y <= 1 && y >= -1)){
+            return to_string(x*y);
+        }
+        else if(numeric_limits<double>::max() / absVal(x) < absVal(y)){
+            throw overflow_error("Overflow");
+        }
+        else{
+            return to_string(x*y);
+        }
     }
 }
 
@@ -462,6 +483,12 @@ string evalDiv(string num1, string num2){
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
         double y = stod(num2);
+        //Kontrola přetečení
+        if(y <= 1 && y >= -1){
+            if(numeric_limits<double>::max() * absVal(y) < absVal(x)){
+                throw overflow_error("Overflow");
+            }
+        }
         return doubleToString(x/y);
     }
     // Jinak se operandy převedou na long long

@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <string>
 #include <iomanip>
+#include <limits>
 
 /** @brief Přesnost kalkulačky */
 #define CALC_PRECISION 0.000000000000001
