@@ -194,26 +194,8 @@ doc:
 coverage: build-coverage build-test-coverage run-test-coverage process-coverage
 
 ### profile: ## Sestaví a spustí profiling matematické knihovny
-profile:
-	$(MAKE) $(SILENTOPT) install-prof-dep
-	$(MAKE) build-profile
-
-	$(MAKE)  $(SILENTOPT) clean-profile
-	rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
-	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
-
-	$(MAKE) $(SILENTOPT) run-first-profile
-	$(MAKE) $(SILENTOPT) run-next-profile
-
-	gprof $(STDDEV) gmon.sum | tee gprof-report.txt | gprof2dot -s | dot -Gdpi=500 -Tpng -o gprof-report.png
+profile: install-prof-dep build-profile run-profile
 	
-	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
-	@mv gmon.sum ./$(PROFILE_BUILD_DIR)/
-	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
-
-	mv gprof-report.txt $(PROFILE_OUT_DIR)/
-	mv gprof-report.png $(PROFILE_OUT_DIR)/
-
 ### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
 build-gui: set-env-var
 	@mkdir -p $(GUI_BUILD_DIR)
@@ -273,6 +255,7 @@ install-prof-dep:
 	sudo apt-get install -y python3-pip
 	sudo apt-get install -y graphviz
 	sudo apt-get install -y tar
+	sudo apt-get install -y neofetch
 	sudo pip3 install gprof2dot
 
 ### install-pack-dep: ## Nainstaluje závislosti potřebné pro balení projektu
@@ -299,6 +282,7 @@ upgrade-dep:
 	sudo apt-get upgrade -y python3-pip
 	sudo apt-get upgrade -y graphviz
 	sudo apt-get upgrade -y tar
+	sudo apt-get upgrade -y neofetch
 	sudo apt-get upgrade -y rsync
 	sudo apt-get upgrade -y zip
 	sudo pip3 install --upgrade gprof2dot
@@ -341,8 +325,13 @@ clean-coverage:
 
 ### clean-profile: ## Odstraní všechny soubory vytvořené během profilování
 clean-profile:
-	rm -f $(PROFILE_OUT_DIR)/gprof-report.txt
+	rm -f $(PROFILE_OUT_DIR)/flat-profile.txt
+	rm -f $(PROFILE_OUT_DIR)/gprof-report.md
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
+	@mkdir -p $(PROFILE_OUT_DIR)
+	@if [ ! -f $(PROFILE_OUT_DIR)/.placeholder ]; then \
+		touch $(PROFILE_OUT_DIR)/.placeholder; \
+	fi
 
 ### clean-pack: ## Odstraní ZIP archiv s projektem pro odevzdání
 clean-pack:
@@ -490,6 +479,30 @@ $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o: $(CORE_DIR)/$(EXECUTABLE).cpp
 ### build-profile: ## Sestaví profiler pro výpočet směrodatné odchylky
 build-profile: $(BUILD_DIR)/$(PROFILER)
 
+### run-profile: ## Spustí profiling matematické knihovny
+run-profile: $(BUILD_DIR)/$(PROFILER)
+	$(MAKE)  $(SILENTOPT) clean-profile
+	rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
+	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
+
+	$(MAKE) $(SILENTOPT) run-first-profile
+	$(MAKE) $(SILENTOPT) run-next-profile
+
+	$(MAKE) $(SILENTOPT) process-profile
+
+### process-profile: ## Zpracuje data o profilování a vygeneruje jejich výstup
+process-profile:
+	gprof $(STDDEV) gmon.sum | tee flat-profile.txt | gprof2dot -s | dot -Gdpi=400 -Tpng -o gprof-report.png
+	
+	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
+	@mv gmon.sum ./$(PROFILE_BUILD_DIR)/
+	@mv -f $(AUTO_GEN_DATA_FILE) $(PROFILE_BUILD_DIR)/ 2>/dev/null || true
+
+	mv flat-profile.txt $(PROFILE_OUT_DIR)/
+	mv gprof-report.png $(PROFILE_OUT_DIR)/
+
+	$(MAKE) $(SILENTOPT) filter-profile
+
 ### run-first-profile: ## Spustí první běh profilování matematické knihovny
 run-first-profile:
 	if [ "$(FILE)" = "-1" ]; then \
@@ -547,6 +560,142 @@ $(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
 $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
+
+### filter-report: ## Zpracuje data o profilování a vygeneruje markdown report
+filter-profile:
+	@awk 'NR < 6 || /catMath|catStddev|main/ || /----------/ {print} \
+	/the percentage of the total running time of the/ {print; p=1} p && !/<spontaneous>/ {print} \
+	/<spontaneous>/ {print; p=0; q=1} q && /catMath|catStddev|main/ {print} \
+	/This table describes the call tree of the program, and was sorted by/ {print; q=0; r=1} \
+	r && !/Index by function name/ {print} /Index by function name/ {print; r=0; s=1} \
+	s && /catMath|catStddev|main/ {print}' $(PROFILE_OUT_DIR)/flat-profile.txt > \
+	$(PROFILE_OUT_DIR)/temp1.txt
+
+	@awk '!/<spontaneous>/ && /catMath|catStddev|main/ {sub(/\(.*/, ""); \
+	sub(/\[abi:cxx11\]/, ""); print} !/<spontaneous>/ && !/catMath|catStddev|main/ \
+	{sub(/\[abi:cxx11\]/, ""); print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
+
+	@awk 'NR == 1 || $$0 != prev {print} {prev = $$0}' $(PROFILE_OUT_DIR)/temp2.txt > \
+	$(PROFILE_OUT_DIR)/temp1.txt
+
+	@awk '{gsub(/(catMath[a-zA-Z0-9_::]+|catStddev[a-zA-Z0-9_::]+|main[a-zA-Z0-9_::]+)/, "&()"); \
+	print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
+
+	@awk 'BEGIN {print "# Zpráva z Gprof\n## Informace o systému"}' > \
+	$(PROFILE_OUT_DIR)/gprof-report.md
+
+	@neofetch --off | awk '{sub(/[ \t]+$$/, "", $$0); if(NR==1) print "**"$$0"**"; \
+	else if(/Memory/) {print "- **"$$1"** " substr($$0, index($$0,$$2)); exit} else \
+	if(/Theme/ || /Icons/) next; else if(NR>2) print "- **"$$1"** " \
+	substr($$0, index($$0,$$2))}' | sed -r 's/\x1b\[[0-9;]*[mK]//g' | \
+	sed 's/\x1b\[[?][0-9;]*[hl]//g' >> $(PROFILE_OUT_DIR)/gprof-report.md
+
+	@awk 'BEGIN {print "\n## Flat profile\n### Každý vzorek je počítán jako 0.01 sekundy."}' \
+	>> $(PROFILE_OUT_DIR)/gprof-report.md
+
+	@awk 'BEGIN {print "| Time [%] | Cumulative [s] | Self [s] | Calls | Self [ms/call] | \
+	Total [ms/call] | Name |"; print "|:---:|:---:|:---:|:---:|:---:|:---:|---|"} \
+	NR>=6 {if (/the percentage of the total running time of the/) exit; else printf("| %s | %s | %s | %s | %s | %s | %s |\n", \
+	$$1, $$2, $$3, $$4, $$5, $$6, $$7)}' $(PROFILE_OUT_DIR)/temp2.txt >> $(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN {print "\n\n<br>\n\n- `%`:\n  - **=** Procento celkové doby běhu programu využité \
+	touto funkcí.\n- `Cumulative seconds`:\n  - **=** Běžný součet sekund přiřazených této funkci a \
+	těm, které jsou uvedeny nad ní.\n- `Self seconds`:\n  - **=** Počet sekund přiřazených pouze \
+	této funkci.\n  - Toto je hlavní kritérium pro toto seřazení.\n- `Calls`:\n  - **=** Počet volání \
+	této funkce, pokud je tato funkce profilována, jinak prázdné.\n- `Self ms/call`:\n  - **=** \
+	Průměrný počet milisekund strávených v této funkci na volání, pokud je tato funkce profilována, \
+	jinak prázdné.\n- `Total ms/call`:\n  - **=** Průměrný počet milisekund strávených v této funkci \
+	a jejích potomcích na volání, pokud je tato funkce profilována, jinak prázdné.\n- `Name`:\n  - \
+	**= Název funkce**\n  - Toto je vedlejší kritérium pro toto seřazení.\n  - Index ukazuje umístění \
+	funkce v seznamu *gprof*.\n  - Pokud je index v závorce, ukazuje, kde by se objevil v seznamu \
+	*gprof*, pokud by byl vytištěn.\n\n<br>\n\n# Graf volání (call graph)\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md
+
+	@awk '/granularity: each sample hit covers 4 byte\\(s\\) for / {split($$9, a, "%"); \
+	split($$11, b, " "); print "- `granularity` **=** každý vzorek pokrývá 4 bajty pro " a[1] \
+	"% z " b[1] " sekundy\\n\\n<br>\\n"}' $(PROFILE_OUT_DIR)/temp2.txt >> $(PROFILE_OUT_DIR)/gprof-report.md
+
+	@awk '\
+	BEGIN {\
+		print_table = 0;\
+		print "| Index | Time [%] | Self | Children | Called | Name |"; \
+		print "|:-----:|:--------:|:----:|:--------:|:------:|------|"; \
+	}\
+	/index % time    self  children    called     name/ {\
+		print_table = 1;\
+		next;\
+	}\
+	/This table describes the call tree of the program, and was sorted by/ { \
+		print_table = 0; \
+	}\
+	print_table == 1 { \
+		if ($$0 ~ /^-+$$/) { \
+			print "| | | | | | |\n| | | | | | |"; \
+		} else if ($$0 ~ /^\[/) { \
+			if ($$5 == "main") { \
+				printf("| %s | %s | %s | %s | | %s %s |\n", $$1, $$2, $$3, $$4, $$5, $$6);\
+			} else {\
+				printf("| %s | %s | %s | %s | %s | %s |\n", $$1, $$2, $$3, $$4, $$5, substr($$0, index($$0,$$6), length($$6)));\
+			}\
+		} else {\
+			printf("| | | %s | %s | %s | %s |\n", $$1, $$2, $$3, substr($$0, index($$0,$$4), length($$4)));\
+		}\
+	}\
+	' $(PROFILE_OUT_DIR)/temp2.txt >> $(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN{print "<br>\n\nTato tabulka popisuje strom volání programu a byla seřazena \
+	podle celkového času stráveného v každé funkci a jejích potomcích.\n\nKaždý záznam v \
+	této tabulce se skládá z několika řádků. Řádek s indexovým číslem na levém okraji \
+	uvádí aktuální funkci. Řádky nad ním uvádějí funkce, které tuto funkci volaly, a \
+	řádky pod ním uvádějí funkce, které tato funkce volala. Tento řádek uvádí:\n\n- \
+	`index`\n  - Jedinečné číslo přidělené každému prvku tabulky.\n  - Indexová čísla \
+	jsou seřazena numericky.\n  - Indexové číslo je vytisknuto vedle každého názvu \
+	funkce, aby bylo snazší zjistit, kde je funkce v tabulce.\n- `time [%]`\n  - Toto \
+	je procento z *celkového* času, které bylo stráveno v této funkci a jejích \
+	potomcích."}' >> $(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN{print "\n  - Vzhledem k různým hlediskům, vyloučenými funkcemi atd. se \
+	tyto čísla NESEČTOU na 100%.\n- `self`\n  - Toto je celkové množství času \
+	stráveného v této funkci.\n- `children`\n  - Toto je celkové množství času, které \
+	do této funkce přenesly její potomci.\n- `called`\n  - Toto je počet volání \
+	funkce.\n  - Pokud funkce volala sama sebe rekurzivně, číslo zahrnuje pouze \
+	nerekurzivní volání a je následováno `+` a počtem rekurzivních volání.\n- `name` - \
+	Název aktuální funkce.\n  - Indexové číslo je vytisknuto za ním.\n  - Pokud je \
+	funkce členem cyklu, číslo cyklu je vytisknuto mezi názvem funkce a indexovým \
+	číslem.\n\n<br>\n\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md	
+	
+	@awk 'BEGIN{print "**Pro rodiče funkce mají pole následující významy:**\n\n- `self`\n  \
+	- Toto je množství času, které bylo přímo přeneseno z funkce do tohoto rodiče.\n- \
+	`children`\n  - Toto je množství času, které bylo přeneseno z potomků funkce do \
+	tohoto rodiče.\n- `called`\n  - Toto je počet volání, které tento rodič provedl \
+	funkci `/` celkový počet volání funkce.\n  - Rekurzivní volání funkce nejsou zahrnuta \
+	v čísle za `/`.\n- `name` - Toto je název rodiče.\n  - Indexové číslo rodiče je \
+	vytisknuto za ním.\n  - Pokud je rodič členem cyklu, číslo cyklu je vytisknuto mezi \
+	názvem a indexovým číslem.\n- ***Pokud nelze určit rodiče funkce, pole jsou \
+	prázdná.***\n\n<br>\n\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN{print "**Pro potomky funkce mají pole následující významy:**\n\n- `self`\n  \
+	- Toto je množství času, které bylo přímo přeneseno z potomka do funkce.\n- \
+	`children`\n  - Toto je množství času, které bylo přeneseno z potomků potomka do \
+	funkce.\n- `called`\n  - Toto je počet volání, které funkce provedla tomuto \
+	potomku `/` celkový počet volání potomka.\n  - Rekurzivní volání potomkem nejsou \
+	uvedena v čísle za `/`.\n- `name`\n  - Toto je název potomka.\n  - Indexové číslo \
+	potomka je vytisknuto za ním.\n  - Pokud je potomek členem cyklu, číslo cyklu je \
+	vytisknuto mezi názvem a indexovým číslem.\n\n<br>\n\n"}' >> \
+	$(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN{print "Pokud jsou v grafu volání nějaké cykly (kruhy), existuje záznam pro \
+	celý cyklus. Tento záznam ukazuje, kdo volal cyklus (jako rodiče) a členy cyklu (jako \
+	potomky). Záznam `+` rekurzivních volání ukazuje počet volání funkcí, které byly \
+	interní pro cyklus, a záznam volání pro každého člena ukazuje, kolikrát byl volán od \
+	ostatních členů cyklu.\n\n## Indexy funkcí\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md
+	
+	@awk 'BEGIN {start=0;} /Index by function name/ {start=1; next;} start==1 && \
+	/\[[0-9]+\] .+::.+/{gsub(/\[/, "**["); gsub(/\]/, "]** `"); gsub(/$$/, "`"); print \
+	"- " $$0;}' $(PROFILE_OUT_DIR)/temp2.txt | sort -n -t ']' -k 2 >> \
+	$(PROFILE_OUT_DIR)/gprof-report.md
+
+	@rm -f $(PROFILE_OUT_DIR)/temp1.txt
+	@rm -f $(PROFILE_OUT_DIR)/temp2.txt
 
 
 ################################################################################
