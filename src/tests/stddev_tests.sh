@@ -81,6 +81,7 @@ run_test() {
 # Seznam jednotlivých testů
 run_test "0" "all_one.txt"
 run_test "Error: Invalid input data (not a number)." "invalid_data.txt"
+run_test "598347.0604" "10_nums.txt"
 run_test "14.1189" "with_zeroes.txt"
 run_test "5918.5819" "100_nums_1.txt"
 run_test "100123.8524" "100_nums_2.txt"
