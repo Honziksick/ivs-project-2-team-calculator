@@ -564,22 +564,23 @@ $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
 ### filter-report: ## Zpracuje data o profilování a vygeneruje markdown report
 filter-profile:
 	@awk 'NR < 6 || /catMath|catStddev|main/ || /----------/ {print} \
-	/the percentage of the total running time of the/ {print; p=1} p && !/<spontaneous>/ {print} \
-	/<spontaneous>/ {print; p=0; q=1} q && /catMath|catStddev|main/ {print} \
-	/This table describes the call tree of the program, and was sorted by/ {print; q=0; r=1} \
-	r && !/Index by function name/ {print} /Index by function name/ {print; r=0; s=1} \
-	s && /catMath|catStddev|main/ {print}' $(PROFILE_OUT_DIR)/flat-profile.txt > \
-	$(PROFILE_OUT_DIR)/temp1.txt
+	/the percentage of the total running time of the/ {print; p=1} p && !/index \
+	% time    self  children    called     name/ {print} /index % time    self  \
+	children    called     name/ {print; p=0; q=1} q && /catMath|catStddev|main/ \
+	{print} /This table describes the call tree of the program, and was sorted by/ \
+	{print; q=0; r=1} r && !/Index by function name/ {print} /Index by function name/ \
+	{print; r=0; s=1} s && /catMath|catStddev|main/ {print}' \
+	$(PROFILE_OUT_DIR)/flat-profile.txt > $(PROFILE_OUT_DIR)/temp1.txt
 
-	@awk '!/<spontaneous>/ && /catMath|catStddev|main/ {sub(/\(.*/, ""); \
-	sub(/\[abi:cxx11\]/, ""); print} !/<spontaneous>/ && !/catMath|catStddev|main/ \
-	{sub(/\[abi:cxx11\]/, ""); print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
+	@awk '{if(/index % time    self  children    called     name/ || \
+	/catMath|catStddev|main/) {sub(/\(.*/, ""); sub(/\[abi:cxx11\]/, ""); print} \
+	else print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
 
 	@awk 'NR == 1 || $$0 != prev {print} {prev = $$0}' $(PROFILE_OUT_DIR)/temp2.txt > \
 	$(PROFILE_OUT_DIR)/temp1.txt
 
-	@awk '{gsub(/(catMath[a-zA-Z0-9_::]+|catStddev[a-zA-Z0-9_::]+|main[a-zA-Z0-9_::]+)/, "&()"); \
-	print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
+	@awk '{gsub(/(catMath[a-zA-Z0-9_::]+|catStddev[a-zA-Z0-9_::]+|main[a-zA-Z0-9_::]+)/, \
+	"&()"); print}' $(PROFILE_OUT_DIR)/temp1.txt > $(PROFILE_OUT_DIR)/temp2.txt
 
 	@awk 'BEGIN {print "# Zpráva z Gprof\n## Informace o systému"}' > \
 	$(PROFILE_OUT_DIR)/gprof-report.md
@@ -595,8 +596,9 @@ filter-profile:
 
 	@awk 'BEGIN {print "| Time [%] | Cumulative [s] | Self [s] | Calls | Self [ms/call] | \
 	Total [ms/call] | Name |"; print "|:---:|:---:|:---:|:---:|:---:|:---:|---|"} \
-	NR>=6 {if (/the percentage of the total running time of the/) exit; else printf("| %s | %s | %s | %s | %s | %s | %s |\n", \
-	$$1, $$2, $$3, $$4, $$5, $$6, $$7)}' $(PROFILE_OUT_DIR)/temp2.txt >> $(PROFILE_OUT_DIR)/gprof-report.md
+	NR>=6 {if (/the percentage of the total running time of the/) exit; else \
+	printf("| %s | %s | %s | %s | %s | %s | %s |\n", $$1, $$2, $$3, $$4, $$5, $$6, $$7)}' \
+	$(PROFILE_OUT_DIR)/temp2.txt >> $(PROFILE_OUT_DIR)/gprof-report.md
 	
 	@awk 'BEGIN {print "\n\n<br>\n\n- `%`:\n  - **=** Procento celkové doby běhu programu využité \
 	touto funkcí.\n- `Cumulative seconds`:\n  - **=** Běžný součet sekund přiřazených této funkci a \
@@ -607,8 +609,8 @@ filter-profile:
 	jinak prázdné.\n- `Total ms/call`:\n  - **=** Průměrný počet milisekund strávených v této funkci \
 	a jejích potomcích na volání, pokud je tato funkce profilována, jinak prázdné.\n- `Name`:\n  - \
 	**= Název funkce**\n  - Toto je vedlejší kritérium pro toto seřazení.\n  - Index ukazuje umístění \
-	funkce v seznamu *gprof*.\n  - Pokud je index v závorce, ukazuje, kde by se objevil v seznamu \
-	*gprof*, pokud by byl vytištěn.\n\n<br>\n\n# Graf volání (call graph)\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md
+	funkce v seznamu *gprof*.\n  - Pokud je index v závorce, ukazuje, kde by se objevil v seznamu *gprof*, \
+	pokud by byl vytištěn.\n\n<br>\n\n# Graf volání (call graph)\n"}' >> $(PROFILE_OUT_DIR)/gprof-report.md
 
 	@awk '/granularity: each sample hit covers 4 byte\\(s\\) for / {split($$9, a, "%"); \
 	split($$11, b, " "); print "- `granularity` **=** každý vzorek pokrývá 4 bajty pro " a[1] \
@@ -634,7 +636,8 @@ filter-profile:
 			if ($$5 == "main") { \
 				printf("| %s | %s | %s | %s | | %s %s |\n", $$1, $$2, $$3, $$4, $$5, $$6);\
 			} else {\
-				printf("| %s | %s | %s | %s | %s | %s |\n", $$1, $$2, $$3, $$4, $$5, substr($$0, index($$0,$$6), length($$6)));\
+				printf("| %s | %s | %s | %s | %s | %s |\n", $$1, $$2, $$3, $$4, $$5, \
+				substr($$0, index($$0,$$6), length($$6)));\
 			}\
 		} else {\
 			printf("| | | %s | %s | %s | %s |\n", $$1, $$2, $$3, substr($$0, index($$0,$$4), length($$4)));\
