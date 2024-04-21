@@ -326,7 +326,7 @@ jobs:
 
     - name: Check the profiled project
       run: |
-        if [ ! -f "profiling/gprof-report.txt" ]; then
+        if [ ! -f "profiling/gprof-report.md" ]; then
           echo "::error::Flat profile not found."
           false
           exit 42
@@ -342,7 +342,7 @@ jobs:
 
     - name: Check deletion of generated profiling data
       run: |
-        if [ -f "profiling/gprof-report.txt" ]; then
+        if [ -f "profiling/gprof-report.md" ]; then
           echo "::error::Flat profile was not deleted."
           false
           exit 42
