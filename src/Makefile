@@ -328,10 +328,6 @@ clean-profile:
 	rm -f $(PROFILE_OUT_DIR)/flat-profile.txt
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.md
 	rm -f $(PROFILE_OUT_DIR)/gprof-report.png
-	@mkdir -p $(PROFILE_OUT_DIR)
-	@if [ ! -f $(PROFILE_OUT_DIR)/.placeholder ]; then \
-		touch $(PROFILE_OUT_DIR)/.placeholder; \
-	fi
 
 ### clean-pack: ## Odstraní ZIP archiv s projektem pro odevzdání
 clean-pack:
