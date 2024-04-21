@@ -149,7 +149,6 @@ namespace MathSymbols{
     };
 }
 
-
 /**
  * @brief Výčtový typ pro návratové hodnoty funkcí
  */
@@ -159,6 +158,16 @@ enum returnValues{
     E_FILE_OPEN     /**< Error: Nepodařilo se otevřít soubor se vstupními daty */
 };
 
+
+/**
+ * @namespace catStddev
+ * @brief Obsahuje funkce pro výpočet standardní odchylky
+ *
+ * @details Tento namespace obsahuje třídy a funkce, které jsou využívány pro
+ *          výpočet standardní směrodatné odchylky pomocí matematické knihovny
+ *          `cat_calc_core`.
+ */
+namespace catStddev{
 
 /**
  * @brief Funkce na výpis nápovědy k programu `stddev`
@@ -259,6 +268,7 @@ void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N);
  */
 string standardDeviation();
 
+}
 
 /**
  * @brief Hlavní funkce programu
@@ -283,7 +293,6 @@ string standardDeviation();
  *            tohoto typu
  */
 int main(int argc, char **argv);
-
 
 #endif // STDDEV_H_
 

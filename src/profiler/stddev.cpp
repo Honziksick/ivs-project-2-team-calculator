@@ -43,15 +43,16 @@
 
 using namespace std;                // funkce standardní knihovny C++
 using namespace catMath;            // funkce matematické knihovny 'cat_calc_core'
+using namespace catStddev;          // funkce pro zpracování dat programu 'stddev'
 using namespace MathSymbols;        // třídy s matematickými symboly
 
 
 // Deklarace použitých funkcí z knihovny`stddev.h`
-void generateNumbers();
-void readData(istream& dataStream, string &valueSum, string &powerSum, unsigned long &N);
-void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N);
-void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N);
-string standardDeviation();
+void catStddev::generateNumbers();
+void catStddev::readData(istream& dataStream, string &valueSum, string &powerSum, unsigned long &N);
+void catStddev::readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N);
+void catStddev::readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N);
+string catStddev::standardDeviation();
 
 
 // Inicializace konstatních proměnných (stringů) matematickými operandy/symboly
@@ -66,7 +67,7 @@ static const string C_BR = C_BRACKET_SYM;  // Symbol pro uzavírací závorku `)
 
 
 /*            ~~~ Funkce na výpis nápovědy k programu `stddev` ~~~            */
-void help() {
+void catStddev::help() {
     printf("       ~~~ STDDEV: The sample standard deviation calculator & profiler ~~~       \n\n");
 
     // Synopsis
@@ -119,7 +120,7 @@ void help() {
 
 
 /*  ~~~ Funkce pro generování náhodných čísel do souboru 'auto_gen.txt' ~~~   */
-void generateNumbers(){
+void catStddev::generateNumbers(){
     LOG0("    Generating random numbers...");
 
     ofstream file;            // Vytvoření objektu pro zápis do souboru
@@ -160,7 +161,7 @@ void generateNumbers(){
 
 
 /*            ~~~ Funkce pro načítání čísel z datového proudu ~~~             */
-void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned long &N){
+void catStddev::readData(istream &dataStream, string &valueSum, string &powerSum, unsigned long &N){
     LOG0("  Reading input data...");
 
     string valueX;      // Načtená hodnota ze vstupu (stdin nebo souboru)
@@ -197,7 +198,7 @@ void readData(istream &dataStream, string &valueSum, string &powerSum, unsigned 
 
 
 /* ~~~ Funkce pro načítání čísel ze vygenerovaného souboru `auto_gen.txt` ~~~ */
-void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N){
+void catStddev::readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &N){
     LOG0("Going to read data from 'auto_gen.txt'...");
     ifstream dataFile(FILE_PATH);    // Otevření souboru s náhodnými hodnotami
 
@@ -216,14 +217,14 @@ void readDataFromAutoGenFile(string &valueSum, string &powerSum, unsigned long &
 }
 
 /*     ~~~ Funkce pro načítání čísel ze standardního vstupu (`stdin`) ~~~     */
-void readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N){
+void catStddev::readDataFromStdin(string &valueSum, string &powerSum, unsigned long &N){
     LOG0("Reading data from 'STDIN'...");
     readData(cin, valueSum, powerSum, N);  // čteme ze 'stdin'
 }
 
 
 /*           ~~~ Funkce na výpočet výběrové směrodatné odchylky ~~~           */
-string standardDeviation(){
+string catStddev::standardDeviation(){
     string valueSum = "0.0";        // Součet hodnot X ze vstupu
     string powerSum = "0.0";        // Součet hodnot mocnin X^2 ze vstupu
     unsigned long N = 0;            // Součet načtených hodnot
