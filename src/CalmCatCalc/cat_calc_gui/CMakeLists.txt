@@ -1,23 +1,22 @@
-#
-# Název projektu: 	Calm CatCalc
-#
-# Soubor: 			CMakeLists.txt
-# Datum: 			15.04.2024
-# Poslední změna: 		16.04.2024
-#
-# Tým:		Calm CatCalc Coders
-#
-# Autoři: 	Farkašovský Lukáš    <xfarkal00>
-#         	Hýža Pavel           <xhyzapa00>
-#         	Kalina Jan           <xkalinj00>
-#         	Krejčí David         <xkrejcd00>
-#
-# Popis: 	Tento soubor obsahuje Makefile pro GUI nad matematickou knihovnou
-#
-
-#
-# Autor: 	Farkašovský Lukáš    <xfarkal00>
-#
+################################################################################
+#                                                                              #
+# Název projektu:   Calm CatCalc                                               #
+#                                                                              #
+# Soubor:           CMakeLists.txt                                             #
+# Autor:            Lukáš Farkašovský <xfarkal00>                              #
+# Datum:            15.04.2024                                                 #
+# Poslední změna:   16.04.2024                                                 #
+#                                                                              #
+# Tým:      Calm CatCalc Coders                                                #
+# Členové:  Farkašovský Lukáš    <xfarkal00>                                   #
+#           Hýža Pavel           <xhyzapa00>                                   #
+#           Kalina Jan           <xkalinj00>                                   #
+#           Krejčí David         <xkrejcd00>                                   #
+#                                                                              #
+# Popis:    Tento CMakeLists.txt slouží ke stavbě kalkulačky 'Calm CatCalc',   #
+#           resp. GUI verze této aplikace.                                     #
+#                                                                              #
+################################################################################
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -88,3 +87,5 @@ install(TARGETS cat_calc_gui
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(cat_calc_gui)
 endif()
+
+# Konec souboru CMakeLists.txt #

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?> 
+
+<!-- 
+    Název projektu:   Calm CatCalc
+
+    Soubor:           mainwindow.ui
+    Autor:            Lukáš Farkašovský <xfarkal00>
+    Datum:            08.04.2024
+    Poslední změna:   19.04.2024
+
+    Tým:      Calm CatCalc Coders
+    Členové:  Farkašovský Lukáš    <xfarkal00>
+              Hýža Pavel           <xhyzapa00>
+              Kalina Jan           <xkalinj00>
+              Krejčí David         <xkrejcd00>
+-->
+
 <ui version="4.0"> 
 <class>MainWindow</class> 
 <widget class="QMainWindow" name="MainWindow"> 
@@ -1414,3 +1430,4 @@ QPushButton::pressed {
 <resources/> 
 <connections/> 
 </ui> 
+<!-- konec 'mainwindow.ui' -->
