@@ -278,6 +278,7 @@ string standardDeviation();
 
 }  // konec catStddev
 
+
 /**
  * @brief Hlavní funkce programu.
  *
