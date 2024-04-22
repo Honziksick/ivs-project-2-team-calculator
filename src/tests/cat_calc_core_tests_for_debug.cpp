@@ -1,29 +1,71 @@
+/*******************************************************************************
+ *                                                                             *
+ * Název projektu:   Calm CatCalc                                              *
+ *                                                                             *
+ * Soubor:           cat_calc_core_tests_for_debug.cpp                         *
+ * Datum:            15.04.2024                                                *
+ * Poslední změna:   22.04.2024                                                *
+ *                                                                             *
+ * Tým:      Calm CatCalc Coders                                               *
+ *                                                                             *
+ * Členové:  Farkašovský Lukáš    <xfarkal00>                                  *
+ *           Hýža Pavel           <xhyzapa00>                                  *
+ *           Kalina Jan           <xkalinj00>                                  *
+ *           Krejčí David         <xkrejcd00>                                  *
+ *        	                                                                   *
+ ******************************************************************************/
+/**
+ * @file cat_calc_core_tests_for_debug.cpp
+ * @author David Krejčí \<xkrejcd00>
+ *
+ * @brief Soubor obsahující několik testů matematické knihovny přímo ve funkci
+ *        `main()` pro snadnější debuggování.
+ * @details Testy obsažené v tomto souboru jsou převzaty ze souboru
+ *          \link cat_calc_core_tests.cpp \endlink.
+ * 
+ * @see cat_calc_core_tests.cpp
+ */
+
 #include "cat_calc_core.h"
-#include <iostream>
-#include <vector>
-#include <string>
 
-using namespace std;
-using namespace catMath;
+using namespace std;                // funkce standardní knihovny C++
+using namespace catMath;            // funkce matematické knihovny 'cat_calc_core'
 
-/** Testovaná přesnost kalkulačky na 14 desetinných míst */
+
+/**
+ * @brief Testovaná přesnost kalkulačky na 14 desetinných míst
+ * @see cat_calc_core_tests.cpp
+*/
 #define TESTED_PRECISION 0.00000000000001
 
-bool compareVectors(vector<string> vec1, vector<string> vec2) {
-    if (vec1.size() != vec2.size()) {
+/**
+ * @brief Funkce porovná 2 vektory řetězců
+ * @see cat_calc_core_tests.cpp
+*/
+bool compareVectors(vector<string> vec1, vector<string> vec2){
+    if (vec1.size() != vec2.size()){
         return false;
     }
     
-    for (size_t i = 0; i < vec1.size(); i++) {
-        if (vec1[i] != vec2[i]) {
+    for (size_t i = 0; i < vec1.size(); i++){
+        if (vec1[i] != vec2[i]){
             return false;
         }
     }
     return true;
 }
 
+/**
+ * @brief Hlavní funkce pro spuštění testů matematické knihovny pro debuggování.
+ *
+ * @details Tato funkce spustí několik testů matematické knihovny přímo ve
+ *          funkci `main()` pro snadnější debuggování.
+ *          Testy jsou převzaty ze souboru `cat_calc_core_tests.cpp`.
+ * 
+ * @see cat_calc_core_tests.cpp
+ */
 int main() {
-    // BasicExpressions
+    // Testovací případ pro základní výrazy.
     {
         string expression = "4";
         cout << calculate(expression) << endl;
@@ -62,7 +104,7 @@ int main() {
         cout << calculate(expression) << endl;
     }
 
-    // ComplexExpressions
+    // Testovací případ pro složité výrazy.
     {
         string expression = "(3.1+ 8.2) * 3 #cos(48)^2";
         cout << calculate(expression) << endl;
@@ -74,7 +116,7 @@ int main() {
         cout << calculate(expression) << endl;
     }
 
-    // Errors
+    // Testovací případ pro chybové stavy.
     {
         string expression = "3*8/(2-2)";
         try {
@@ -112,7 +154,7 @@ int main() {
         }
     }
 
-    // NoErrors
+    // Testovací případ pro situace, které by neměly vyvolat chybu.
     {
         string expression = "3 + (-8)";
         try {
@@ -157,7 +199,7 @@ int main() {
         }
     }
 
-    // Parse
+    // Testovací případ pro základní výrazy.
     {
         vector<string> result = parse("5");
         for (const auto& str : result) {
@@ -172,7 +214,7 @@ int main() {
         cout << endl;
     }
 
-    // Parse_ComplexExpressions
+    //  Testovací případ pro parsování složitých výrazů.
     {
         vector<string> expected = {"558", "*", "0.5", "-", "(", "~", "2", ")",
                                     "+", "2", "#", "3", "^", "4"};
@@ -180,7 +222,7 @@ int main() {
         cout << (compareVectors(expected, result) ? "PASS" : "FAIL") << endl;
     }
 
-    // Postfix_BasicExpressions
+    // Testovací případ pro základní výrazy převedené do postfixové notace.
     {
         vector<string> expected = {"5"};
         vector<string> result = postfix({"5"});
@@ -191,7 +233,7 @@ int main() {
         cout << (compareVectors(expected, result) ? "PASS" : "FAIL") << endl;
     }
 
-    // Postfix_ComplexExpressions
+    // Testovací případ pro složité výrazy převedené do postfixové notace.
     {
         vector<string> expected = {"558", "0.5", "*", "2", "~", "-",
                                      "2", "3", "4", "^", "#", "+"};
@@ -200,7 +242,7 @@ int main() {
         cout << (compareVectors(expected, result) ? "PASS" : "FAIL") << endl;
     }
 
-    // Evaluate_BasicExpressions
+    //  Testovací případ pro vyhodnocení základních výrazů.
     {
         string expected = "5";
         string result = evaluate({"5"});
@@ -211,7 +253,7 @@ int main() {
         cout << (expected == result ? "PASS" : "FAIL") << endl;
     }
 
-    // Evaluate_ComplexExpressions
+    // Testovací případ pro vyhodnocení složitých výrazů.
     {
         string expected = "290";
         string result = evaluate({"558", "0.5", "*", "2", "~", "-",
@@ -219,13 +261,13 @@ int main() {
         cout << (expected == result ? "PASS" : "FAIL") << endl;
     }
 
-    // Operations_AbsoluteValue
+    // Testovací případ pro absolutní hodnotu.
     {
         cout << (absVal(15) == 15 ? "PASS" : "FAIL") << endl;
         cout << (absVal(-15) == 15 ? "PASS" : "FAIL") << endl;
     }
 
-    // Operations_Root
+    // Testovací případ pro odmocninu.
     {
         cout << (root(2,25) == 5 ? "PASS" : "FAIL") << endl;
         cout << (root(12,4096) == 2 ? "PASS" : "FAIL") << endl;
@@ -244,7 +286,7 @@ int main() {
         }
     }
 
-    // Operations_Power
+    // Testovací případ pro mocninu.
     {
         cout << (power(2,8) == 64 ? "PASS" : "FAIL") << endl;
         cout << (power(4,3) == 81 ? "PASS" : "FAIL") << endl;
@@ -252,7 +294,7 @@ int main() {
         cout << (power(3,-4) == -64 ? "PASS" : "FAIL") << endl;
     }
 
-    // Operations_Sine
+    // Testovací případ pro sinus.
     {
         cout << (abs(csin(30) - 0.5) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
         cout << (abs(csin(-30) + 0.5) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
@@ -260,7 +302,7 @@ int main() {
         cout << (abs(csin(70) - 0.939692620785908) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
     }
 
-    // Operations_Cosine
+    // Testovací případ pro kosinus.
     {
         cout << (abs(ccos(60) - 0.5) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
         cout << (abs(ccos(-60) - 0.5) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
@@ -268,7 +310,7 @@ int main() {
         cout << (abs(ccos(70) - 0.342020143325668) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
     }
 
-    // Operations_Tan
+    // Testovací případ pro tangens.
     {
         cout << (abs(ctan(45) - 1) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
         cout << (abs(ctan(24) - ctan(204)) < TESTED_PRECISION ? "PASS" : "FAIL") << endl;
@@ -281,7 +323,7 @@ int main() {
         }
     }
 
-    // Operations_Factorial
+    // Testovací případ pro faktoriál.
     {
         size_t expectedResult = 24;
         cout << (factorial(4) == expectedResult ? "PASS" : "FAIL") << endl;
@@ -295,7 +337,7 @@ int main() {
         }
     }
 
-    // Other_IsOperator
+    // Testovací případ pro ověření, zda je znak operátorem.
     {
         string testExpression = "4 /(7+1.2)";
         bool expectedResult[] = {false,false,true,false,false,true,false,false,false,false};
