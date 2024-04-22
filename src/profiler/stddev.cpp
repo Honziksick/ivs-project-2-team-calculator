@@ -4,7 +4,7 @@
  *                                                                             *
  * Soubor:           stddev.cpp                                                *
  * Datum:            01.04.2024                                                *
- * Poslední změna:   09.04.2024                                                *
+ * Poslední změna:   22.04.2024                                                *
  *                                                                             *
  * Tým:      Calm CatCalc Coders                                               *
  *                                                                             *
@@ -12,13 +12,13 @@
  *           Hýža Pavel           <xhyzapa00>                                  *
  *           Kalina Jan           <xkalinj00>                                  *
  *           Krejčí David         <xkrejcd00>                                  *
- *        	                                                                   *
+ *                                                                             *
  ******************************************************************************/
 /**
  * @file stddev.cpp
  * @author Jan Kalina \<xkalinj00>
- * @brief __Program na výpočet výběrové směrodatné odchylky.__
  * 
+ * @brief Program na výpočet výběrové směrodatné odchylky.
  * @details Tento program načítá číselné hodnoty ze standardního vstupu
  *          nebo ze souboru a počítá jejich výběrovou směrodatnou
  *          odchylku. Pokud je načtená hodnota neplatná (např. není číslo),

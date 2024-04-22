@@ -1,24 +1,31 @@
-/** @cond */
-/*
- * Název projektu:  Calm CatCalc
- *
- * Soubor:          mainwindow.cpp
- * Datum:           8.04.2024
- * Poslední změna:  8.04.2024
- *
- * Tým:     Calm CatCalc Coders
- *
- * Autoři:  Farkašovský Lukáš    <xfarkal00>
- *         	Hýža Pavel           <xhyzapa00>
- *         	Kalina Jan           <xkalinj00>
- *         	Krejčí David         <xkrejcd00>
- */
-/** @endcond */
-
+/*******************************************************************************
+ *                                                                             *
+ * Název projektu:   Calm CatCalc                                              *
+ *                                                                             *
+ * Soubor:           mainwindow.cpp                                            *
+ * Datum:            08.04.2024                                                *
+ * Poslední změna:   19.04.2024                                                *
+ *                                                                             *
+ * Tým:      Calm CatCalc Coders                                               *
+ *                                                                             *
+ * Členové:  Farkašovský Lukáš    <xfarkal00>                                  *
+ *           Hýža Pavel           <xhyzapa00>                                  *
+ *           Kalina Jan           <xkalinj00>                                  *
+ *           Krejčí David         <xkrejcd00>                                  *
+ *                                                                             *
+ ******************************************************************************/
 /**
  * @file mainwindow.cpp
  * @author Lukáš Farkašovský \<xfarkal00>
- * @brief __Definice/implementace GUI nad matematickou knihovnou__
+ * 
+ * @brief Definice funkcí využívaných v GUI nad matematickou knihovnou.
+ * 
+ * @details Tento zdrojový soubor obsahuje definice funkcí a metod, které jsou
+ *          použity pro propojení uživatelského rozhraní aplikace s matematickou
+ *          knihovnou. Zahrnuje implementace metod pro hlavní okno, dialogová
+ *          okna a další prvky uživatelského rozhraní. Tyto metody zahrnují
+ *          zpracování uživatelských vstupů, výpočet matematických výrazů pomocí
+ *          matematické knihovny _Calm CatCalc Core_ a zobrazení výsledků.
  */
 
 #include "mainwindow.h"
@@ -26,51 +33,54 @@
 #include <QWidget>
 #include "ui_mainwindow.h"
 #include "cat_calc_core.h"
-using namespace catMath;
 
-//stav s prázdnou proměnnou
+using namespace catMath;    // funkce matematické knihovny 'cat_calc_core'
+
+
+/*******************************************************************************
+*                                                                              *
+*                          GLOBÁLNÍ PROMĚNNÉ A FLAGY                           *
+*                                                                              *
+*******************************************************************************/
+
+// Definice globálních proměnných z hlavičkového souboru 'mainwindow.h'
 QString empty_state = "";
 QString eq_str;
-//definice vyjímky
 std::exception e;
 
-/*****************************************************************************
- *
- *                      Flagy pro různé stavy
- *
-******************************************************************************/
+// Flagy pro různé stavy
 int comma_rate = 0;
 int gon_rate = 0;
 int err = 0;
 int eq_state;
 
 
-/*****************************************************************************
- *
- *                      Spojení signálů s tlačitky
- *
-******************************************************************************/
+/*******************************************************************************
+*                                                                              *
+*                      KONSTRUKTOR A DESTRUKTOR OKNA S UI                      *
+*                                                                              *
+*******************************************************************************/
 
-//Třída pro propojení signálů s tlačitky
+/* Třída reprezentující hlavní okno aplikace pro propojení signálů s tlačítky */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    //nastaví text v display aby zobrazoval prazdny string
+    // Nastaví text v display aby zobrazoval prazdny string
     ui->Display->setText(empty_state);
 
-    //definice tlačítek všech čísel
+    // Definice tlačítek všech čísel
     QPushButton *num_buttons[10];
 
-    //for loop pro přidělení tlačítek
+    // For loop pro přidělení tlačítek
     for(int i = 0; i <= 9; ++i){
-        //v ui knihovně máme každé tlačítko pojmenované formátem B(cislo)
+        // V UI knihovně máme každé tlačítko pojmenované formátem B(cislo)
         QString button = "B" + QString::number(i);
         num_buttons[i] = MainWindow::findChild<QPushButton *>(button);
 
-        //propojení tlačíek pro čísla
+        // Propojení tlačíek pro čísla
         connect(num_buttons[i], SIGNAL(pressed()), this, SLOT(num()));
     }
     connect(ui->Zrovna, SIGNAL(clicked()), this, SLOT(equal()));
@@ -91,52 +101,56 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
     connect(ui->Zdel_ch, SIGNAL(clicked()), this, SLOT(delete_char()));
 
-/*****************************************************************************
- *
- *                      Zrušení zkratky tab pro všechny widgety
- *
-******************************************************************************/
 
-    //získáme widget centralwidget, který obsahuje tlačítka
+    /*                Zrušení zkratky tab pro všechny widgety                 */
+
+    // Získáme widget centralwidget, který obsahuje tlačítka
     QObjectList buttons = ui->centralwidget->children();
-    //for cyklus, který projede počtem, kolik je dětí ve widgetu
+
+    // For cyklus, který projede počtem, kolik je dětí ve widgetu
     for(QObject *obj : buttons){
-        //mění datový typ, pokud selže, přeskočí dané tlačítko
+        // Mění datový typ, pokud selže, přeskočí dané tlačítko
         if(QPushButton *button = qobject_cast<QPushButton*>(obj)){
-            //pokud začíná na "Z" mění ho na NoFocus
+            // Pokud začíná na "Z" mění ho na NoFocus
             if(button->objectName().startsWith("Z")){
                 button->setFocusPolicy(Qt::NoFocus);
             }
         }
     }
+
     for(int i = 0; i <= 9; i++){
         num_buttons[i]->setFocusPolicy(Qt::NoFocus);
     }
+
     ui->Lza->setFocusPolicy(Qt::NoFocus);
     ui->Pza->setFocusPolicy(Qt::NoFocus);
     ui->DELETE->setFocusPolicy(Qt::NoFocus);
     ui->Display->setFocusPolicy(Qt::NoFocus);
     ui->vysledek->setFocusPolicy(Qt::NoFocus);
-}
 
+} // konec konstruktoru
+
+
+/*                        Destruktor třídy MainWindow                         */
 MainWindow::~MainWindow(){
     delete ui;
 
 }
 
-/*****************************************************************************
- *
- *                      Funkce tlačítek
- *
-******************************************************************************/
+/*******************************************************************************
+*                                                                              *
+*                         PROPOJENÍ SIGNÁLŮ S TLAČÍTKY                         *
+*                                                                              *
+*******************************************************************************/
 
+/*     Slot pro zpracování signálu vypsání výsledku po vyhodnocení výrazu     */
 void MainWindow::equal(){
     QString dis_val = ui->Display->text();
-    //převedení QString na string
+    // Převedení QString na string
     std::string dis_val_s = dis_val.toStdString();
 
     try{
-        //převedení zpátky do QString formátu
+        // Převedení zpátky do QString formátu
         QString result = QString::fromStdString(calculate(dis_val_s));
         if(result == empty_state){
             ui->vysledek->setText("= 0");
@@ -149,7 +163,7 @@ void MainWindow::equal(){
         }
         
     }catch (std::invalid_argument& e){
-        //vypíše exception, který byl thrownut v knihovně
+        // Vypíše exception, který byl thrownut v knihovně
         ui->Display->setText(QString::fromStdString(e.what()));
 
         err = 1;
@@ -157,19 +171,22 @@ void MainWindow::equal(){
     }
 }
 
+
+/*             Slot pro zpracování signálu smazání celého výrazu              */
 void MainWindow::del(){
     ui->Display->setText(empty_state);
     ui->vysledek->setText(empty_state);
 
-    //reset, aby se znovu mohla napsat čárka
+    // Reset, aby se znovu mohla napsat čárka
     comma_rate = 0;
-    //reset, pro správné využití gon. funkci
+    // Reset, pro správné využití gon. funkci
     gon_rate = 0;
-    //reset pro výpočet nového příkladu
+    // Reset pro výpočet nového příkladu
     eq_state = 0;
 }
 
 
+/*            Slot pro zpracování signálu smazání posledního znaku            */
 void MainWindow::delete_char(){
     QString text = ui->Display->text();
     QString new_val;
@@ -178,11 +195,11 @@ void MainWindow::delete_char(){
     }
     else {
         if(text.endsWith("n") || text.endsWith("s")){
-            //zaručí, že tan, cos a sin se smaže celé
+            // Zaručí, že tan, cos a sin se smaže celé
             new_val = text.left(text.size() - 3);
             }
         else{
-            //text.left vrátí n znaku zleva == velikost qstringu - 1 znak
+            // text.left vrátí n znaku zleva == velikost qstringu - 1 znak
             new_val = text.left(text.size() - 1);
             }
         }
@@ -190,8 +207,10 @@ void MainWindow::delete_char(){
     ui->Display->setText(new_val);
 }
 
+
+/*                     Slot pro zpracování signálu čísel                      */
 void MainWindow::num(){
-    //sender je funkce, která vrátí ukazatel na objekt, který poslal signál
+    // 'sender()' je funkce, která vrátí ukazatel na objekt, který poslal signál
     QPushButton *button = (QPushButton *)sender();
 
     QString val_button = button->text();
@@ -205,18 +224,18 @@ void MainWindow::num(){
 
     }
     else{
-        //pokud není nic napsáno, napíše jedno číslo
+        // Pokud není nic napsáno, napíše jedno číslo
         if(dis_val == empty_state){
             ui->Display->setText(val_button);
         }
         else{
-            //pokud už se jedno číslo napsalo, začne psát další za sebe
+            // Pokud už se jedno číslo napsalo, začne psát další za sebe
             new_val = dis_val + val_button;
             ui->Display->setText(new_val);
         }
     }
 
-    //pokud se vypsal výsledek, nově napsané číslo přepíše výsledek a výpočet
+    // Pokud se vypsal výsledek, nově napsané číslo přepíše výsledek a výpočet
     if(eq_state == 1){
         ui->Display->setText(val_button);
         ui->vysledek->setText(empty_state);
@@ -225,6 +244,8 @@ void MainWindow::num(){
     }
 }
 
+
+/*              Slot pro zpracování signálu vypsání levé závorky              */
 void MainWindow::lbra(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -246,6 +267,8 @@ void MainWindow::lbra(){
     }
 }
 
+
+/*             Slot pro zpracování signálu vypsání pravé závorky              */
 void MainWindow::rbra(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -266,8 +289,10 @@ void MainWindow::rbra(){
     }
 }
 
+
+/*                 Slot pro zpracování signálu vypsání čárky                  */
 void MainWindow::comma(){
-    //zaručí, že se nepoužije vícekrát
+    // Zaručí, že se nepoužije vícekrát
     comma_rate++;
 
     if(comma_rate == 1){
@@ -275,15 +300,18 @@ void MainWindow::comma(){
         QString dis_val = ui->Display->text();
         QString new_val = dis_val + val_button;
 
-        //pokud není nastavena hodnota nebo bylo pressnuto =, tak se dá 0 pčed čárku
+        // Pokud není nastavena hodnota nebo bylo pressnuto =, tak se dá 0 před čárku
         if(dis_val == empty_state || eq_state == 1){
             new_val = "0" + val_button;
         }
+
         ui->Display->setText(new_val);
         eq_state =0;
     }
 }
 
+
+/*           Slot pro zpracování signálu vypsání operátoru sčítání            */
 void MainWindow::plus(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -294,15 +322,19 @@ void MainWindow::plus(){
     if(dis_val == empty_state){
         new_val = "0" + val_button;
     }
+
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     comma_rate = 0;
     eq_state = 0;
     gon_rate = 1;
 }
 
+
+/*          Slot pro zpracování signálu vypsání operátoru odsčítání           */
 void MainWindow::minus(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -313,15 +345,19 @@ void MainWindow::minus(){
     if(dis_val == empty_state){
         new_val = "0" + val_button;
     }
+
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     comma_rate = 0;
     eq_state = 0;
     gon_rate = 1;
 }
 
+
+/*           Slot pro zpracování signálu vypsání operátoru násobení           */
 void MainWindow::multiply(){
     QString val_button = "*";
     QString dis_val = ui->Display->text();
@@ -330,15 +366,19 @@ void MainWindow::multiply(){
     if(dis_val == empty_state){
         new_val = "0" + val_button;
     }
+
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     comma_rate = 0;
     eq_state = 0;
     gon_rate = 1;
 }
 
+
+/*            Slot pro zpracování signálu vypsání operátoru dělení            */
 void MainWindow::div(){
     QString val_button = "/";
     QString dis_val = ui->Display->text();
@@ -347,15 +387,19 @@ void MainWindow::div(){
     if(dis_val == empty_state){
         new_val = "0" + val_button;
     }
+
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     comma_rate = 0;
     eq_state = 0;
     gon_rate = 1;
 }
 
+
+/*           Slot pro zpracování signálu vypsání operátoru mocniny            */
 void MainWindow::root(){
     QString val_button = "#";
     QString dis_val = ui->Display->text();
@@ -364,6 +408,8 @@ void MainWindow::root(){
     ui->Display->setText(new_val);
 }
 
+
+/*          Slot pro zpracování signálu vypsání operátoru odmocniny           */
 void MainWindow::sqr(){
     QString val_button = "^";
     QString dis_val = ui->Display->text();
@@ -372,10 +418,13 @@ void MainWindow::sqr(){
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     eq_state = 0;
 }
 
+
+/*          Slot pro zpracování signálu vypsání operátoru faktoriálu          */
 void MainWindow::fact(){
     QString val_button = "!";
     QString dis_val = ui->Display->text();
@@ -384,10 +433,13 @@ void MainWindow::fact(){
     if(eq_state == 1){
         new_val = eq_str + val_button;
     }
+
     ui->Display->setText(new_val);
     eq_state = 0;
 }
 
+
+/*             Slot pro zpracování signálu vypsání operátoru sinu             */
 void MainWindow::sin(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -416,6 +468,8 @@ void MainWindow::sin(){
     gon_rate++;
 }
 
+
+/*           Slot pro zpracování signálu vypsání operátoru tangensu           */
 void MainWindow::tan(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -444,6 +498,8 @@ void MainWindow::tan(){
     gon_rate++;
 }
 
+
+/*            Slot pro zpracování signálu vypsání operátoru kosinu            */
 void MainWindow::cos(){
     QPushButton *button = (QPushButton *)sender();
 
@@ -472,13 +528,15 @@ void MainWindow::cos(){
     gon_rate++;
 }
 
+
+/*    Slot pro zpracování signálu převedení ze stupňů na radiány a naopak     */
 void MainWindow::deg_rad(){
-    //přepne deg na rad a naopak
+    // Přepne stupně na radiány a naopak
     degRad = !degRad;
 
-    //RAD == false (default), DEG == true
+    // RAD == false (default), DEG == true
     if(degRad == true){
-        //změní tlačítko, aby bylo deg nebo rad
+        // Změní tlačítko, aby bylo deg nebo rad
         ui->Zdeg->setText("DEG");
     }
     else ui->Zdeg->setText("RAD");

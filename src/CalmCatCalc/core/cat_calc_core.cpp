@@ -1,46 +1,57 @@
-/** @cond */
-/*
- * Název projektu:  Calm CatCalc
- *
- * Soubor:          cat_calc_core.h
- * Datum:           19.03.2024
- * Poslední změna:  16.04.2024
- *
- * Tým:     Calm CatCalc Coders
- *
- * Autoři:  Farkašovský Lukáš    <xfarkal00>
- *         	Hýža Pavel           <xhyzapa00>
- *         	Kalina Jan           <xkalinj00>
- *         	Krejčí David         <xkrejcd00>
- */
-/** @endcond */
-
+/*******************************************************************************
+ *                                                                             *
+ * Název projektu:   Calm CatCalc                                              *
+ *                                                                             *
+ * Soubor:           cat_calc_core.cpp                                         *
+ * Datum:            19.03.2024                                                *
+ * Poslední změna:   22.04.2024                                                *
+ *                                                                             *
+ * Tým:      Calm CatCalc Coders                                               *
+ *                                                                             *
+ * Členové:  Farkašovský Lukáš    <xfarkal00>                                  *
+ *           Hýža Pavel           <xhyzapa00>                                  *
+ *           Kalina Jan           <xkalinj00>                                  *
+ *           Krejčí David         <xkrejcd00>                                  *
+ *                                                                             *
+ ******************************************************************************/
 /**
  * @file cat_calc_core.cpp
  * @author David Krejčí \<xkrejcd00>
- * @brief __Definice/implementace funkcí matematické knihovny Calm CatCalc Core.__
- * @details _Tento soubor obsahuje implementace funkcí, které jsou definovány
- * v matematické knihovně Calm CatCalc Core (souboru cat_calc_core.h)._
+ * @brief Definice/implementace funkcí matematické knihovny _Calm CatCalc Core_.
+ * 
+ * @details Tento soubor obsahuje implementace funkcí, které jsou deklarovány
+ *          v matematické knihovně _Calm CatCalc Core_ (resp. v souboru
+ *          hlavičkovém souboru `cat_calc_core.h`).
  */
 
 #include "cat_calc_core.h"
+#include <vector>
+#include <stdexcept>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <iomanip>
+#include <limits>
 
-using namespace std;
+using namespace std;        // funkce standardní knihovny C++
+using namespace catMath;    // funkce matematické knihovny 'cat_calc_core'
 
 // Globální proměnná určující, jestli jsou hodnoty zadány ve stupních nebo radiánech
 // FALSE = stupně, TRUE = radiány
 bool degRad = true;
 
-namespace catMath{
 
-double absVal(double num){
+/*                 Vypočítá absolutní hodnotu zadaného čísla                  */
+double catMath::absVal(double num){
     if(num >= 0.0){
         return num;
     }
     return -num;
 }
 
-size_t factorial(size_t num){
+
+/*                             Vypočítá faktoriál                             */
+size_t catMath::factorial(size_t num){
     size_t result = 1;
     while(num > 1){
         // Kontrola přetečení
@@ -53,7 +64,9 @@ size_t factorial(size_t num){
     return result;
 }
 
-double root(int exp, double num){
+
+/*            Vypočítá odmocninu zadaného čísla pro zadaný základ             */
+double catMath::root(int exp, double num){
     // Kontrola vstupních hodnot pro záporný základ
     if(num < 0 && exp%2 == 0){
         throw invalid_argument("Math error");
@@ -76,6 +89,7 @@ double root(int exp, double num){
     }
 
     double minVal, maxVal; // Minimální a maximální hodnota pro binární vyhledávání
+
     // Rozdělení výsledku na interval
     if(num > 0 && num < 1){
         minVal = num;
@@ -96,9 +110,10 @@ double root(int exp, double num){
 
     int numOfCycles = 0;
     double estimate = (minVal + maxVal)/2; // Odhad výsledku
-    // Binární vyhledávání
-    // Ukončí se, pokud je rozdíl mezi odhadem a skutečným výsledkem menší než přesnost
-    // Nebo pokud je počet cyklů větší než maximální počet cyklů
+
+    /* Binární vyhledávání */
+    /* Ukončí se, pokud je rozdíl mezi odhadem a skutečným výsledkem menší než
+       přesnost, nebo pokud je počet cyklů větší než maximální počet cyklů */
     while((absVal(absVal(power(exp,estimate)) - absVal(num)) > CALC_PRECISION) && (numOfCycles < MAX_CYCLES)){
         // Pokud je výsledek moc velký, tak se sníží horní mez
         if(power(exp,estimate) > num){
@@ -112,9 +127,11 @@ double root(int exp, double num){
         numOfCycles++;
     }
     return estimate;
-}
+} // konec root()
 
-double power(int exp, double num){
+
+/*    Vypočítá mocninu zadaného čísla o zadaném celém nezáporném exponentu    */
+double catMath::power(int exp, double num){
     // Kontrola vstupních hodnot pro záporný exponent
     if(exp < 0){
         if(num == 0){
@@ -142,7 +159,9 @@ double power(int exp, double num){
     }
 }
 
-double normalizeAngle(double ang){
+
+/*                    Funkce na provedení normalizace úhlu                    */
+double catMath::normalizeAngle(double ang){
     // Pokud je úhel ve stupních, tak se převede na radiány
     if(degRad == false){
         ang = ang *(PI/180);
@@ -158,14 +177,17 @@ double normalizeAngle(double ang){
     return ang;
 }
 
-double csin(double ang){
+
+/*                        Vypočítá sinus zadaného úhlu                        */
+double catMath::csin(double ang){
     ang = normalizeAngle(ang);
     
     double result = 0;
     double term = ang;
-    int i = 1;  //Počet cyklů
-    // Cyklicky počítá dokuď není dosažena požadována přesnost
-    // nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES)
+    int i = 1;  // Počet cyklů
+
+    /* Cyklicky počítá dokuď není dosažena požadována přesnost
+       nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES) */
     while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i) * (2 * i + 1));
@@ -174,14 +196,17 @@ double csin(double ang){
     return result;
 }
 
-double ccos(double ang){
+
+/*                       Vypočítá kosinus zadaného úhlu                       */
+double catMath::ccos(double ang){
     ang = normalizeAngle(ang);
 
     double result = 0;
     double term = 1;
     int i = 1;  //Počet cyklů
-    // Cyklicky počítá dokuď není dosažena požadována přesnost
-    // nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES)
+
+    /* Cyklicky počítá dokuď není dosažena požadována přesnost
+       nebo není dosaženo maximálního počtu cyklů (i == MAX_CYCLES) */
     while ( (absVal(term)>=CALC_PRECISION) && (i<MAX_CYCLES) ){
         result += term;
         term = -term * ang * ang / ((2 * i - 1) * (2 * i));
@@ -190,21 +215,24 @@ double ccos(double ang){
     return result;
 }
 
-double ctan(double ang){
+
+/*                       Vypočítá tangens zadaného úhlu                       */
+double catMath::ctan(double ang){
     // Pokud je zadaný úhel nedefinovaný pro tangens
     if(absVal(normalizeAngle(ang) - PI/2) < CALC_PRECISION ||
-     absVal(normalizeAngle(ang) - 3*PI/2) < CALC_PRECISION)
-    {
+       absVal(normalizeAngle(ang) - 3*PI/2) < CALC_PRECISION){
         throw invalid_argument("Math error");
     }
+
     double result = csin(ang)/ccos(ang);
     return result;
 }
 
-bool isOperator(char c){
+
+/*                 Kontroluje, zda je zadaný znak operátorem                  */
+bool catMath::isOperator(char c){
     if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^' ||
-        c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~')
-    {
+       c == '#' || c == '!' || c == 's' || c == 'c' || c == 't' || c == '~'){
         return true;
     }
     else{
@@ -212,7 +240,9 @@ bool isOperator(char c){
     }
 }
 
-vector<string> parse(string expression){
+
+/*                Rozděluje vstupní výraz na jednotlivé tokeny                */
+vector<string> catMath::parse(string expression){
     vector<string> result;
     string token = "";
     // true, pokud poslední token byl operand nebo "("
@@ -265,30 +295,34 @@ vector<string> parse(string expression){
     }
 
     return result;
-}
+} // konec parse()
 
-int priority(string op){
+
+/*                     Vrátí prioritu zadaného operátoru                      */
+int catMath::priority(string op){
     if(op == "(" || op == ")"){
-        return 0;
+        return PARENTHESES;
     }
     else if(op == "+" || op == "-"){
-        return 1;
+        return ADD_SUB;
     }
     else if(op == "*" || op == "/"){
-        return 2;
+        return MUL_DIV;
     }
     else if(op == "~"){
-        return 5;
+        return NEGATION;
     }
     else if(op == "s" || op == "c" || op == "t"){
-        return 4;
+        return GONIOMETRIC;
     }
     else{
-        return 3;
+        return OTHERS;
     }
 }
 
-bool associativity(string op){
+
+/*                   Zjistí asociativitu zadaného operátora                   */
+bool catMath::associativity(string op){
     if(op == "+" || op == "-" || op == "*" || op == "/" || op == "(" || op == ")"){
         return true; // Left
     }
@@ -297,7 +331,9 @@ bool associativity(string op){
     }
 }
 
-vector<string> postfix(vector<string> parsedExpression){
+
+/*           Převádí vektor tokenů z infixového tvaru na postfixový           */
+vector<string> catMath::postfix(vector<string> parsedExpression){
     vector<string> postfixExpression;
     vector<string> stack;
 
@@ -306,12 +342,10 @@ vector<string> postfix(vector<string> parsedExpression){
         // Pokud je token číslo, tak se přidá do výsledku
         if(isdigit(token[0])){
             postfixExpression.push_back(token);
-
         }
         // Otevřená závorka se přidá do zásobníku
         else if(token == "("){
             stack.push_back(token);
-
         }
         // Uravření závorky znamená, že se provedou všechny operace mezi závorkami
         else if(token == ")"){
@@ -340,27 +374,27 @@ vector<string> postfix(vector<string> parsedExpression){
             // nebo je stejná priorita a operátor je pravou asociativitou
             // přidá se operátor do zásobníku
             else if( (priority(token) > priority(stack.back())) ||
-                (priority(token) == priority(stack.back()) && associativity(token) == false) )
-            {
+                     (priority(token) == priority(stack.back()) && associativity(token) == false) ){
                 stack.push_back(token);
             }
             // Jinak se provedou operace ze zásobníku s větší prioritou
             // nebo stejnou prioritou a levou asociativitou
             else{
                 while( (priority(token) < priority(stack.back())) ||
-                    (priority(token)==priority(stack.back()) && associativity(token)==true) )
-                {
+                       (priority(token)==priority(stack.back()) && associativity(token)==true) ){
                     postfixExpression.push_back(stack.back());
                     stack.pop_back();
                     if(stack.size() == 0){
                         break;
                     }
                 }
+
                 // Nakonec se načtený operátor přidá do zásobníku
                 stack.push_back(token);
             }
         }
-    }
+    } // konec hlavního cyklu for()
+
     // Všechny zbývající operátory ze zásobníku se přidají do výsledku
     while(stack.size() > 0){
         postfixExpression.push_back(stack.back());
@@ -368,11 +402,14 @@ vector<string> postfix(vector<string> parsedExpression){
     }
 
     return postfixExpression;
-}
+} // konec postfix()
 
-string doubleToString(double x){
+
+/*                  Převede číslo typu 'double' na 'string'                   */
+string catMath::doubleToString(double x){
     size_t numLen = 0;
     double i = 10;
+
     while(x/i > 1){
         numLen++;
         i = i*10;
@@ -382,6 +419,7 @@ string doubleToString(double x){
     stream << fixed << setprecision(16-numLen) << x;
     string result = stream.str();
     size_t dotIdx = result.find('.');
+
     if(dotIdx != string::npos){
         size_t notZeroIdx = result.find_last_not_of('0');
         if(notZeroIdx <= dotIdx){
@@ -391,10 +429,12 @@ string doubleToString(double x){
             result.erase(notZeroIdx+1);
         }
     }
+
     size_t nineIdx = result.find_last_of('9');
     if(nineIdx == string::npos){
         return result;
     }
+
     if(nineIdx >= result.size()-3 && (dotIdx == string::npos || dotIdx < nineIdx)){
         result.erase(nineIdx);
         while(result.back() == '9'){
@@ -404,6 +444,7 @@ string doubleToString(double x){
                 break;
             }
         }
+
         size_t inc = result.find_last_not_of('9');
         if(result[inc] == '.'){
             result.erase(inc);
@@ -413,9 +454,11 @@ string doubleToString(double x){
         }
     }
     return result;
-}
+} // konec doubleToString()
 
-string evalAdd(string num1, string num2){
+
+/*                    Funkce na výpočet součtu dvou výrazů                    */
+string catMath::evalAdd(string num1, string num2){
     // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
@@ -430,7 +473,9 @@ string evalAdd(string num1, string num2){
     }
 }
 
-string evalSub(string num1, string num2){
+
+/*                    Funkce na výpočet rozdíl dvou výrazů                    */
+string catMath::evalSub(string num1, string num2){
     // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
@@ -445,7 +490,9 @@ string evalSub(string num1, string num2){
     }
 }
 
-string evalMul(string num1, string num2){
+
+/*                    Funkce na výpočet součin dvou výrazů                    */
+string catMath::evalMul(string num1, string num2){
     // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos || num2.find('.') != string::npos){
         double x = stod(num1);
@@ -477,7 +524,9 @@ string evalMul(string num1, string num2){
     }
 }
 
-string evalDiv(string num1, string num2){
+
+/*                    Funkce na výpočet podíl dvou výrazů                     */
+string catMath::evalDiv(string num1, string num2){
     if(num2 == "0"){
         throw invalid_argument("Math error");
     }
@@ -507,7 +556,9 @@ string evalDiv(string num1, string num2){
     }
 }
 
-string evalNeg(string num1){
+
+/*                        Funkce provede negaci výrazu                        */
+string catMath::evalNeg(string num1){
     // Pokud je některý z operandů desetinné číslo, tak se provede operace s double
     if(num1.find('.') != string::npos){
         double x = stod(num1);
@@ -521,7 +572,9 @@ string evalNeg(string num1){
     }
 }
 
-string evaluateOperation(char op, vector<string> *stack){
+
+/*                          Vyhodnotí jednu operaci                           */
+string catMath::evaluateOperation(char op, vector<string> *stack){
     // Proměnné pro ukládání operandů různých typů
     string xs;
     string ys;
@@ -636,10 +689,12 @@ string evaluateOperation(char op, vector<string> *stack){
         // Nikdy by se nemělo provést, ale bez default se program nepřeloží
         default :
             throw invalid_argument("Syntax error");
-    }
-}
+    } // konec switch()
+} // konec evaluateOperation()
 
-string evaluate(vector<string> postfixExpression){
+
+/*                    Vyhodnocuje výraz postfixového tvaru                    */
+string catMath::evaluate(vector<string> postfixExpression){
     // Cyklus, který vyhodnocuje výraz, dokud není výsledek
     while(postfixExpression.size() > 1){
         vector<string> stack;
@@ -669,9 +724,11 @@ string evaluate(vector<string> postfixExpression){
         postfixExpression = stack;
     }
     return postfixExpression.front();
-}
+} // konec evaluate()
 
-string removeMultSpaces(string expression){
+
+/*                Odstraní přebytečné mezery ve vstupním výrazu                */
+string catMath::removeMultSpaces(string expression){
     string result;
     bool prevIsSpace = false;
     for(char c : expression){ // Cyklus procházející všechny znaky ve vstupním řetězci
@@ -690,7 +747,9 @@ string removeMultSpaces(string expression){
     return result;
 }
 
-string pairParenthesis(string expression){
+
+/*            V případě chybějících závorek, provede doplnění párů            */
+string catMath::pairParenthesis(string expression){
     int cnt = 0;
     // Počítá kolik závorek je otevřených oproti uzavřeným.
     for(char c : expression){
@@ -713,7 +772,9 @@ string pairParenthesis(string expression){
     return expression;
 }
 
-string formatInput(string expression){
+
+/*                      Výpočet hodnoty zadaného výrazu                       */
+string catMath::formatInput(string expression){
     // Odstranění přebytečných mezer
     expression = removeMultSpaces(expression);
     // Uzavření závorek
@@ -773,7 +834,7 @@ string formatInput(string expression){
         expression.insert(idx2+1,1,'2');
         // Pusuneme první index
         idx = idx+2;
-    }
+    } // konec while()
     
     // Implicitní mocnina 2
     idx = 0;
@@ -810,11 +871,14 @@ string formatInput(string expression){
         expression.insert(idx2,1,'2');
         // Pusuneme první index
         idx = idx+2;
-    }
-    return expression;
-}
+    } // konec while()
 
-string calculate(string expression){
+    return expression;
+} // konec formatInput()
+
+
+/*                      Výpočet hodnoty zadaného výrazu                       */
+string catMath::calculate(string expression){
     // Kontrola, zda je výraz prázdný
     bool noNum = true;
     for(char c : expression){
@@ -838,5 +902,4 @@ string calculate(string expression){
     return evaluate(tokens);
 }
 
-} // namespace catMath
 /*** Konec souboru cat_calc_core.cpp ***/

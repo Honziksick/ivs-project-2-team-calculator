@@ -1,27 +1,69 @@
+/*******************************************************************************
+ *                                                                             *
+ * Název projektu:   Calm CatCalc                                              *
+ *                                                                             *
+ * Soubor:           cat_calc_core_tests.cpp                                   *
+ * Datum:            17.03.2024                                                *
+ * Poslední změna:   22.04.2024                                                *
+ *                                                                             *
+ * Tým:      Calm CatCalc Coders                                               *
+ *                                                                             *
+ * Členové:  Farkašovský Lukáš    <xfarkal00>                                  *
+ *           Hýža Pavel           <xhyzapa00>                                  *
+ *           Kalina Jan           <xkalinj00>                                  *
+ *           Krejčí David         <xkrejcd00>                                  *
+ *        	                                                                   *
+ ******************************************************************************/
+/**
+ * @file cat_calc_core_tests.cpp
+ * @author David Krejčí \<xkrejcd00>
+ * 
+ * @brief Soubor obsahující testy matematické knihovny _Calm CatCalc Core_.
+ * @details Tento soubor obsahuje testovací případy pro funkce jádra kalkulačky.
+ *          Testuje se správnost výpočtů, chování při chybných vstupech a další
+ *          aspekty funkčnosti matematické knihovny _Calm CatCalc Core_.
+ */
+
 #include "gtest/gtest.h"
 #include <gmock/gmock.h>
 #include "cat_calc_core.h"
 
-/** Testovaná přesnost kalkulačky na 14 desetinných míst */
+/** @brief Testovaná přesnost kalkulačky na 14 desetinných míst */
 #define TESTED_PRECISION 0.00000000000001
 
 using namespace ::testing;
 using namespace std;
 using namespace catMath;
 
+
+/*******************************************************************************
+ *                                                                             *
+ *         SPECIÁLNÍ FUNKCE VYUŽÍVANÉ K TESTOVÁNÍ MATEMATICKÉ KNIHOVNY         *
+ *                                                                             *
+ ******************************************************************************/
+
 /**
- * @brief Porovnává 2 vektory řetězců
+ * @brief Funkce porovná 2 vektory řetězců.
  * 
- * @return True, pokud mají vektory stejný obsah, jinak false
-*/
-bool compareVectors(vector<string> vec1, vector<string> vec2) {
+ * @details Tato funkce porovná dva vektory řetězců. Pokud mají vektory různou
+ *          délku, funkce vrátí `false`. Pokud mají vektory stejnou délku,
+ *          funkce porovná jednotlivé prvky vektory. Pokud jsou všechny prvky
+ *          stejné, funkce vrátí `true`. Pokud je alespoň jeden prvek různý,
+ *          funkce vrátí `false`.
+ * 
+ * @param[in] vec1 První vektor k porovnání.
+ * @param[in] vec2 Druhý vektor k porovnání.
+ * @return
+ * - `true`, pokud jsou vektory stejné, jinak `false`.
+ */
+bool compareVectors(vector<string> vec1, vector<string> vec2){
     // Pokud mají vektory různou délku, nejsou stejné
-    if (vec1.size() != vec2.size()) {
+    if (vec1.size() != vec2.size()){
         return false;
     }
     // Porovnání jednotlivých prvků
-    for (size_t i = 0; i < vec1.size(); i++) {
-        if (vec1[i] != vec2[i]) {
+    for (size_t i = 0; i < vec1.size(); i++){
+        if (vec1[i] != vec2[i]){
             return false;
         }
     }
@@ -29,6 +71,35 @@ bool compareVectors(vector<string> vec1, vector<string> vec2) {
 }
 
 
+/*******************************************************************************
+ *                                                                             *
+ *               TESTY FUNKCÍ NA ZPRACOVÁNÍ MATEMATICKÝCH VÝRAZŮ               *
+ *                                                                             *
+ ******************************************************************************/
+
+/**
+ * @brief Testovací případ pro základní výrazy.
+ *
+ * @details Tento testovací případ ověřuje správnost výpočtu základních
+ *          výrazů. <br>
+ *          __Testuje následující situace:__
+ *          - Opsání výrazu
+ *          - Základní dělení
+ *          - Zaokrouhlení při násobení
+ *          - Dělení záporných desetinných čísel a práce se znaménky
+ *          - Dvojí faktoriál
+ *          - Implicitní odmocnina
+ *          - Neukončená závorka
+ *          - Implicitní odmocnina s mezerami
+ *          - Implicitní odmocnina s dalšími operacemi
+ *          - Implicitní mocnina
+ *          - Implicitní mocnina s mezerami
+ *          - Implicitní mocnina se závorkou a dalšími operacemi
+ *          - Mocnina se závorkou a dalšími operacemi
+ *          - Dva mínus za sebou
+ *          - Jednoduché sčítání
+ *          - Jednoduché dělení desetinným číslem
+ */
 TEST(Calculate, BasicExpressions){
     // Opsání výrazu
     string expression = "4";
@@ -116,7 +187,7 @@ TEST(Calculate, BasicExpressions){
     expectedResult= "31";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 
-    // Dvě - za sebou
+    // Dva - za sebou
     expression = "4 - (-8)";
     expectedResult= "12";
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
@@ -133,6 +204,18 @@ TEST(Calculate, BasicExpressions){
 
 }
 
+/**
+ * @brief Testovací případ pro složité výrazy.
+ *
+ * @details Tento testovací případ ověřuje správnost výpočtu složitých
+ *          výrazů. <br>
+ *          __Testuje následující situace:__
+ *          - Výrazy s více operacemi, včetně sčítání, násobení, odmocniny,
+ *            kosinu a mocniny.
+ *          - Výrazy obsahující goniometrické funkce a faktoriál.
+ *          - Výrazy obsahující goniometrické funkce, faktoriál, sčítání,
+ *            násobení a závorky.
+ */
 TEST(Calculate, ComplexExpressions){
     degRad = false;
 
@@ -150,6 +233,26 @@ TEST(Calculate, ComplexExpressions){
     EXPECT_STREQ(expectedResult.c_str(), calculate(expression).c_str());
 }
 
+/**
+ * @brief Testovací případ pro chybové stavy.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `calculate()` správně
+ *          vyhazuje výjimky pro chybové stavy. <br>
+ *          __Testuje následující situace:__
+ *          - Dělení nulou
+ *          - Faktoriál desetinného čísla
+ *          - Faktoriál záporného čísla
+ *          - Chybějící začátek závorky
+ *          - Odmocnina záporného čísla
+ *          - Odmocnina o desetinném exponentu
+ *          - Záporná odmocnina o základu nula
+ *          - Mocnina s desetinným exponentem
+ *          - Mocnina se záporným exponentem a základem nula
+ *          - Více operací bez operandů
+ *          - Dvě čísla bez operace
+ *          - Nedostatek operandů
+ *          - Neplatný znak
+ */
 TEST(Calculate, Errors){
     // Dělení nulou
     string expression = "3*8/(2-2)";
@@ -240,6 +343,21 @@ TEST(Calculate, Errors){
     EXPECT_ANY_THROW(calculate(expression));
 }
 
+/**
+ * @brief Testovací případ pro situace, které by neměly vyvolat chybu.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `calculate()` nevyhazuje
+ *          výjimky pro situace, které by neměly být považovány za chyby. <br>
+ *          __Testuje následující situace:__
+ *          - Výrazy se závorkami a zápornými čísly
+ *          - Lichá odmocnina záporného čísla
+ *          - Výrazy s více plusy za sebou
+ *          - Výrazy, které jsou jen jedno číslo
+ *          - Výrazy s dvojitým faktoriálem
+ *          - Prázdný výraz
+ *          - Výrazy s mezerami na začátku
+ *          - Výrazy s neuzavřenými závorkami
+ */
 TEST(Calculate, NoErrors){
     // Test závorek
     string expression = "3 + (-8)";
@@ -291,6 +409,15 @@ TEST(Calculate, NoErrors){
 
 }
 
+/**
+ * @brief Testovací případ pro základní výrazy.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `parse()` správně rozdělí
+ *          základní výrazy na jednotlivé části. <br>
+ *          __Testuje následující situace:__
+ *          - Opsání výrazu
+ *          - Základní rozdělení
+ */
 TEST(Parse, BasicExpressions){
     // Opsání výrazu
     vector<string> expected = {"5"};
@@ -303,6 +430,15 @@ TEST(Parse, BasicExpressions){
     EXPECT_PRED2(compareVectors, expected, result);
 }
 
+/**
+ * @brief Testovací případ pro parsování složitých výrazů.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `parse()` správně rozdělí
+ *          složitý výraz na jednotlivé části. <br>
+ *          __Testuje následující situace:__
+ *          - Výraz obsahuje násobení, odečítání, záporné číslo v závorkách,
+ *            sčítání, odmocninu, mocninu a mezery na začátku a na konci.
+ */
 TEST(Parse, ComplexExpressions){
     // Rozdělení složitějšího výrazu
     vector<string> expected = {"558", "*", "0.5", "-", "(", "~", "2", ")",
@@ -311,6 +447,15 @@ TEST(Parse, ComplexExpressions){
     EXPECT_PRED2(compareVectors, expected, result);
 }
 
+/**
+ * @brief Testovací případ pro základní výrazy převedené do postfixové notace.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `postfix()` správně převede
+ *          základní výrazy do postfixové notace. <br>
+ *          __Testuje následující situace:__
+ *          - Opsání výrazu
+ *          - Základní příklad s operací sčítání a faktoriálem
+ */
 TEST(Postfix, BasicExpressions){
     // Opsání výrazu
     vector<string> expected = {"5"};
@@ -323,6 +468,15 @@ TEST(Postfix, BasicExpressions){
     EXPECT_PRED2(compareVectors, expected, result);
 }
 
+/**
+ * @brief Testovací případ pro složité výrazy převedené do postfixové notace.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `postfix()` správně převede
+ *          složité výrazy do postfixové notace. <br>
+ *          __Testuje následující situace:__
+ *          - Složitý výraz obsahující operace násobení, odečítání, negace,
+ *            sčítání, odmocniny a mocniny
+ */
 TEST(Postfix, ComplexExpressions){
     // Složitější výraz
     vector<string> expected = {"558", "0.5", "*", "2", "~", "-",
@@ -332,7 +486,15 @@ TEST(Postfix, ComplexExpressions){
     EXPECT_PRED2(compareVectors, expected, result);
 }
 
-
+/**
+ * @brief Testovací případ pro vyhodnocení základních výrazů.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `evaluate()()` správně
+ *          vyhodnotí základní výrazy. <br>
+ *          __Testuje následující situace:__
+ *          - Opsání výrazu
+ *          - Základní příklad s operací sčítání a faktoriálem
+ */
 TEST(Evaluate, BasicExpressions){
     // Opsání výrazu
     string expected = "5";
@@ -345,6 +507,15 @@ TEST(Evaluate, BasicExpressions){
     EXPECT_STREQ(expected.c_str(), result.c_str());
 }
 
+/**
+ * @brief Testovací případ pro vyhodnocení složitých výrazů.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `evaluate()()` správně
+ *          vyhodnotí složité výrazy. <br>
+ *          __Testuje následující situace:__
+ *          - Složitý výraz obsahující operace násobení, odečítání, negace,
+ *            sčítání, odmocniny a mocniny
+ */
 TEST(Evaluate, ComplexExpressions){
     // Složitější výraz
     string expected = "290";
@@ -353,15 +524,30 @@ TEST(Evaluate, ComplexExpressions){
     EXPECT_STREQ(expected.c_str(), result.c_str());
 }
 
-/********************************************************************
- * Funkce pro testování matematických operací
- * 
-********************************************************************/
+
+/*******************************************************************************
+ *                                                                             *
+ *                    TESTY FUNKCÍ PRO MATEMATICKÉ OPERACE                     *
+ *                                                                             *
+ ******************************************************************************/
+
+/**
+ * @brief Testovací případ pro absolutní hodnotu.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `absVal()` správně
+ *          vypočítá absolutní hodnotu čísla.
+ */
 TEST(Operations, AbsoluteValue){
     EXPECT_EQ(15, absVal(15));
     EXPECT_EQ(15, absVal(-15));
 }
 
+/**
+ * @brief Testovací případ pro odmocninu.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `root()` správně vypočítá
+ *          odmocninu čísla.
+ */
 TEST(Operations, Root){
     EXPECT_EQ(5, root(2,25));
     EXPECT_EQ(2, root(12,4096));
@@ -377,6 +563,12 @@ TEST(Operations, Root){
     EXPECT_ANY_THROW(root(2,-16));
 }
 
+/**
+ * @brief Testovací případ pro mocninu.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `power()` správně vypočítá
+ *          mocninu čísla.
+ */
 TEST(Operations, Power){
     EXPECT_EQ(64, power(2,8));
     EXPECT_EQ(81, power(4,3));
@@ -386,6 +578,12 @@ TEST(Operations, Power){
 
 }
 
+/**
+ * @brief Testovací případ pro sinus.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `csin()` správně vypočítá
+ *          sinus úhlu.
+ */
 TEST(Operations, Sine){
     degRad = true;
     EXPECT_NEAR(0.5, csin(PI/6), TESTED_PRECISION);
@@ -396,6 +594,12 @@ TEST(Operations, Sine){
     EXPECT_NEAR(0.939692620785908, csin(70), TESTED_PRECISION);
 }
 
+/**
+ * @brief Testovací případ pro kosinus.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `ccos()` správně vypočítá
+ *          kosinus úhlu.
+ */
 TEST(Operations, Cosine){
     degRad = true;
     EXPECT_NEAR(0.5, ccos(PI/3), TESTED_PRECISION);
@@ -406,6 +610,12 @@ TEST(Operations, Cosine){
     EXPECT_NEAR(0.342020143325668, ccos(70), TESTED_PRECISION);
 }
 
+/**
+ * @brief Testovací případ pro tangens.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `ctan()` správně vypočítá
+ *          tangens úhlu.
+ */
 TEST(Operations, Tan){
     degRad = true;
     EXPECT_NEAR(1,ctan(PI/4), TESTED_PRECISION);
@@ -416,6 +626,12 @@ TEST(Operations, Tan){
     EXPECT_ANY_THROW(ctan(270));
 }
 
+/**
+ * @brief Testovací případ pro faktoriál.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `factorial()` správně
+ *          vypočítá faktoriál čísla.
+ */
 TEST(Operations, Factorial){
     size_t expectedResult = 24;
     EXPECT_EQ(expectedResult,factorial(4));
@@ -424,6 +640,12 @@ TEST(Operations, Factorial){
     EXPECT_ANY_THROW(factorial(-5));
 }
 
+/**
+ * @brief Testovací případ pro ověření, zda je znak operátorem.
+ *
+ * @details Tento testovací případ ověřuje, že funkce `isOperator()` správně
+ *          rozpozná, zda je znak operátorem.
+ */
 TEST(Other, IsOperator){
     string testExpression = "4 /(7+1.2)";
     bool expectedResult[] = {false,false,true,false,false,true,false,false,false,false};
