@@ -26,15 +26,15 @@ jobs:
             exit 42
         fi
 
-    - name: Build by 'make'
+    - name: Build by 'make dev-install'
       run: |
         if [ ! -d /run/user/1000/ ]; then
           sudo mkdir -p /run/user/1000/
         fi
         cd src
-        make
+        make dev-install
         if [ $? -ne 0 ]; then
-          echo "::error::Failed to build the project via 'make'."
+          echo "::error::Failed to build the project via 'make dev-install'."
           false
           exit 42
         fi
@@ -211,37 +211,8 @@ jobs:
     - name: Check the "Calm CatCalc GUI" executable
       run: |
         cd src
-        if [ ! -f "build/gui/cat_calc_gui" ]; then
+        if [ ! -f "build/cat_calc_gui" ]; then
           echo "::error::GUI executable not found."
-          false
-          exit 42
-        fi
-
-    - name: Check the "Calm CatCalc GUI" symlink
-      run: |
-        cd src
-        if [ ! -L "build/CalmCatCalc" ]; then
-          echo "::error::Symlink to GUI executable not found."
-          false
-          exit 42
-        fi
-
-    - name: Add executable to the system PATH
-      run: |
-        cd src
-        if [ "build/gui/cat_calc_gui" -nt "/usr/local/bin/catcalc" ]; then
-          sudo cp build/gui/cat_calc_gui /usr/local/bin/catcalc
-          if [ $? -ne 0 ]; then
-            echo "::error::Failed to add the executable to the system PATH."
-            false
-            exit 42
-          fi
-        fi
-
-    - name: Check the executable in the system PATH
-      run: |
-        if [ ! -f "/usr/local/bin/catcalc" ]; then
-          echo "::error::Executable not found in the system PATH."
           false
           exit 42
         fi

@@ -189,8 +189,8 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 		run-first-profile run-next-profile run-profile run-stddev-test \
 		run-test-coverage test
 
-### all: ## Nainstaluje kalkulačku "Calm CatCalc"
-all: install
+### all: ## Nainstaluje dev-verze kalkulačky "Calm CatCalc" a programu "stddev"
+all: dev-install
 
 ### install-catcalc: ## Nainstaluje kalkulačku "Calm CatCalc" s GUI
 install-catcalc: build-gui
@@ -656,7 +656,6 @@ run-stddev-test: build-stddev
 	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(MAKE) $(SILENTOPT) prep-stddev-test
 	$(TEST_BUILD_DIR)/$(STDDEV_TEST) $(ADV)
-	@mv gmon.out ./$(PROFILE_BUILD_DIR)/
 
 ### prep-stddev-test: ## Připraví testovací data pro program pro výpočet směrodatné odchylky
 prep-stddev-test:
