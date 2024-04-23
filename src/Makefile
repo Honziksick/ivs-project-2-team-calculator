@@ -187,10 +187,10 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 		install-catcalc install-stddev pack-doc pack-install pack-repo pack \
 		prep-stddev-test process-coverage process-profile profile run-core-test \
 		run-first-profile run-next-profile run-profile run-stddev-test \
-		run-test-coverage test
+		run-test-coverage test deb-rewrite-readme-catcalc
 
 ### all: ## Nainstaluje dev-verze kalkulačky "Calm CatCalc" a programu "stddev"
-all: dev-install
+all: build-gui
 
 ### install-catcalc: ## Nainstaluje kalkulačku "Calm CatCalc" s GUI
 install-catcalc: build-gui
@@ -290,10 +290,11 @@ deb-init-catcalc:
 	cp -r $(INSTALL_SRC) $(INSTALL_DIR_CATCALC)
 	cp -r $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/$(ENV_SETUP_DIR)_catcalc $(INSTALL_DIR_CATCALC)/$(ENV_SETUP_DIR)
 	cd $(INSTALL_DIR_CATCALC) && tar -czvf ../$(PRODUCT_NAME_CATCALC).tar.gz $(INSTALL_SRC) $(ENV_SETUP_DIR)
-	cd $(INSTALL_DIR_CATCALC) && dh_make -e xkalinj00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_CATCALC).tar.gz
+	cd $(INSTALL_DIR_CATCALC) && dh_make -e xhyzapa00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_CATCALC).tar.gz
 	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/install-catcalc $(INSTALL_DIR_CATCALC)/debian/install
 	$(MAKE) $(SILENTOPT) deb-rewrite-control-catcalc
 	$(MAKE) $(SILENTOPT) deb-rewrite-rules-catcalc
+	$(MAKE) $(SILENTOPT) deb-rewrite-readme-catcalc
 	$(MAKE) $(SILENTOPT) deb-rewrite-copyright
 	
 ### deb-init-stddev: ## Vytvoří archiv se zdrojovými soubory a debian složku  programu 'stddev'
@@ -301,8 +302,7 @@ deb-init-stddev:
 	mkdir -p $(INSTALL_DIR_STDDEV)
 	cp -r $(INSTALL_SRC) $(INSTALL_DIR_STDDEV)
 	cd $(INSTALL_DIR_STDDEV) && tar -czvf ../$(PRODUCT_NAME_STDDEV).tar.gz $(INSTALL_SRC)
-	cd $(INSTALL_DIR_STDDEV) && dh_make -e xkalinj00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_STDDEV).tar.gz
-	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/install-stddev $(INSTALL_DIR_STDDEV)/debian/install
+	cd $(INSTALL_DIR_STDDEV) && dh_make -e xhyzapa00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_STDDEV).tar.gz
 	$(MAKE) $(SILENTOPT) deb-rewrite-control-stddev
 	$(MAKE) $(SILENTOPT) deb-rewrite-rules-stddev
 	$(MAKE) $(SILENTOPT) deb-rewrite-copyright
@@ -326,6 +326,10 @@ deb-rewrite-rules-catcalc:
 ### deb-rewrite-rules-stddev: ## Přepíše soubor 'rules' pro debian balík programu 'stddev'
 deb-rewrite-rules-stddev:
 	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/rules-stddev $(INSTALL_DIR_STDDEV)/debian/rules
+
+### deb-rewrite-readme-catcalc: ## Přepíše soubor 'readme' pro debian balík programu 'Calm CatCalc'
+deb-rewrite-readme-catcalc:
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/readme-catcalc $(INSTALL_DIR_CATCALC)/debian/README
 
 ### deb-rewrite-copyright: ## Přepíše soubor 'copyright' pro debian balík aktuálními informacemi
 deb-rewrite-copyright:
@@ -457,6 +461,10 @@ clean-pack:
 clean-deb:
 	sudo rm -rf $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)
 	sudo rm -rf $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)
+	sudo rm -rf $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb
+	sudo rm -rf $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)_$(STDDEV_VERSION)_amd64.deb
+
+
 
 ################################################################################
 #                                                                              #
