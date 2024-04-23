@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Utility;
+Exec=calm-catcalc
+GenericName=Calm CatCalc
+Icon=/usr/share/pixmaps/calm-catcalc.xpm
+Name=Calm CatCalc
+Type=Application
+X-KDE-StartupNotify=false

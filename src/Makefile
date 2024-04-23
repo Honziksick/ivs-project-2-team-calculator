@@ -32,7 +32,7 @@ EXECUTABLE = cat_calc_core
 
 # Název a spouštění programu pro profilování
 PROFILER = stddev
-STDDEV = ./$(BUILD_DIR)/$(PROFILER)
+STDDEV = ./$(BUILD_DIR)/$(PROFILER)-profile
 STDDEV_TEST = stddev_tests.sh
 STDDEV_TEST_PACK = stddev_test_files.tar.gz
 
@@ -83,6 +83,35 @@ DOC_OUT_DIR = ../doc
 # Adresář pro generování profilovacích dat
 PROFILE_OUT_DIR = ../profiling
 
+
+###                                               ###
+#  Konfigurační parametry pro tvorbu debian balíku  #
+###                                               ###
+
+# Název a verze balíků
+CATCALC_NAME = calm-catcalc
+CATCALC_VERSION = 1.0
+PRODUCT_NAME_CATCALC = $(CATCALC_NAME)-$(CATCALC_VERSION)
+
+STDDEV_NAME = stddev
+STDDEV_VERSION = 1.0
+PRODUCT_NAME_STDDEV = $(STDDEV_NAME)-$(STDDEV_VERSION)
+
+# Adresář a zdrojové soubory pro zdrojové soubory k tvorbě debian balíku
+INSTALL_MAIN_DIR = ../install
+INSTALL_DIR_CATCALC = $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)/$(PRODUCT_NAME_CATCALC)
+INSTALL_DIR_STDDEV = $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)/$(PRODUCT_NAME_STDDEV)
+
+DEB_RESRC_DIR = deb-resources
+ENV_SETUP_DIR = install
+INSTALL_SRC = $(SRC_DIR) $(PROFILE_DIR) $(TEST_DIR) Makefile Doxyfile
+
+# Cesta k adresáři, kam se má projekt nainstalovat
+DESTDIR_CATCALC = debian/$(CATCALC_NAME)/
+DESTDIR_STDDEV = debian/$(STDDEV_NAME)/
+INSFLAGS = -m 0755
+
+
 ###                                                                       ###
 #  Definice cest k různým složkám obsahující zdrojové soubory ke kompilaci  #
 ###                                                                       ###
@@ -92,8 +121,9 @@ GTEST_DIR = ./tests/googletest-src/googletest
 GMOCK_DIR = ./tests/googletest-src/googlemock
 
 # Cesta ke zdrojovým souborům matematické knihovny "Calm CatCalc Core" a testů
-CORE_DIR = CalmCatCalc/core
-GUI_DIR = CalmCatCalc/cat_calc_gui
+SRC_DIR = CalmCatCalc
+CORE_DIR = $(SRC_DIR)/core
+GUI_DIR = $(SRC_DIR)/cat_calc_gui
 TEST_DIR = tests
 PROFILE_DIR = profiler
 
@@ -107,6 +137,7 @@ BUILD_DIR = ./build
 TEST_BUILD_DIR = $(BUILD_DIR)/test
 COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(BUILD_DIR)/profile
+STDDEV_BUILD_DIR = $(BUILD_DIR)/$(PROFILER)-build
 GUI_BUILD_DIR = $(BUILD_DIR)/gui
 PACK_DIR = ../pack
 
@@ -137,7 +168,6 @@ CXXFLAGS_TEST = $(STANDARD) -O0 $(WARNING) $(DEBUG)
 CXXFLAGS_COV = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(COVERAGE)
 CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 
-
 ################################################################################
 #                                                                              #
 #                          ZÁKLADNÍ PŘÍKAZY MAKEFILE                           #
@@ -145,17 +175,35 @@ CXXFLAGS_PROF = $(STANDARD) -O0 $(WARNING) $(DEBUG) $(PROFILE)
 ################################################################################
 
 # Příkaz '.PHONY' určuje, že následující příkazy nejsou nikdy brány jako soubory
-.PHONY: all install build clean doc help pack test profile coverage \
-        clean-build clean-core clean-coverage clean-doc clean-pack clean-profile \
-        update-dep install-dep upgrade-dep add-to-path set-env-var \
-        build-core build-gui \
-        build-test build-test-libs build-test-debug run-core-test run-stddev-test \
-        build-profile run-first-profile run-next-profile prep-stddev-test \
-        build-coverage build-test-coverage process-coverage \
-        pack-repo pack-doc pack-install
+.PHONY: all build-core build-coverage build-gui build-profile build-test-coverage \
+        build-test-debug build-test-libs build-test build clean-build clean-core \
+		clean-coverage clean-doc clean-pack clean-profile clean coverage deb-init \
+		deb-make deb-make-catcalc deb-make-stddev deb-init-catcalc deb-init-stddev \
+		deb-rewrite-control-catcalc deb-rewrite-control-stddev deb-rewrite-rules-catcalc \
+		deb-rewrite-rules-stddev deb-rewrite-copyright build-stddev \
+		dev-add-to-path dev-install-dep dev-install-dev-dep dev-install-doc-dep \
+		dev-install-gui-dep dev-install-pack-dep dev-install-prof-dep dev-install \
+		dev-set-env-var dev-update-dep dev-upgrade-dep doc filter-report help \
+		install-catcalc install-stddev pack-doc pack-install pack-repo pack \
+		prep-stddev-test process-coverage process-profile profile run-core-test \
+		run-first-profile run-next-profile run-profile run-stddev-test \
+		run-test-coverage test
 
-### all: ## Instaluje kalulačku "Calm CatCalc" a program "stddev" pro profilování
-all: install build add-to-path
+### all: ## Nainstaluje kalkulačku "Calm CatCalc"
+all: install
+
+### install-catcalc: ## Nainstaluje kalkulačku "Calm CatCalc" s GUI
+install-catcalc: build-gui
+	mkdir -p $(DESTDIR_CATCALC)/usr/bin
+	install $(INSFLAGS) $(BUILD_DIR)/cat_calc_gui $(DESTDIR_CATCALC)/usr/bin/catcalc
+
+### install-stddev: ## Nainstaluje program na výpočet výběrové směrodatné odchylky "stddev"
+install-stddev: build-stddev
+	mkdir -p $(DESTDIR_STDDEV)/usr/bin
+	install $(INSFLAGS) $(BUILD_DIR)/stddev $(DESTDIR_STDDEV)/usr/bin/stddev
+
+### build: ## Sestaví "Calm CatCalc" s GUI a program "stddev" pro profilování
+build: build-gui build-stddev
 
 ### help: ## Vypíše nápovědu k použití Makefile
 help:
@@ -189,20 +237,18 @@ doc:
 	doxygen Doxyfile
 	cd $(DOC_OUT_DIR)/html && grep -v 'target="_self">resources\|target="_self">doc' files.html > temp.html && mv temp.html files.html
 	
-
 ### coverage: ## Vytvoří a zpracuje data o pokrytí kódu testy
 coverage: build-coverage build-test-coverage run-test-coverage process-coverage
 
 ### profile: ## Sestaví a spustí profiling matematické knihovny
-profile: install-prof-dep build-profile run-profile
+profile: build-profile run-profile
 	
 ### build-gui: ## Sestaví grafické uživatelské rozhraní kalkulačky "Calm CatCalc"
-build-gui: set-env-var
+build-gui:
 	@mkdir -p $(GUI_BUILD_DIR)
 	@cp $(GUI_DIR)/CMakeLists.txt $(GUI_BUILD_DIR)/
 	cd $(GUI_BUILD_DIR) && cmake . && make
-	sudo chmod 0700  /run/user/1000/
-	cd build && sudo ln -snf gui/cat_calc_gui CalmCatCalc
+	mv $(GUI_BUILD_DIR)/cat_calc_gui $(BUILD_DIR)/
 
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
@@ -218,39 +264,112 @@ pack:
 
 ################################################################################
 #                                                                              #
-#                  CÍLE PRO INSTALACI A AKTUALIZACI ZÁVISLOSTÍ                 #
+#                 CÍLE PRO TVORBU DEBIAN BALÍKŮ A INSTALÁTORŮ                  #
 #                                                                              #
 ################################################################################
 
-### build: ## Sestaví "Calm CatCalc" s GUI a program "stddev" pro profilování
-build: build-gui build-profile
+### deb-init: ## Vytvoří archiv se zdrojovými soubory a debian složku programu 'Calm CatCalc' i 'stddev'
+deb-init: deb-init-catcalc deb-init-stddev
 
-### install: ## Aktualizuje seznam balíčků, instaluje a aktualizuje závislosti
-install: update-dep install-dep upgrade-dep
+### deb-make: ## Vytvoří debian balík programu 'Calm CatCalc' i 'stddev'
+deb-make: deb-make-catcalc deb-make-stddev
 
-### install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
-install-dep: install-gui-dep install-doc-dep install-dev-dep install-pack-dep
+### deb-make-catcalc: ## Vytvoří debian balík programu 'Calm CatCalc'
+deb-make-catcalc:
+	cd $(INSTALL_DIR_CATCALC) && sudo dpkg-buildpackage -rfakeroot -uc -b
+	mv $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb $(INSTALL_MAIN_DIR)/
 
-### install-gui-dep: ## Nainstaluje závislosti potřebné pro GUI kalkulačky
-install-gui-dep:
+### deb-make-stddev: ## Vytvoří debian balík programu 'stddev'
+deb-make-stddev:
+	cd $(INSTALL_DIR_STDDEV) && sudo dpkg-buildpackage -rfakeroot -uc -b
+	mv $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)/$(STDDEV_NAME)_$(STDDEV_VERSION)_amd64.deb $(INSTALL_MAIN_DIR)/
+
+### deb-init-catcalc: ## Vytvoří archiv se zdrojovými soubory a debian složku programu 'Calm CatCalc'
+deb-init-catcalc: 
+	mkdir -p $(INSTALL_DIR_CATCALC)
+	cp -r $(INSTALL_SRC) $(INSTALL_DIR_CATCALC)
+	cp -r $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/$(ENV_SETUP_DIR)_catcalc $(INSTALL_DIR_CATCALC)/$(ENV_SETUP_DIR)
+	cd $(INSTALL_DIR_CATCALC) && tar -czvf ../$(PRODUCT_NAME_CATCALC).tar.gz $(INSTALL_SRC) $(ENV_SETUP_DIR)
+	cd $(INSTALL_DIR_CATCALC) && dh_make -e xkalinj00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_CATCALC).tar.gz
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/install-catcalc $(INSTALL_DIR_CATCALC)/debian/install
+	$(MAKE) $(SILENTOPT) deb-rewrite-control-catcalc
+	$(MAKE) $(SILENTOPT) deb-rewrite-rules-catcalc
+	$(MAKE) $(SILENTOPT) deb-rewrite-copyright
+	
+### deb-init-stddev: ## Vytvoří archiv se zdrojovými soubory a debian složku  programu 'stddev'
+deb-init-stddev: 
+	mkdir -p $(INSTALL_DIR_STDDEV)
+	cp -r $(INSTALL_SRC) $(INSTALL_DIR_STDDEV)
+	cd $(INSTALL_DIR_STDDEV) && tar -czvf ../$(PRODUCT_NAME_STDDEV).tar.gz $(INSTALL_SRC)
+	cd $(INSTALL_DIR_STDDEV) && dh_make -e xkalinj00@stud.fit.vutbr.cz -n -s -c gpl3 -f ../$(PRODUCT_NAME_STDDEV).tar.gz
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/install-stddev $(INSTALL_DIR_STDDEV)/debian/install
+	$(MAKE) $(SILENTOPT) deb-rewrite-control-stddev
+	$(MAKE) $(SILENTOPT) deb-rewrite-rules-stddev
+	$(MAKE) $(SILENTOPT) deb-rewrite-copyright
+
+### deb-rewrite-control-catcalc: ## Přepíše soubor 'control' pro debian balík programu 'Calm CatCalc'
+deb-rewrite-control-catcalc:
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/control-catcalc $(INSTALL_DIR_CATCALC)/debian/control
+	sed -i '/^Source:/c\Source: $(CATCALC_NAME)' $(INSTALL_DIR_CATCALC)/debian/control
+	sed -i '/^Package:/c\Package: $(CATCALC_NAME)' $(INSTALL_DIR_CATCALC)/debian/control
+
+### deb-rewrite-control-stddev: ## Přepíše soubor 'control' pro debian balík programu 'stddev'
+deb-rewrite-control-stddev:
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/control-stddev $(INSTALL_DIR_STDDEV)/debian/control
+	sed -i '/^Source:/c\Source: $(STDDEV_NAME)' $(INSTALL_DIR_STDDEV)/debian/control
+	sed -i '/^Package:/c\Package: $(STDDEV_NAME)' $(INSTALL_DIR_STDDEV)/debian/control
+
+### deb-rewrite-rules-catcalc: ## Přepíše soubor 'rules' pro debian balík programu 'Calm CatCalc'
+deb-rewrite-rules-catcalc:
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/rules-catcalc $(INSTALL_DIR_CATCALC)/debian/rules
+
+### deb-rewrite-rules-stddev: ## Přepíše soubor 'rules' pro debian balík programu 'stddev'
+deb-rewrite-rules-stddev:
+	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/rules-stddev $(INSTALL_DIR_STDDEV)/debian/rules
+
+### deb-rewrite-copyright: ## Přepíše soubor 'copyright' pro debian balík aktuálními informacemi
+deb-rewrite-copyright:
+	if [ -d "$(INSTALL_DIR_CATCALC)/debian/" ]; then \
+		cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/copyright $(INSTALL_DIR_CATCALC)/debian/; \
+	fi
+
+	if [ -d "$(INSTALL_DIR_STDDEV)/debian/" ]; then \
+		cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/copyright $(INSTALL_DIR_STDDEV)/debian/; \
+	fi
+
+
+################################################################################
+#                                                                              #
+#         CÍLE PRO INSTALACI VÝVOJÁŘSKÉ VERZE PŘÍMO ZE ZDROJOVÝCH KÓDŮ         #
+#                                                                              #
+################################################################################
+
+### dev-install: ## Aktualizuje seznam balíčků, instaluje a aktualizuje závislosti
+dev-install: dev-update-dep dev-install-dep dev-upgrade-dep build dev-add-to-path dev-set-env-var
+
+### dev-install-dep: ## Nainstaluje závislosti potřebné pro kompilaci projektu
+dev-install-dep: dev-install-gui-dep dev-install-doc-dep dev-install-dev-dep dev-install-pack-dep
+
+### dev-install-gui-dep: ## Nainstaluje závislosti potřebné pro GUI kalkulačky
+dev-install-gui-dep:
 	sudo apt-get install -y qtbase5-dev
 	sudo apt-get install -y qt6-base-dev
 	sudo apt-get install -y qt6-wayland
 	sudo apt-get install -y qtwayland5
 
-### install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
-install-doc-dep:
+### dev-install-doc-dep: ## Nainstaluje závislosti potřebné pro generování dokumentace
+dev-install-doc-dep:
 	sudo apt-get install -y doxygen
 
-### install-dev-dep: ## Nainstaluje závislosti potřebné pro vývoj a testování
-install-dev-dep: install-prof-dep
+### dev-install-dev-dep: ## Nainstaluje závislosti potřebné pro vývoj a testování
+dev-install-dev-dep: dev-install-prof-dep
 	sudo apt-get install -y binutils
 	sudo apt-get install -y lcov
 	sudo apt-get install -y less
 	sudo apt-get install -y cmake
 
-### install-prof-dep: ## Nainstaluje závislosti potřebné pro profilování
-install-prof-dep:
+### dev-install-prof-dep: ## Nainstaluje závislosti potřebné pro profilování
+dev-install-prof-dep:
 	sudo apt-get install -y libcairo2-dev
 	sudo apt-get install -y python3-pip
 	sudo apt-get install -y graphviz
@@ -258,17 +377,17 @@ install-prof-dep:
 	sudo apt-get install -y neofetch
 	sudo pip3 install gprof2dot
 
-### install-pack-dep: ## Nainstaluje závislosti potřebné pro balení projektu
-install-pack-dep:
+### dev-install-pack-dep: ## Nainstaluje závislosti potřebné pro balení projektu
+dev-install-pack-dep:
 	sudo apt-get install -y rsync
 	sudo apt-get install -y zip
 
-### update-dep: ## Aktualizuje seznam dostupných balíčků
-update-dep:
+### dev-update-dep: ## Aktualizuje seznam dostupných balíčků
+dev-update-dep:
 	sudo apt-get update -y
 
-### upgrade-dep: ## Aktualizuje závislosti potřebné pro kompilaci projektu
-upgrade-dep:
+### dev-upgrade-dep: ## Aktualizuje závislosti potřebné pro kompilaci projektu
+dev-upgrade-dep:
 	sudo apt-get upgrade -y qtbase5-dev
 	sudo apt-get upgrade -y qt6-base-dev
 	sudo apt-get upgrade -y qtwayland5
@@ -287,12 +406,13 @@ upgrade-dep:
 	sudo apt-get upgrade -y zip
 	sudo pip3 install --upgrade gprof2dot
 
-### add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
-add-to-path: $(GUI_BUILD_DIR)/cat_calc_gui
+### dev-add-to-path: ## Přidá spustitelný soubor kalkulačky do systémové cesty
+dev-add-to-path: $(BUILD_DIR)/cat_calc_gui
 	sudo cp $< /usr/local/bin/catcalc
 
-### set-env-var: ## Nastaví proměnnou prostředí QT_QPA_PLATFORM=wayland, pokud ještě není nastavena
-set-env-var:
+### dev-set-env-var: ## Nastaví proměnnou prostředí QT_QPA_PLATFORM=wayland, pokud ještě není nastavena
+dev-set-env-var:
+	sudo chmod 0700  /run/user/1000/
 	@{ \
 	if ! awk '/export QT_QPA_PLATFORM=wayland/ {found=1} END {exit !found}' ~/.profile; then \
 		echo "" >> ~/.profile; \
@@ -317,7 +437,7 @@ clean-core:
 
 ### clean-doc: ## Odstraní všechny soubory z adresáře 'doc' (kromě ./resources/)
 clean-doc:
-	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/resources*' -delete
+	find $(DOC_OUT_DIR) -mindepth 1 ! -path '$(DOC_OUT_DIR)/resources*' -delete || true
 
 ### clean-coverage: ## Odstraní všechny soubory vytvořené během pokrytí kódu
 clean-coverage:
@@ -333,6 +453,10 @@ clean-profile:
 clean-pack:
 	rm -f ../$(PACK_NAME)
 
+### clean-deb: ## Odstraní adresáře a soubory vytvořené příkazem 'deb-init'
+clean-deb:
+	sudo rm -rf $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)
+	sudo rm -rf $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)
 
 ################################################################################
 #                                                                              #
@@ -472,11 +596,14 @@ $(COVERAGE_BUILD_DIR)/$(EXECUTABLE)-coverage.o: $(CORE_DIR)/$(EXECUTABLE).cpp
 #                                                                              #
 ################################################################################
 
-### build-profile: ## Sestaví profiler pro výpočet směrodatné odchylky
-build-profile: $(BUILD_DIR)/$(PROFILER)
+### build-profile: ## Sestaví program pro výpočet směrodatné odchylky pro profilování
+build-profile: $(BUILD_DIR)/$(PROFILER)-profile
+
+### build-profile: ## Sestaví program pro výpočet směrodatné odchylky bez profilování
+build-stddev: $(BUILD_DIR)/$(PROFILER)
 
 ### run-profile: ## Spustí profiling matematické knihovny
-run-profile: $(BUILD_DIR)/$(PROFILER)
+run-profile: $(BUILD_DIR)/$(PROFILER)-profile
 	$(MAKE)  $(SILENTOPT) clean-profile
 	rm -f $(PROFILE_BUILD_DIR)/gmon.out ./$(PROFILE_BUILD_DIR)/gmon.sum
 	rm -f $(PROFILE_BUILD_DIR)/$(AUTO_GEN_DATA_FILE) 2>/dev/null || true
@@ -525,7 +652,7 @@ run-next-profile:
 	done
 
 ### run-stddev-test: ## Spustí testy programu pro výpočet směrodatné odchylky
-run-stddev-test: build-profile
+run-stddev-test: build-stddev
 	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(MAKE) $(SILENTOPT) prep-stddev-test
 	$(TEST_BUILD_DIR)/$(STDDEV_TEST) $(ADV)
@@ -543,17 +670,32 @@ prep-stddev-test:
 	fi
 
 # Stavba objektového souboru programu "stddev" pro výpočet směrodatné odchylky
-$(PROFILE_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
+$(STDDEV_BUILD_DIR)/$(PROFILER).o: $(PROFILE_DIR)/$(PROFILER).cpp
+	@mkdir -p $(STDDEV_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) -c $< -o $@
+
+# Stavba binárky programu "stddev" pro výpočet směrodatné odchylky
+$(BUILD_DIR)/$(PROFILER): $(STDDEV_BUILD_DIR)/$(PROFILER).o \
+                          $(STDDEV_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) $^ -o $@
+
+# Stavba matematické knihovny s přepínači pro profilování pomocí gprof
+$(STDDEV_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
+	@mkdir -p $(STDDEV_BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_STD) -c $< -o $@
+
+# Stavba objektového souboru programu "stddev-profile" pro výpočet směrodatné odchylky
+$(PROFILE_BUILD_DIR)/$(PROFILER)-profile.o: $(PROFILE_DIR)/$(PROFILER).cpp
 	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
-# Stavba binárky programu "stddev" pro výpočet směrodatné odchylky
-$(BUILD_DIR)/$(PROFILER): $(PROFILE_BUILD_DIR)/$(PROFILER).o \
-                          $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o
+# Stavba binárky programu "stddev-profile" pro výpočet směrodatné odchylky
+$(BUILD_DIR)/$(PROFILER)-profile: $(PROFILE_BUILD_DIR)/$(PROFILER)-profile.o \
+                          $(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER)-profile.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) $^ -o $@
 
 # Stavba matematické knihovny s přepínači pro profilování pomocí gprof
-$(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER).o: $(CORE_DIR)/$(EXECUTABLE).cpp
+$(PROFILE_BUILD_DIR)/$(EXECUTABLE)-$(PROFILER)-profile.o: $(CORE_DIR)/$(EXECUTABLE).cpp
 	@mkdir -p $(PROFILE_BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS_PROF) -c $< -o $@
 
@@ -705,6 +847,7 @@ filter-profile:
 
 ### pack-repo: ## Zkopíruje požadované složky repozitáře do složky pro odevzdání
 pack-repo:
+	mkdir -p $(PACK_DIR)/$(PACK_REPO_DIR)
 	if [ -d "../.git" ]; then \
 		rsync -av --progress ../.git $(PACK_REPO_DIR)/; \
 	else \
@@ -768,10 +911,26 @@ pack-repo:
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
 pack-doc:
+	mkdir -p $(PACK_DIR)/$(PACK_DOC_DIR)
 	$(MAKE) $(SILENTOPT) doc
 	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
 	@$(MAKE) $(SILENTOPT) clean-doc
 
 ### pack-install: ## Zkopíruje instalátor do složky pro odevzdání
 pack-install:
-	@echo "NULL"
+	mkdir -p $(PACK_DIR)/$(PACK_INSTALL_DIR)
+	if [ -d "$(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)" ]; then \
+		rsync -av --progress $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR) $(PACK_INSTALL_DIR)/; \
+	else \
+		echo "DEBIAN DEPENDENCIES DIR does not exist"; \
+	fi
+	if [ -f "$(INSTALL_MAIN_DIR)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb" ]; then \
+		rsync -av --progress $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb $(PACK_INSTALL_DIR)/; \
+	else \
+		echo "Debian pack for CALM CATCALC does not exist"; \
+	fi
+	if [ -f "$(INSTALL_MAIN_DIR)/$(STDDEV_NAME)_$(STDDEV_VERSION)_amd64.deb" ]; then \
+		rsync -av --progress $(INSTALL_MAIN_DIR)/$(STDDEV_NAME)_$(STDDEV_VERSION)_amd64.deb $(PACK_INSTALL_DIR)/; \
+	else \
+		echo "Debian pack for STDDEV does not exist"; \
+	fi
