@@ -140,7 +140,7 @@ COVERAGE_BUILD_DIR = $(BUILD_DIR)/coverage
 PROFILE_BUILD_DIR = $(BUILD_DIR)/profile
 STDDEV_BUILD_DIR = $(BUILD_DIR)/$(STDDEV_NAME)-build
 GUI_BUILD_DIR = $(BUILD_DIR)/gui
-PACK_DIR = ../pack
+PACK_DIR = ../xkalinj00_xfarkal00_xhyzapa00_xkrejcd00
 
 # Dočasné složky při balení projektu
 TEMP_DIRS = PACK_REPO_DIR PACK_DOC_DIR PACK_INSTALL_DIR
@@ -374,7 +374,7 @@ deb-rewrite-scripts-catcalc:
 	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/postrm-catcalc.ex $(INSTALL_DIR_CATCALC)/debian/postrm.ex
 	mv $(INSTALL_DIR_CATCALC)/debian/postrm.ex $(INSTALL_DIR_CATCALC)/debian/postrm
 
-### deb-rewrite-scripts-stddev: ## Přepíše soubor 'scripts' pro debian balík programu 'Calm CatCalc'
+### deb-rewrite-scripts-stddev: ## Přepíše soubor 'scripts' pro debian balík programu 'Stddev'
 deb-rewrite-scripts-stddev:
 	cp $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)/preinst-stddev.ex $(INSTALL_DIR_STDDEV)/debian/preinst.ex
 	mv $(INSTALL_DIR_STDDEV)/debian/preinst.ex $(INSTALL_DIR_STDDEV)/debian/preinst
@@ -936,6 +936,21 @@ pack-repo:
 		rsync -av --progress ../README.md $(PACK_REPO_DIR)/; \
 	else \
 		echo "../README.md does not exist"; \
+	fi
+	if [ -f "../screenshot.png" ]; then \
+		rsync -av --progress ../screenshot.png $(PACK_REPO_DIR)/; \
+	else \
+		echo "../screenshot.png does not exist"; \
+	fi
+	if [ -f "../dokumentace.pdf" ]; then \
+		rsync -av --progress ../dokumentace.pdf $(PACK_REPO_DIR)/; \
+	else \
+		echo "../dokumentace.pdf does not exist"; \
+	fi
+	if [ -d "../mockup" ]; then \
+		rsync -av --progress ../mockup $(PACK_REPO_DIR)/; \
+	else \
+		echo "../mockup does not exist"; \
 	fi
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání

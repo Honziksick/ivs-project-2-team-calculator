@@ -15,10 +15,6 @@ set -e
 
 case "$1" in
     install|upgrade)
-        if dpkg -s stddev >/dev/null 2>&1; then
-            echo "Balíček 'stddev' je již nainstalován."
-            exit 1
-        fi
         echo ""
         echo "Před instalací si prosím přečtěte naše licenční podmínky dané licencí GNU GPL3."
         echo "Licence:"

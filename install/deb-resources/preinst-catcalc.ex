@@ -13,14 +13,8 @@ set -e
 # for details, see https://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-DEPENDENCIES="libqt5core5a (>= 5.15.1), libqt5gui5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0~alpha1)"
-
 case "$1" in
     install|upgrade)
-        if dpkg -s calm-catcalc >/dev/null 2>&1; then
-            echo "Balíček 'calm-catcalc' je již nainstalován."
-            exit 1
-        fi
         echo ""
         echo "Před instalací si prosím přečtěte naše licenční podmínky dané licencí GNU GPL3."
         echo "Licence:"
