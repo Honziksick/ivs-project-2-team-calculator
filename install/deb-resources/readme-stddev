@@ -1,10 +1,10 @@
-The Debian Package calm catcalc
+The Debian Package stddev
 ----------------------------
 
 Comments regarding the Package
 
- -- Pavel Hyza <xhyzapa00@stud.fit.vutbr.cz>  Tue, 23 Apr 2024 21:40:41 +0200
-Toto je debianový balíček pro samotnou aplikaci kalkulačky Calm CatCalc.
+ -- Pavel Hyza <xhyzapa00@stud.fit.vutbr.cz>  Wed, 24 Apr 2024 22:01:30 +0200
+Toto je debianový balíček pro doplňkovou aplikaci pro profilování Stddev.
 'control' obsahuje závislosti aplikace
 'rules' obsahuje příkaz pro automatické vytvoření balíčku pomocí dh_make
 'install' obsahuje cesty pro ikonu na plochu

@@ -17,8 +17,8 @@
 %:
 	dh $@
 
-
-
+override_dh_auto_build:
+	@echo "Přeskakuji cíl all"
 
 override_dh_auto_install:
 	make install-stddev
