@@ -1,7 +1,7 @@
 Source: product_name_from_makefile
 Section: utils
 Priority: extra
-Maintainer: Jan Kalina <xkalinj00@vutbr.cz>
+Maintainer: Pavel Hyza <xhyzapa00@vutbr.cz>
 Build-Depends: debhelper (>= 13), debhelper-compat (= 13), qtbase5-dev, qt6-base-dev, qtwayland5, qt6-wayland
 Standards-Version: 4.6.0
 Rules-Requires-Root: no

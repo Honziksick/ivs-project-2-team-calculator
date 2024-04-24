@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: calmcatcalc
-Upstream-Contact: Jan Kalina <xkalinj00@vutbr.cz>
+Upstream-Contact: Pavel Hyza <xhyzapa00@vutbr.cz>
 
 Files: *
 Copyright: 2024 Jan Kalina <xkalinj00@vutbr.cz>
@@ -10,7 +10,7 @@ Copyright: 2024 Jan Kalina <xkalinj00@vutbr.cz>
 License: GPL-3.0+
 
 Files: debian/*
-Copyright: 2024 Jan Kalina <xkalinj00@vutbr.cz>
+Copyright: 2024 Pavel Hyza <xhyzapa00@vutbr.cz>
 License: GPL-3.0+
 
 License: GPL-3.0+
