@@ -336,6 +336,15 @@ private slots:
      */
     void delete_char();
 
+
+    /**
+     * @brief Slot pro zpracování signálu zobrazení nápovědy.
+     *
+     * @details Tento slot je aktivován, když uživatel stiskne tlačítko pro
+     *          zobrazení nápovědy. 
+     */
+    void prompt();
+
 }; // class MainWindow
 
 #endif // MAINWINDOW_H
