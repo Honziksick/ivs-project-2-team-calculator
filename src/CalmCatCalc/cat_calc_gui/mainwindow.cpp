@@ -31,6 +31,7 @@
 #include "mainwindow.h"
 #include <QKeyEvent>
 #include <QWidget>
+#include <QMessageBox>
 #include "ui_mainwindow.h"
 #include "cat_calc_core.h"
 
@@ -100,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->Ztan, SIGNAL(clicked()), this, SLOT(tan()));
     connect(ui->Zdeg, SIGNAL(clicked()), this, SLOT(deg_rad()));
     connect(ui->Zdel_ch, SIGNAL(clicked()), this, SLOT(delete_char()));
+    connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(prompt()));
 
 
     /*                Zrušení zkratky tab pro všechny widgety                 */
@@ -540,6 +542,40 @@ void MainWindow::deg_rad(){
         ui->Zdeg->setText("DEG");
     }
     else ui->Zdeg->setText("RAD");
+}
+
+void MainWindow::prompt(){
+
+    const char *msg = 
+"Základní vlastnosti kalkulačky:\n"
+"1) Kalkulačka Calm CatCalc™ je jednořádkový model kalkulačky, proto se tak i operuje.\n"
+"2) Dané tlačítka aplikace vykonávají operace, které by dělalo i počítací zařízení.\n"
+"3) Tlačítko DEL slouží k smazání celého výrazu a tlačítko se značkou zpětné šipky "
+"naopak maže po jednom.\n"
+"4) Při počítání může dojít k chybě syntaktické (Syntax Error), matematické (Math Error)"
+" a chybě závorek (Parenthesis Mismatch)\n"
+" - 'Syntax Error' značí chybu logiky zadané uživatelem (např. výraz *-+)\n"
+" - 'Math Error' značí chybu matematické logiky zadané uživatelem (např. dělení nulou)\n"
+" - 'Parenthesis Error' značí chybu uzavření závorkami "
+"(např. vynechání uzavírací závorky)\n"
+"Podrobnější návod naleznete v uživatelské příručce\n\n"
+
+"Klávesové zkratky: \n"
+
+"Tlačítka s čísly reprezentují jednotlivé klávesy.\n"
+"Tlačítko '=' má zkratku pravého 'Enteru'\n"
+"Tlačítka se závorkami a čárkou ',' také jsou reprezentovány jednotlivými klávesami.\n"
+"Tlačítka pro operace '+ - * /' jsou reprezentovány jednotlivými klávesami.\n"
+"Tlačítko DEL má zkratku 'Del' a tlačítko '<=' má zkratku 'Backspace'\n"
+"Tlačítko RAD má zkratku 'D'\n"
+"Tlačítko sin má zkratku 'S'\n"
+"Tlačítko cos má zkratku 'C'\n"
+"Tlačítko tan má zkratku 'T'\n"
+"Tlačítko faktoriálu má zkratku '!'\n"
+"Tlačítko odmocniny má zkratku 'R'\n"
+"Tlačítko mocniny má zkratku 'E'\n";
+
+    QMessageBox::information(this, "Nápověda", msg);
 }
 
 /*** Konec souboru mainwindow.cpp ***/
