@@ -1,0 +1,4 @@
+xfarkal00 100 (GUI a Mockup, git review, moderace komunikačních kanálů a správa týmového discordu)
+xhyzapa00 100 (instalátor a odinstalátor, uživatelská příručka, návod k instalaci a odinstalaci, doodle, konzultant v pozadí)
+xkalinj00 100 (organizace týmu - šéfování, git review, správa repozitáře, tvorba plánu a týmových dokumentů, Makefile, programová dokumentace, profiling a vše okolo toho)
+xkrejcd00 100 (testy matematické knihovny, matematická knihovna, průběžná aktualizace a developmnet knihovny, asistence s uživatleksou příručkou)

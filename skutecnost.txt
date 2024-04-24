@@ -1,0 +1,48 @@
+Jediný rozdíl mezi plánem a skutečností je ve většině termínů splnění úkolů. Pravidla pro komunikaci a ostatní stanovené zásady byly dodržovány. Bohužel jsme se dostali z osobních důvodů i množství půlsemestrálních zkoušek, zápočtových testů a dalších projektů do většího časového skluzu, než jsme původně do časového plánu započítali. Naštěstí jsme si nechali nějakou rezervu, takže to neskončilo úplným "výbuchem".
+Zde je vypsán seznam úkolů, jejich plánovaný termín splnění a skutečný termín splnění:
+
+Tvorba a příprava
+repozitáře a README
+Plán: 14. března, Skutečnost: 13. března
+
+Předběžný plán
+projektu
+Plán: 14. března, Skutečnost: 13. března
+
+Testy pro matematickou
+knihovnu formou TDD
+Plán: 17. března, Skutečnost: 20. března
+
+Matematická knihovna
+Plán: 24. března, Skutečnost: 27. března
+
+GUI nad matematickou
+knihovnou
+Plán: 7. dubna, Skutečnost: 15. dubna
+
+Implementace
+směrodatné odchylky
+Plán: 7. dubna, Skutečnost: 11. dubna
+
+Protokol z profileru
+Plán: 14. dubna, Skutečnost: 22. dubna
+
+Od/Instalátor
+Plán: 14. dubna, Skutečnost: 24. dubna
+
+Mockup
+Plán: 14. dubna, Skutečnost: 24. dubna
+
+Debugging
+Plán: 19. dubna, Skutečnost: 16. dubna
+
+Návod pro manuální
+od/instalaci
+Plán: 19. dubna, Skutečnost: 24. dubna
+
+Finalizace programové dokumentace
+Plán: 19. dubna, Skutečnost: 22. dubna
+
+Uživatelská
+dokumentace
+Plán: 19. dubna, Skutečnost: 24. dubna
