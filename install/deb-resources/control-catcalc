@@ -1,0 +1,13 @@
+Source: product_name_from_makefile
+Section: utils
+Priority: extra
+Maintainer: Pavel Hyza <xhyzapa00@vutbr.cz>
+Build-Depends: debhelper (>= 13), debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Rules-Requires-Root: no
+
+Package: package_name_from_makefile
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5core5a (>= 5.15.1), libqt5gui5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0~alpha1), libqt6widgets6 (>= 6.2.4), libqt6gui6 (>= 6.2.4), libqt6core6 (>= 6.2.4), libqt6dbus6 (>= 6.2.4), qtwayland5 (>=5.15.3-1), qt6-wayland (>= 6.2.4-1)
+Description: Calm CatCalc
+ Počítání tak příjemné, že budete vrnět blahem - jedině s Calm CatCalc.

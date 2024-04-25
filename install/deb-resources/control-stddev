@@ -1,0 +1,13 @@
+Source: product_name_from_makefile
+Section: utils
+Priority: extra
+Maintainer: Pavel Hyza <xhyzapa00@vutbr.cz>
+Build-Depends: debhelper (>= 13), debhelper-compat (= 13)
+Standards-Version: 4.6.0
+Rules-Requires-Root: no
+
+Package: product_name_from_makefile
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Standard Deviation Calculator
+ Terminálová aplikace na výpočet výběrové směrodatné odchylky.

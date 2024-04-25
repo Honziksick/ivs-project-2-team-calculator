@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Utility;
+Exec=stddev
+GenericName=Stddev
+Icon=/usr/share/pixmaps/stddev.xpm
+Name=Stddev
+Type=Application
+Terminal=true

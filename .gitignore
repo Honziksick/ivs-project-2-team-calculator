@@ -69,9 +69,17 @@ dkms.conf
 **/.history/
 **/*.vsix
 
-# Build
+# Build system
 **/build/*
-/profiling/gprof-report.txt
+/profiling/gprof-report.md
+/profiling/gprof-report.png
+/profiling/flat-profile.txt
+
+# Install system
+/install/*
+!**/install/deb-resources
+!**/install/calm-catcalc_1.0_amd64.deb
+!**/install/stddev_1.0_amd64.deb
 
 # General folders and files
 **/kostra_repozitare
@@ -81,3 +89,4 @@ dkms.conf
 *.doc
 *.docx
 **/virtual_machine
+**/pack
