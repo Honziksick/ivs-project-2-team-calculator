@@ -145,7 +145,6 @@ PACK_DIR = ../xkalinj00_xfarkal00_xhyzapa00_xkrejcd00
 # Dočasné složky při balení projektu
 TEMP_DIRS = PACK_REPO_DIR PACK_DOC_DIR PACK_INSTALL_DIR
 PACK_REPO_DIR = $(PACK_DIR)/repo
-PACK_DOC_DIR = $(PACK_DIR)/doc
 PACK_INSTALL_DIR = $(PACK_DIR)/install
 
 
@@ -287,6 +286,8 @@ build-gui:
 ### pack: ## Vytvoří ZIP archiv s projektem pro odevzdání
 pack:
 	$(MAKE) $(SILENTOPT) dev-install-pack-dep
+	$(MAKE) $(SILENTOPT) clean
+	$(MAKE) $(SILENTOPT) clean-pack
 	$(MAKE) $(SILENTOPT) clean-pack
 	mkdir -p $(PACK_DIR)
 
@@ -952,22 +953,36 @@ pack-repo:
 	else \
 		echo "../mockup does not exist"; \
 	fi
+	if [ -d "../install" ]; then \
+		rsync -av --progress ../install $(PACK_REPO_DIR)/; \
+	else \
+		echo "../install does not exist"; \
+	fi
+	if [ -f "../skutecnost.txt" ]; then \
+		rsync -av --progress ../skutecnost.txt $(PACK_REPO_DIR)/; \
+	else \
+		echo "../skutecnost.txt does not exist"; \
+	fi
+	if [ -f "../hodnoceni.txt" ]; then \
+		rsync -av --progress ../hodnoceni.txt $(PACK_REPO_DIR)/; \
+	else \
+		echo "../hodnoceni.txt does not exist"; \
+	fi
+	if [ -f "../debugging.png" ]; then \
+		rsync -av --progress ../debugging.png $(PACK_REPO_DIR)/; \
+	else \
+		echo "../debugging.png does not exist"; \
+	fi
 
 ### pack-doc: ## Vygeneruje dokumentaci pro účely odevzdání do složky pro odevzdání
 pack-doc:
-	mkdir -p $(PACK_DIR)/$(PACK_DOC_DIR)
 	$(MAKE) $(SILENTOPT) doc
-	cp -r $(DOC_OUT_DIR)/ $(PACK_DOC_DIR)/
+	cp -r $(DOC_OUT_DIR)/ $(PACK_DIR)/
 	@$(MAKE) $(SILENTOPT) clean-doc
 
 ### pack-install: ## Zkopíruje instalátor do složky pro odevzdání
 pack-install:
 	mkdir -p $(PACK_DIR)/$(PACK_INSTALL_DIR)
-	if [ -d "$(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR)" ]; then \
-		rsync -av --progress $(INSTALL_MAIN_DIR)/$(DEB_RESRC_DIR) $(PACK_INSTALL_DIR)/; \
-	else \
-		echo "DEBIAN DEPENDENCIES DIR does not exist"; \
-	fi
 	if [ -f "$(INSTALL_MAIN_DIR)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb" ]; then \
 		rsync -av --progress $(INSTALL_MAIN_DIR)/$(CATCALC_NAME)_$(CATCALC_VERSION)_amd64.deb $(PACK_INSTALL_DIR)/; \
 	else \
